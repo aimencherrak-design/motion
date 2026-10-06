@@ -3,10 +3,10 @@
 // Laisse un champ vide ("") pour masquer la ligne correspondante.
 window.VIDEO_CONFIG = {
   monogramme: "A",
-  nom: "PRÉNOM NOM",
+  nom: "AIMEN",
   tagline: "Apporteur d'affaires automobile",
   region: "Alsace",
-  telephone: "06 00 00 00 00",
-  email: "contact@votre-domaine.fr",
-  linkedin: "linkedin.com/in/votre-profil",
+  telephone: "",
+  email: "",
+  linkedin: "",
 };
