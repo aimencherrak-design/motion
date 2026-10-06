@@ -5,7 +5,7 @@ window.VIDEO_CONFIG = {
   monogramme: "A",
   nom: "AIMEN",
   tagline: "Apporteur d'affaires automobile",
-  region: "Alsace",
+  region: "",
   telephone: "",
   email: "",
   linkedin: "",

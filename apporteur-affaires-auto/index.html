@@ -21,19 +21,19 @@
   html, body { background: #050505; height: 100%; }
   body { font-family: "Space Grotesk", sans-serif; color: var(--ink); overflow: hidden; -webkit-font-smoothing: antialiased; }
 
-  /* ---------- stage ---------- */
-  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); transform-origin: 0 0; }
+  /* ---------- stage (16:9) ---------- */
+  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); transform-origin: 0 0; }
   .layer, .scene { position: absolute; inset: 0; }
   .scene { visibility: hidden; }
-  svg.full { position: absolute; inset: 0; width: 1080px; height: 1920px; overflow: visible; }
+  svg.full { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: visible; }
   .y { color: var(--y); }
   .ch { display: inline-block; will-change: transform, opacity; }
   .fit { width: max-content; white-space: nowrap; }
 
   /* ---------- ambient layers ---------- */
-  #grid { inset: -200px -200px -800px -200px; background-image: radial-gradient(rgba(255,255,255,.075) 1.6px, transparent 2px); background-size: 54px 54px; }
-  #glow { width: 1700px; height: 1700px; left: -310px; top: 60px; border-radius: 50%; background: radial-gradient(circle, rgba(255,201,39,.15) 0%, rgba(255,201,39,.05) 35%, rgba(255,201,39,0) 62%); }
-  #vignette { background: radial-gradient(ellipse 85% 70% at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); pointer-events: none; }
+  #grid { inset: -400px; background-image: radial-gradient(rgba(255,255,255,.075) 1.6px, transparent 2px); background-size: 54px 54px; }
+  #glow { width: 1700px; height: 1700px; left: 110px; top: -310px; border-radius: 50%; background: radial-gradient(circle, rgba(255,201,39,.15) 0%, rgba(255,201,39,.05) 35%, rgba(255,201,39,0) 62%); }
+  #vignette { background: radial-gradient(ellipse 75% 85% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); pointer-events: none; }
   #grain { inset: -120px; opacity: .07; mix-blend-mode: overlay; pointer-events: none; will-change: transform; }
   .corner { position: absolute; width: 38px; height: 38px; border-color: rgba(244,241,234,.28); border-style: solid; border-width: 0; }
   .corner.tl { left: 52px; top: 52px; border-left-width: 2px; border-top-width: 2px; }
@@ -42,50 +42,50 @@
   .corner.br { right: 52px; bottom: 52px; border-right-width: 2px; border-bottom-width: 2px; }
 
   /* ---------- shared type ---------- */
-  .eyebrow { position: absolute; left: 90px; display: flex; align-items: center; gap: 18px; font-size: 30px; font-weight: 500; letter-spacing: .22em; color: var(--muted); }
+  .eyebrow { position: absolute; left: 140px; display: flex; align-items: center; gap: 18px; font-size: 28px; font-weight: 500; letter-spacing: .22em; color: var(--muted); }
   .eyebrow .dash { width: 44px; height: 4px; background: var(--y); transform-origin: 0 50%; }
   .mask { overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
   .display { font-weight: 700; letter-spacing: -.025em; line-height: 1.0; }
+  .wipe { position: relative; display: block; width: max-content; }
+  .wipe .txt { display: block; }
+  .wipe .bar { position: absolute; left: -10px; right: -10px; top: 6%; bottom: 2%; background: var(--y); transform-origin: 0 50%; }
 
   /* ---------- scene 1 : accroche ---------- */
-  #hook { position: absolute; left: 90px; top: 690px; font-size: 118px; }
-  #hook .hook-line { perspective: 700px; }
-  #hook-sub { position: absolute; left: 90px; top: 1112px; display: flex; align-items: center; gap: 20px; font-size: 36px; font-weight: 500; letter-spacing: .1em; color: var(--muted); }
+  #hook { position: absolute; top: 300px; font-size: 136px; }
+  #hook .hook-line { perspective: 800px; }
+  #hook-sub { position: absolute; top: 760px; display: flex; align-items: center; gap: 20px; font-size: 34px; font-weight: 500; letter-spacing: .12em; color: var(--muted); }
   #hook-sub .dash { width: 56px; height: 4px; background: var(--y); transform-origin: 0 50%; }
 
   /* ---------- scene 2 : réseau ---------- */
-  #s2-title { position: absolute; left: 90px; top: 282px; font-size: 112px; }
-  #net { transform-origin: 540px 1090px; }
-  .chip { position: absolute; padding: 11px 20px 10px; font-size: 26px; font-weight: 700; letter-spacing: .09em; line-height: 1.18; text-align: center; white-space: nowrap; background: var(--bg); border: 1.5px solid rgba(244,241,234,.16); border-radius: 14px; }
+  #s2-title { position: absolute; left: 140px; top: 340px; font-size: 116px; }
+  #net { transform-origin: 1380px 540px; }
+  .chip { position: absolute; padding: 10px 18px 9px; font-size: 24px; font-weight: 700; letter-spacing: .09em; line-height: 1.18; text-align: center; white-space: nowrap; background: var(--bg); border: 1.5px solid rgba(244,241,234,.16); border-radius: 13px; }
   #hub-letter { font-family: "Space Grotesk"; font-weight: 700; }
 
   /* ---------- scene 3 : sans risque ---------- */
-  #s3-title { position: absolute; left: 90px; top: 250px; font-size: 104px; }
+  #s3-title { position: absolute; left: 140px; top: 300px; font-size: 108px; }
   #s3-title .kw { display: block; }
-  #s3-sub { position: absolute; left: 90px; top: 1210px; }
-  #s3-sub .a { font-size: 60px; font-weight: 700; letter-spacing: -.01em; }
-  #s3-sub .b { margin-top: 14px; font-size: 40px; font-weight: 500; letter-spacing: .02em; color: var(--muted); }
+  #s3-sub { position: absolute; left: 140px; top: 590px; }
+  #s3-sub .a { font-size: 58px; font-weight: 700; letter-spacing: -.01em; }
+  #s3-sub .b { margin-top: 14px; font-size: 38px; font-weight: 500; letter-spacing: .02em; color: var(--muted); }
   #s3-sub .b .y { position: relative; font-weight: 700; }
   #s3-underline { position: absolute; left: 0; right: 0; bottom: -8px; height: 4px; background: var(--y); transform-origin: 0 50%; }
   #euro { font-family: "Space Grotesk"; font-weight: 700; }
 
   /* ---------- scene 4 : CRM ---------- */
-  #s4-words { position: absolute; left: 90px; top: 222px; font-size: 100px; }
-  .wipe { position: relative; display: block; width: max-content; }
-  .wipe .txt { display: block; }
-  .wipe .bar { position: absolute; left: -10px; right: -10px; top: 6%; bottom: 2%; background: var(--y); transform-origin: 0 50%; }
-  #crm-cam { position: absolute; left: 0; top: 650px; width: 1080px; height: 1270px; perspective: 2200px; -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 64%, transparent 90%); mask-image: linear-gradient(to bottom, #000 0%, #000 64%, transparent 90%); }
-  #crm { position: absolute; left: 95px; top: 30px; width: 890px; height: 1100px; border-radius: 38px; background: #171717; border: 1.5px solid #2B2B2B; box-shadow: 0 50px 140px rgba(0,0,0,.65), inset 0 1.5px 0 rgba(255,201,39,.35); transform-origin: 50% 30%; overflow: hidden; }
-  .crm-head { display: flex; align-items: center; gap: 20px; padding: 36px 38px 22px; }
-  .crm-logo { width: 56px; height: 56px; border-radius: 50%; background: var(--y); color: var(--bg); display: grid; place-items: center; font-size: 34px; font-weight: 700; }
-  .crm-title { font-size: 36px; font-weight: 700; letter-spacing: -.01em; }
-  .crm-date { margin-left: auto; font-size: 24px; color: var(--muted); font-weight: 500; }
-  .crm-tabs { position: relative; display: flex; gap: 38px; padding: 4px 38px 0; font-size: 24px; font-weight: 500; color: var(--muted); border-bottom: 1.5px solid #262626; }
+  #s4-words { position: absolute; left: 140px; top: 360px; font-size: 116px; }
+  #crm-cam { position: absolute; left: 900px; top: 0; width: 1020px; height: 1080px; perspective: 2000px; perspective-origin: 20% 45%; -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 74%, transparent 97%); mask-image: linear-gradient(to bottom, #000 0%, #000 74%, transparent 97%); }
+  #crm { position: absolute; left: 70px; top: 110px; width: 860px; height: 1040px; border-radius: 36px; background: #171717; border: 1.5px solid #2B2B2B; box-shadow: 0 50px 140px rgba(0,0,0,.65), inset 0 1.5px 0 rgba(255,201,39,.35); transform-origin: 40% 40%; overflow: hidden; }
+  .crm-head { display: flex; align-items: center; gap: 20px; padding: 34px 36px 22px; }
+  .crm-logo { width: 54px; height: 54px; border-radius: 50%; background: var(--y); color: var(--bg); display: grid; place-items: center; font-size: 32px; font-weight: 700; }
+  .crm-title { font-size: 34px; font-weight: 700; letter-spacing: -.01em; }
+  .crm-date { margin-left: auto; font-size: 23px; color: var(--muted); font-weight: 500; }
+  .crm-tabs { position: relative; display: flex; gap: 34px; padding: 4px 36px 0; font-size: 23px; font-weight: 500; color: var(--muted); border-bottom: 1.5px solid #262626; }
   .crm-tabs span { padding-bottom: 18px; }
   .crm-tabs .on { color: var(--ink); }
-  #crm-tab-bar { position: absolute; left: 38px; bottom: -1.5px; height: 4px; width: 50px; background: var(--y); border-radius: 2px; }
-  .crm-list-clip { position: absolute; left: 0; right: 0; top: 182px; bottom: 0; overflow: hidden; }
-  #crm-list { padding: 24px 28px; }
+  #crm-tab-bar { position: absolute; left: 36px; bottom: -1.5px; height: 4px; width: 50px; background: var(--y); border-radius: 2px; }
+  .crm-list-clip { position: absolute; left: 0; right: 0; top: 176px; bottom: 0; overflow: hidden; }
+  #crm-list { padding: 24px 26px; }
   .card { position: relative; display: flex; align-items: center; gap: 22px; height: 128px; padding: 0 24px; margin-bottom: 16px; border-radius: 24px; background: var(--card); border: 1.5px solid #252525; }
   .card .flash { position: absolute; inset: -1.5px; border-radius: 24px; border: 2.5px solid var(--y); opacity: 0; }
   .avatar { flex: none; width: 70px; height: 70px; border-radius: 50%; background: #242424; display: grid; place-items: center; }
@@ -102,22 +102,22 @@
   .pill.conclu   { background: var(--y); color: var(--bg); }
 
   /* ---------- scene 5 : clôture ---------- */
-  #s5 .center { position: absolute; left: 0; right: 0; text-align: center; }
-  #s5-q { top: 238px; font-size: 104px; }
-  #s5-q .line { display: block; perspective: 700px; }
-  #s5-cta { top: 470px; font-size: 104px; }
-  #s5-cta .wipe { margin: 0 auto; }
-  #s5-cta-line { position: absolute; left: 50%; top: 600px; width: 180px; height: 5px; margin-left: -90px; background: var(--y); transform-origin: 50% 50%; }
-  #mono-wrap { position: absolute; left: 540px; top: 900px; width: 0; height: 0; }
+  #s5-q { position: absolute; left: 140px; top: 318px; font-size: 108px; }
+  #s5-q .line { display: block; perspective: 800px; }
+  #s5-cta { position: absolute; left: 140px; top: 548px; font-size: 108px; }
+  #s5-cta-line { position: absolute; left: 140px; top: 684px; width: 180px; height: 5px; background: var(--y); transform-origin: 0 50%; }
+  #s5-id { position: absolute; left: 950px; width: 1000px; top: 0; height: 1080px; }
+  #s5-id .center { position: absolute; left: 0; right: 0; text-align: center; }
+  #mono-wrap { position: absolute; left: 500px; top: 420px; width: 0; height: 0; }
   .ring { position: absolute; left: -118px; top: -118px; width: 236px; height: 236px; border-radius: 50%; border: 3px solid var(--y); opacity: 0; }
   #mono { position: absolute; left: -118px; top: -118px; width: 236px; height: 236px; border-radius: 50%; background: var(--y); overflow: hidden; box-shadow: 0 0 90px rgba(255,201,39,.35); }
   #mono-letter { position: absolute; inset: 0; display: grid; place-items: center; font-size: 150px; font-weight: 700; color: var(--bg); letter-spacing: -.02em; padding-bottom: 6px; }
-  #s5-name { top: 1080px; font-size: 66px; font-weight: 700; letter-spacing: .01em; }
-  #s5-tag { top: 1168px; font-size: 32px; font-weight: 500; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
-  #s5-div { position: absolute; left: 50%; top: 1240px; width: 120px; height: 3px; margin-left: -60px; background: var(--y); }
-  #s5-contacts { top: 1282px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-  .contact { display: flex; align-items: center; gap: 18px; font-size: 38px; font-weight: 500; letter-spacing: .01em; }
-  .contact svg { width: 38px; height: 38px; fill: none; stroke: var(--y); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  #s5-name { top: 596px; font-size: 68px; font-weight: 700; letter-spacing: .02em; }
+  #s5-tag { top: 686px; font-size: 28px; font-weight: 500; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+  #s5-div { position: absolute; left: 50%; top: 750px; width: 120px; height: 3px; margin-left: -60px; background: var(--y); }
+  #s5-contacts { top: 790px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .contact { display: flex; align-items: center; gap: 16px; font-size: 34px; font-weight: 500; letter-spacing: .01em; }
+  .contact svg { width: 34px; height: 34px; fill: none; stroke: var(--y); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 
   /* ---------- preview chrome (hidden in render mode) ---------- */
   #controls { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 8px 14px; border-radius: 12px; background: rgba(30,30,30,.92); color: #ddd; font: 500 13px/1 "Space Grotesk", sans-serif; z-index: 10; }
@@ -128,7 +128,7 @@
 </style>
 </head>
 <body>
-<div id="stage" data-composition-id="apporteur-affaires-auto" data-width="1080" data-height="1920" data-start="0" data-duration="30" data-fps="30">
+<div id="stage" data-composition-id="apporteur-affaires-auto" data-width="1920" data-height="1080" data-start="0" data-duration="30" data-fps="30">
 
   <!-- ambient -->
   <div class="layer" id="grid"></div>
@@ -136,10 +136,10 @@
 
   <!-- ===================== SCÈNE 1 — ACCROCHE (0:00–0:04) ===================== -->
   <section class="scene" id="s1">
-    <svg class="full" viewBox="0 0 1080 1920">
+    <svg class="full" viewBox="0 0 1920 1080">
       <g id="rays" style="filter: drop-shadow(0 0 10px rgba(255,201,39,.55))"></g>
-      <circle id="flash-ring" cx="540" cy="900" r="40" fill="none" stroke="#FFC927" stroke-width="3"/>
-      <circle id="flash-dot" cx="540" cy="900" r="12" fill="#FFC927"/>
+      <circle id="flash-ring" cx="960" cy="540" r="40" fill="none" stroke="#FFC927" stroke-width="3"/>
+      <circle id="flash-dot" cx="960" cy="540" r="12" fill="#FFC927"/>
     </svg>
     <div id="hook" class="display">
       <div class="hook-line fit">VOUS <span class="y">VENDEZ.</span></div>
@@ -151,24 +151,24 @@
 
   <!-- ===================== SCÈNE 2 — L'OFFRE (0:04–0:12) ===================== -->
   <section class="scene" id="s2">
-    <div class="eyebrow" id="s2-eb" style="top:226px"><span class="dash"></span>JE SUIS</div>
+    <div class="eyebrow" id="s2-eb" style="top:284px"><span class="dash"></span>JE SUIS</div>
     <div id="s2-title" class="display">
       <div class="mask"><div class="in fit">APPORTEUR</div></div>
       <div class="mask"><div class="in fit">D'AFFAIRES</div></div>
       <div class="mask"><div class="in fit y">AUTOMOBILE</div></div>
     </div>
-    <div class="eyebrow" id="s2-rel" style="top:662px"><span class="dash"></span>JE METS EN RELATION</div>
+    <div class="eyebrow" id="s2-rel" style="top:730px"><span class="dash"></span>JE METS EN RELATION</div>
     <div class="layer" id="net">
-      <svg class="full" viewBox="0 0 1080 1920">
-        <circle id="orbit" cx="540" cy="1090" r="366" fill="none" stroke="rgba(255,201,39,.32)" stroke-width="1.6"/>
+      <svg class="full" viewBox="0 0 1920 1080">
+        <circle id="orbit" cx="1380" cy="540" r="384" fill="none" stroke="rgba(255,201,39,.32)" stroke-width="1.6"/>
         <g id="spokes" style="filter: drop-shadow(0 0 9px rgba(255,201,39,.7))"></g>
         <g id="packets" style="filter: drop-shadow(0 0 8px rgba(255,201,39,.9))"></g>
         <g id="nodes"></g>
         <g id="hub">
-          <circle class="hub-ring" cx="540" cy="1090" r="78" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
-          <circle class="hub-ring" cx="540" cy="1090" r="78" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
-          <circle cx="540" cy="1090" r="78" fill="#FFC927"/>
-          <text id="hub-letter" x="540" y="1090" dy="0.35em" text-anchor="middle" font-size="92" fill="#121212">A</text>
+          <circle class="hub-ring" cx="1380" cy="540" r="78" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
+          <circle class="hub-ring" cx="1380" cy="540" r="78" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
+          <circle cx="1380" cy="540" r="78" fill="#FFC927"/>
+          <text id="hub-letter" x="1380" y="540" dy="0.35em" text-anchor="middle" font-size="92" fill="#121212">A</text>
         </g>
       </svg>
       <div id="chips"></div>
@@ -181,20 +181,20 @@
       <span class="kw fit">SANS RISQUE.</span>
       <span class="kw fit y">SANS ENGAGEMENT.</span>
     </div>
-    <svg class="full" viewBox="0 0 1080 1920">
+    <svg class="full" viewBox="0 0 1920 1080">
       <g id="s3-icon">
-        <circle class="s3-ring" cx="540" cy="900" r="170" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
-        <circle class="s3-ring" cx="540" cy="900" r="170" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
+        <circle class="s3-ring" cx="1500" cy="540" r="170" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
+        <circle class="s3-ring" cx="1500" cy="540" r="170" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
         <g id="shield" style="filter: drop-shadow(0 0 16px rgba(255,201,39,.45))">
-          <path id="shield-fill" d="M540 745 L665 792 V885 C665 968 612 1022 540 1055 C468 1022 415 968 415 885 V792 Z" fill="#FFC927" opacity="0"/>
-          <path id="shield-path" d="M540 745 L665 792 V885 C665 968 612 1022 540 1055 C468 1022 415 968 415 885 V792 Z" fill="none" stroke="#FFC927" stroke-width="7" stroke-linejoin="round"/>
-          <path id="shield-check" d="M486 902 L526 942 L600 862" fill="none" stroke="#FFC927" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path id="shield-fill" d="M1500 385 L1625 432 V525 C1625 608 1572 662 1500 695 C1428 662 1375 608 1375 525 V432 Z" fill="#FFC927" opacity="0"/>
+          <path id="shield-path" d="M1500 385 L1625 432 V525 C1625 608 1572 662 1500 695 C1428 662 1375 608 1375 525 V432 Z" fill="none" stroke="#FFC927" stroke-width="7" stroke-linejoin="round"/>
+          <path id="shield-check" d="M1446 542 L1486 582 L1560 502" fill="none" stroke="#FFC927" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
         </g>
         <g id="coin" style="filter: drop-shadow(0 0 18px rgba(255,201,39,.5))">
-          <circle id="coin-fill" cx="540" cy="900" r="150" fill="#FFC927" opacity=".07"/>
-          <circle id="coin-ring" cx="540" cy="900" r="150" fill="none" stroke="#FFC927" stroke-width="7"/>
-          <circle id="coin-inner" cx="540" cy="900" r="124" fill="none" stroke="rgba(255,201,39,.45)" stroke-width="2" stroke-dasharray="3 9"/>
-          <text id="euro" x="540" y="900" dy="0.35em" text-anchor="middle" font-size="190" fill="#FFC927">€</text>
+          <circle id="coin-fill" cx="1500" cy="540" r="150" fill="#FFC927" opacity=".07"/>
+          <circle id="coin-ring" cx="1500" cy="540" r="150" fill="none" stroke="#FFC927" stroke-width="7"/>
+          <circle id="coin-inner" cx="1500" cy="540" r="124" fill="none" stroke="rgba(255,201,39,.45)" stroke-width="2" stroke-dasharray="3 9"/>
+          <text id="euro" x="1500" y="540" dy="0.35em" text-anchor="middle" font-size="190" fill="#FFC927">€</text>
         </g>
       </g>
     </svg>
@@ -226,29 +226,31 @@
 
   <!-- ===================== SCÈNE 5 — APPEL À L'ACTION (0:24–0:30) ===================== -->
   <section class="scene" id="s5">
-    <div id="s5-q" class="center display">
-      <span class="line">UN APPORTEUR</span>
-      <span class="line">SÉRIEUX ?</span>
+    <div id="s5-q" class="display">
+      <span class="line fit">UN APPORTEUR</span>
+      <span class="line fit">SÉRIEUX ?</span>
     </div>
-    <div id="s5-cta" class="center display">
+    <div id="s5-cta" class="display">
       <div class="wipe"><span class="txt fit y">CONTACTEZ-MOI.</span><span class="bar"></span></div>
     </div>
     <div id="s5-cta-line"></div>
-    <div id="mono-wrap">
-      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
-      <div id="mono"><div id="mono-letter" data-mono>A</div></div>
+    <div id="s5-id">
+      <div id="mono-wrap">
+        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+        <div id="mono"><div id="mono-letter" data-mono>A</div></div>
+      </div>
+      <div id="s5-name" class="center"></div>
+      <div id="s5-tag" class="center"></div>
+      <div id="s5-div"></div>
+      <div id="s5-contacts" class="center"></div>
     </div>
-    <div id="s5-name" class="center"></div>
-    <div id="s5-tag" class="center"></div>
-    <div id="s5-div"></div>
-    <div id="s5-contacts" class="center"></div>
   </section>
 
   <!-- overlays -->
   <div class="layer" id="vignette"></div>
-  <svg class="layer" id="grain" width="1320" height="2160" viewBox="0 0 1320 2160">
+  <svg class="layer" id="grain" width="2160" height="1320" viewBox="0 0 2160 1320">
     <filter id="noise" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
-    <rect width="1320" height="2160" filter="url(#noise)"/>
+    <rect width="2160" height="1320" filter="url(#noise)"/>
   </svg>
   <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
 </div>
@@ -260,7 +262,7 @@
 <script>
 (() => {
   const COMP_ID = "apporteur-affaires-auto";
-  const W = 1080, H = 1920, DURATION = 30;
+  const W = 1920, H = 1080, DURATION = 30;
   const YELLOW = "#FFC927";
   const NS = "http://www.w3.org/2000/svg";
   const params = new URLSearchParams(location.search);
@@ -287,6 +289,11 @@
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
+
+  // Sound-effect cues, emitted next to the tweens they belong to and exported for scripts/sound.py.
+  const CUES = [];
+  const panX = (x) => +(((x - W / 2) / (W / 2)) * 0.7).toFixed(2);
+  const cue = (t, type, opts = {}) => CUES.push({ t: +t.toFixed(3), type, ...opts });
 
   // Minimal line icons, drawn in a 64-unit box centred on 0,0.
   const ICONS = {
@@ -321,15 +328,15 @@
   });
 
   // Scene 1 — converging rays
-  const CX = 540, CY = 900;
+  const CX = 960, CY = 540;
   const raysG = $("#rays");
   const rand = rng(20261006);
-  const RAY_COUNT = 18;
+  const RAY_COUNT = 22;
   const rays = [];
   for (let i = 0; i < RAY_COUNT; i++) {
-    const a = (i / RAY_COUNT) * Math.PI * 2 + (rand() - 0.5) * 0.22;
-    const rOut = 980 + rand() * 220;
-    const rIn = 120 + rand() * 170;
+    const a = (i / RAY_COUNT) * Math.PI * 2 + (rand() - 0.5) * 0.2;
+    const rOut = 1000 + rand() * 200;
+    const rIn = 150 + rand() * 190;
     const line = svgEl("line", {
       x1: CX + Math.cos(a) * rOut, y1: CY + Math.sin(a) * rOut,
       x2: CX + Math.cos(a) * rIn, y2: CY + Math.sin(a) * rIn,
@@ -340,13 +347,13 @@
   }
 
   // Scene 2 — network diagram
-  const HUB = { x: 540, y: 1090, r: 78 };
+  const HUB = { x: 1380, y: 540, r: 78 };
   const NODE_R = 62;
   const NODES = [
-    { x: 240, y: 880,  icon: "person", label: "PARTICULIERS" },
-    { x: 840, y: 880,  icon: "garage", label: "GARAGES" },
-    { x: 840, y: 1300, icon: "tag",    label: "AGENCES<br>DÉPÔT-VENTE" },
-    { x: 240, y: 1300, icon: "key",    label: "LOUEURS" },
+    { x: 1080, y: 300, icon: "person", label: "PARTICULIERS" },
+    { x: 1680, y: 300, icon: "garage", label: "GARAGES" },
+    { x: 1680, y: 780, icon: "tag",    label: "AGENCES<br>DÉPÔT-VENTE" },
+    { x: 1080, y: 780, icon: "key",    label: "LOUEURS" },
   ];
   const spokesG = $("#spokes"), nodesG = $("#nodes"), packetsG = $("#packets"), chipsEl = $("#chips");
   NODES.forEach((n) => {
@@ -366,7 +373,7 @@
     chip.className = "chip";
     chip.innerHTML = n.label;
     chip.style.left = n.x + "px";
-    chip.style.top = n.y + NODE_R + 20 + "px";
+    chip.style.top = n.y + NODE_R + 18 + "px";
     chipsEl.appendChild(chip);
     n.chip = chip;
   });
@@ -382,7 +389,7 @@
     { icon: "tag",    t: "Agence dépôt-vente",   m: "Golf 8 GTD · mise en dépôt",      s: ["contacte", "encours"] },
     { icon: "key",    t: "Loueur",               m: "Utilitaire 12 m³ · 3 mois",       s: ["nouveau"] },
     { icon: "person", t: "Acheteur particulier", m: "Citadine · budget 9 000 €",       s: ["relance", "encours"] },
-    { icon: "garage", t: "Garage",               m: "Reprise véhicule · Colmar",       s: ["encours", "conclu"] },
+    { icon: "garage", t: "Garage",               m: "Reprise véhicule · SUV diesel",   s: ["encours", "conclu"] },
     { icon: "key",    t: "Loueur",               m: "Flotte · 5 véhicules",            s: ["nouveau", "contacte"] },
   ];
   const listEl = $("#crm-list");
@@ -414,6 +421,7 @@
       size -= 1;
       els.forEach((e) => (e.style.fontSize = size + "px"));
     }
+    return widest();
   }
   // Wrap every character of an element (recursively) in a span.ch, keeping nested colour spans.
   function splitChars(root) {
@@ -447,30 +455,31 @@
   }
 
   /* ------------------------------------------------------------------ */
-  /* Timeline                                                            */
+  /* Timeline (times are synced to the voice-over in audio/voix.flac)    */
   /* ------------------------------------------------------------------ */
   function build() {
-    // Fit display lines to the 900 px safe width (90 px margins).
-    fitGroup($$("#hook .hook-line"), 900);
-    fitGroup($$("#s2-title .in"), 900);
-    fitGroup($$("#s3-title .kw"), 900);
-    fitGroup([$("#s3-sub .a")], 900);
-    fitGroup([$("#s3-sub .b")], 900);
-    fitGroup($$("#s4-words .txt"), 900);
-    fitGroup([$("#s5-cta .txt")], 900);
+    // Fit display lines to their column widths.
+    const hookW = fitGroup($$("#hook .hook-line"), 1400);
+    gsap.set(["#hook", "#hook-sub"], { left: Math.round((W - hookW) / 2) });
+    fitGroup($$("#s2-title .in"), 780);
+    fitGroup($$("#s3-title .kw"), 1000);
+    fitGroup([$("#s3-sub .a")], 1000);
+    fitGroup([$("#s3-sub .b")], 1000);
+    fitGroup($$("#s4-words .txt"), 720);
+    fitGroup([...$$("#s5-q .line"), $("#s5-cta .txt")], 780);
     fitGroup([$("#s5-name")].map((e) => { e.style.width = "max-content"; e.style.margin = "0 auto"; return e; }), 900);
 
     const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
 
     /* ---------- ambient: parallax grid + travelling glow ---------- */
-    tl.to("#grid", { y: -520, duration: DURATION, ease: "none" }, 0);
-    tl.to("#grid", { x: -60, duration: DURATION, ease: "sine.inOut" }, 0);
+    tl.to("#grid", { x: -380, duration: DURATION, ease: "none" }, 0);
+    tl.to("#grid", { y: -140, duration: DURATION, ease: "sine.inOut" }, 0);
     gsap.set("#glow", { x: 0, y: 0, scale: 0.8, opacity: 0 });
     tl.to("#glow", { opacity: 1, scale: 1, duration: 1.4, ease: "power2.out" }, 0.3);
-    tl.to("#glow", { x: 0, y: 190, duration: 1.6, ease: "power2.inOut" }, 4.0);    // → réseau
-    tl.to("#glow", { y: 0, scale: 0.75, duration: 1.4, ease: "power2.inOut" }, 12.0); // → bouclier
-    tl.to("#glow", { y: 280, scale: 1.05, duration: 1.4, ease: "power2.inOut" }, 18.0); // → CRM
-    tl.to("#glow", { y: 0, scale: 0.7, duration: 1.4, ease: "power2.inOut" }, 24.0);  // → monogramme
+    tl.to("#glow", { x: 420, duration: 1.6, ease: "power2.inOut" }, 4.15);              // → réseau
+    tl.to("#glow", { x: 540, scale: 0.75, duration: 1.4, ease: "power2.inOut" }, 11.9);  // → bouclier
+    tl.to("#glow", { x: 470, scale: 1.05, duration: 1.4, ease: "power2.inOut" }, 18.0);  // → CRM
+    tl.to("#glow", { x: 490, scale: 0.7, duration: 1.4, ease: "power2.inOut" }, 24.0);   // → monogramme
     tl.to("#glow", { scale: 0.82, duration: 1.2, ease: "sine.inOut", repeat: 3, yoyo: true }, 25.4);
 
     /* ================= SCÈNE 1 — ACCROCHE ================= */
@@ -479,58 +488,78 @@
     gsap.set("#rays", { opacity: 1 });
     // rays are already streaking in from the edges on frame 0, then converge on the centre
     rays.forEach((r, i) => tl.fromTo(r, { strokeDashoffset: r._L * 0.6 }, { strokeDashoffset: 0, duration: 0.7, ease: "power2.out" }, (i % 6) * 0.012));
-    tl.to("#rays", { rotation: 9, svgOrigin: `${CX} ${CY}`, duration: 4.2, ease: "none" }, 0);
+    cue(0, "riser", { dur: 0.68 });
+    tl.to("#rays", { rotation: 9, svgOrigin: `${CX} ${CY}`, duration: 4.4, ease: "none" }, 0);
     gsap.set("#flash-dot", { scale: 0, transformOrigin: "50% 50%" });
     gsap.set("#flash-ring", { scale: 0.3, opacity: 0, transformOrigin: "50% 50%" });
     tl.to("#flash-dot", { scale: 1, duration: 0.3, ease: "back.out(3)" }, 0.68);
-    tl.fromTo("#flash-ring", { scale: 0.3, opacity: 0.9 }, { scale: 7, opacity: 0, duration: 1.1, ease: "power2.out", immediateRender: false }, 0.7);
-    tl.to("#flash-dot", { scale: 0, duration: 0.5, ease: "power2.in" }, 1.25);
+    tl.fromTo("#flash-ring", { scale: 0.3, opacity: 0.9 }, { scale: 9, opacity: 0, duration: 1.1, ease: "power2.out", immediateRender: false }, 0.7);
+    cue(0.68, "impact", { size: 0.8 });
+    cue(0.7, "shimmer", { dur: 1.3 });
+    tl.to("#flash-dot", { scale: 0, duration: 0.5, ease: "power2.in" }, 1.1);
     tl.to("#rays", { opacity: 0.2, duration: 1.2, ease: "power2.out" }, 0.9);
 
     const hookLines = $$("#hook .hook-line").map(splitChars);
     hookLines.flat().forEach((c) => gsap.set(c, { opacity: 0, yPercent: 70, rotationX: -85, transformOrigin: "50% 100%" }));
-    [0.3, 1.08, 1.88].forEach((t, i) =>
-      tl.to(hookLines[i], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.032, ease: "power3.out" }, t));
+    const HOOK_T = [0.15, 1.22, 2.0]; // "Vous vendez," / "vous louez," / "ou vous cherchez…"
+    HOOK_T.forEach((t, i) => {
+      tl.to(hookLines[i], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.032, ease: "power3.out" }, t);
+      cue(t, "swish", { pan: -0.15, gain: -4 });
+    });
     // soft pulse on each verb as it lands
     $$("#hook .y").forEach((el, i) => {
       gsap.set(el, { display: "inline-block", transformOrigin: "0% 70%" });
-      tl.to(el, { scale: 1.05, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1 }, [0.62, 1.34, 2.3][i]);
+      const t = HOOK_T[i] + [0.32, 0.26, 0.42][i];
+      tl.to(el, { scale: 1.05, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1 }, t);
+      cue(t, "pop", { freq: [520, 620, 740][i], pan: 0.1 });
     });
     gsap.set("#hook-sub", { opacity: 0, y: 24 });
     gsap.set("#hook-sub .dash", { scaleX: 0 });
-    tl.to("#hook-sub", { opacity: 1, y: 0, duration: 0.6 }, 2.55);
-    tl.to("#hook-sub .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 2.6);
+    tl.to("#hook-sub", { opacity: 1, y: 0, duration: 0.6 }, 2.75);
+    tl.to("#hook-sub .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 2.8);
+    cue(2.78, "tick", { pan: -0.3 });
     // exit
-    tl.to(hookLines.flat(), { opacity: 0, yPercent: -90, duration: 0.28, stagger: 0.003, ease: "power2.in" }, 3.6);
-    tl.to("#hook-sub", { opacity: 0, y: -30, duration: 0.28, ease: "power2.in" }, 3.72);
-    tl.to(rays, { strokeDashoffset: (i, el) => -(el._L + 10), duration: 0.45, ease: "power2.in", stagger: 0.006 }, 3.5);
-    tl.set("#s1", { autoAlpha: 0 }, 4.15);
+    tl.to(rays, { strokeDashoffset: (i, el) => -(el._L + 10), duration: 0.45, ease: "power2.in", stagger: 0.006 }, 3.72);
+    tl.to(hookLines.flat(), { opacity: 0, yPercent: -90, duration: 0.28, stagger: 0.003, ease: "power2.in" }, 3.85);
+    tl.to("#hook-sub", { opacity: 0, y: -30, duration: 0.28, ease: "power2.in" }, 3.9);
+    cue(3.75, "whoosh", { dur: 0.5, peak: 0.85, size: 0.8 });
+    tl.set("#s1", { autoAlpha: 0 }, 4.3);
 
     /* ================= SCÈNE 2 — L'OFFRE ================= */
-    tl.set("#s2", { autoAlpha: 1 }, 4.0);
+    tl.set("#s2", { autoAlpha: 1 }, 4.15);
     gsap.set("#s2-eb, #s2-rel", { opacity: 0, x: -24 });
     gsap.set("#s2-eb .dash, #s2-rel .dash", { scaleX: 0 });
-    tl.to("#s2-eb", { opacity: 1, x: 0, duration: 0.5 }, 4.15);
-    tl.to("#s2-eb .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 4.2);
+    tl.to("#s2-eb", { opacity: 1, x: 0, duration: 0.5 }, 4.3);
+    tl.to("#s2-eb .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 4.35);
+    cue(4.32, "tick", { pan: -0.6 });
     gsap.set("#s2-title .in", { yPercent: 110 });
-    tl.to("#s2-title .in", { yPercent: 0, duration: 0.8, stagger: 0.13, ease: "expo.out" }, 4.3);
+    tl.to("#s2-title .in", { yPercent: 0, duration: 0.8, stagger: 0.13, ease: "expo.out" }, 4.45);
+    [0, 1, 2].forEach((i) => cue(4.45 + i * 0.13, "thump", { pan: -0.5, gain: -8 + i * 2 }));
+    cue(4.42, "swish", { pan: -0.5, gain: -6 });
 
     gsap.set("#net", { scale: 0.95, filter: "blur(0px)" });
-    tl.to("#net", { scale: 1.02, duration: 8, ease: "none" }, 4.0);  // slow push-in (parallax vs. grid)
+    tl.to("#net", { scale: 1.02, duration: 7.85, ease: "none" }, 4.15);  // slow push-in (parallax vs. grid)
     gsap.set("#hub", { scale: 0, svgOrigin: `${HUB.x} ${HUB.y}` });
-    tl.to("#hub", { scale: 1, duration: 0.7, ease: "back.out(1.9)" }, 4.95);
+    tl.to("#hub", { scale: 1, duration: 0.7, ease: "back.out(1.9)" }, 5.05);
+    cue(5.05, "pop", { freq: 330, pan: panX(HUB.x), gain: 2 });
+    cue(5.05, "thump", { pan: panX(HUB.x), gain: -4 });
     $$("#hub .hub-ring").forEach((r, i) => {
       gsap.set(r, { svgOrigin: `${HUB.x} ${HUB.y}` });
-      tl.fromTo(r, { scale: 1, opacity: 0.7 }, { scale: 1.9, opacity: 0, duration: 1.6, ease: "power2.out", repeat: 3, repeatDelay: 0, immediateRender: false }, 5.3 + i * 0.8);
+      tl.fromTo(r, { scale: 1, opacity: 0.7 }, { scale: 1.9, opacity: 0, duration: 1.6, ease: "power2.out", repeat: 3, repeatDelay: 0, immediateRender: false }, 5.4 + i * 0.8);
     });
+    cue(5.4, "ping", { freq: 660, pan: panX(HUB.x), gain: -6 });
     prepDraw($("#orbit"));
     gsap.set("#orbit", { rotation: -90, svgOrigin: `${HUB.x} ${HUB.y}` });
-    tl.to("#orbit", { strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut" }, 5.35);
+    tl.to("#orbit", { strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut" }, 5.45);
+    cue(5.45, "draw", { dur: 1.6, pan: panX(HUB.x), gain: -6 });
 
-    tl.to("#s2-rel", { opacity: 1, x: 0, duration: 0.5 }, 6.45);
-    tl.to("#s2-rel .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 6.5);
+    tl.to("#s2-rel", { opacity: 1, x: 0, duration: 0.5 }, 6.55);
+    tl.to("#s2-rel .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 6.6);
+    cue(6.57, "tick", { pan: -0.6 });
 
-    const NODE_T = [7.6, 8.7, 9.3, 10.35]; // synced to "vendeurs particuliers / garages / agences de dépôt-vente / loueurs"
+    // synced to "vendeurs particuliers / garages / agences de dépôt-vente / loueurs"
+    const NODE_T = [7.6, 8.85, 9.8, 10.72];
+    const NODE_NOTE = [659, 784, 880, 1047];
     NODES.forEach((n, i) => {
       const t = NODE_T[i];
       prepDraw(n.spoke);
@@ -543,8 +572,11 @@
       tl.to(n.iconParts, { strokeDashoffset: 0, duration: 0.6, stagger: 0.06, ease: "power2.out" }, t + 0.08);
       tl.fromTo(n.ring, { scale: 1, opacity: 0.85 }, { scale: 1.75, opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t + 0.05);
       tl.to(n.chip, { opacity: 1, y: 0, duration: 0.45 }, t + 0.12);
+      cue(t - 0.22, "zip", { dur: 0.42, pan: panX(n.x) });
+      cue(t, "pop", { freq: NODE_NOTE[i], pan: panX(n.x) });
+      cue(t + 0.14, "tick", { pan: panX(n.x), gain: -6 });
       // data packets travelling hub → node until the scene ends
-      const start = t + 0.35, end = 11.4, period = 1.05;
+      const start = t + 0.35, end = 11.5, period = 1.05;
       const reps = Math.max(0, Math.floor((end - start) / period) - 1);
       tl.to(n.packet, {
         keyframes: [
@@ -556,70 +588,84 @@
         repeat: reps,
       }, start);
       // soft breathing on each node once connected
-      tl.to(n.disc, { attr: { "stroke-width": 5 }, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 1 }, 10.8 + i * 0.12);
+      tl.to(n.disc, { attr: { "stroke-width": 5 }, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 1 }, 11.0 + i * 0.1);
     });
 
     // exit: zoom through the network
-    tl.to("#s2-eb, #s2-rel, #s2-title", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in", stagger: 0.04 }, 11.4);
-    tl.to("#net", { scale: 1.28, opacity: 0, filter: "blur(14px)", duration: 0.55, ease: "power2.in" }, 11.45);
-    tl.set("#s2", { autoAlpha: 0 }, 12.05);
+    tl.to("#s2-eb, #s2-rel, #s2-title", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in", stagger: 0.04 }, 11.5);
+    tl.to("#net", { scale: 1.28, opacity: 0, filter: "blur(14px)", duration: 0.55, ease: "power2.in" }, 11.55);
+    cue(11.55, "whoosh", { dur: 0.6, peak: 0.85, size: 1 });
+    tl.set("#s2", { autoAlpha: 0 }, 12.15);
 
     /* ================= SCÈNE 3 — SANS RISQUE ================= */
-    tl.set("#s3", { autoAlpha: 1 }, 11.85);
-    gsap.set("#s3-icon", { scale: 0.82, opacity: 0, svgOrigin: "540 900", filter: "blur(0px)" });
-    tl.to("#s3-icon", { scale: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 11.88);
+    tl.set("#s3", { autoAlpha: 1 }, 11.95);
+    gsap.set("#s3-icon", { scale: 0.82, opacity: 0, svgOrigin: "1500 540", filter: "blur(0px)" });
+    tl.to("#s3-icon", { scale: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 11.98);
     prepDraw($("#shield-path"));
     prepDraw($("#shield-check"));
-    tl.to("#shield-path", { strokeDashoffset: 0, duration: 1.1, ease: "power3.out" }, 11.88);
-    tl.to("#shield-fill", { opacity: 0.09, duration: 0.6 }, 12.85);
-    tl.to("#shield-check", { strokeDashoffset: 0, duration: 0.42, ease: "power2.out" }, 12.95);
+    tl.to("#shield-path", { strokeDashoffset: 0, duration: 1.1, ease: "power3.out" }, 12.0);
+    cue(12.0, "draw", { dur: 0.9, pan: panX(1500), gain: -2 });
+    tl.to("#shield-fill", { opacity: 0.09, duration: 0.6 }, 12.7);
+    tl.to("#shield-check", { strokeDashoffset: 0, duration: 0.42, ease: "power2.out" }, 12.8);
+    cue(12.85, "chime", { notes: [1047, 1568], pan: panX(1500) });
     $$("#s3 .s3-ring").forEach((r, i) => {
-      gsap.set(r, { svgOrigin: "540 900" });
-      tl.fromTo(r, { scale: 0.9, opacity: 0.6 }, { scale: 1.55, opacity: 0, duration: 1.5, ease: "power2.out", repeat: 2, immediateRender: false }, 13.1 + i * 0.75);
+      gsap.set(r, { svgOrigin: "1500 540" });
+      tl.fromTo(r, { scale: 0.9, opacity: 0.6 }, { scale: 1.55, opacity: 0, duration: 1.5, ease: "power2.out", repeat: 2, immediateRender: false }, 13.0 + i * 0.75);
     });
+    cue(13.0, "ping", { freq: 523, pan: panX(1500), gain: -8 });
 
     // keyword cross-fades: blur + tracking settle
     $$("#s3-title .kw").forEach((kw, i) => {
+      const t = [12.33, 13.15][i]; // "Sans risque," / "sans engagement"
       gsap.set(kw, { opacity: 0, filter: "blur(18px)", letterSpacing: "0.14em", x: -10 });
-      tl.to(kw, { opacity: 1, filter: "blur(0px)", letterSpacing: "-0.025em", x: 0, duration: 0.75, ease: "expo.out" }, [12.38, 13.12][i]);
+      tl.to(kw, { opacity: 1, filter: "blur(0px)", letterSpacing: "-0.025em", x: 0, duration: 0.75, ease: "expo.out" }, t);
+      cue(t - 0.05, "swell", { pan: -0.4, gain: -3 });
     });
 
     // shield flips into the € coin
-    gsap.set("#shield", { svgOrigin: "540 900" });
-    gsap.set("#coin", { scaleX: 0, svgOrigin: "540 900" });
+    gsap.set("#shield", { svgOrigin: "1500 540" });
+    gsap.set("#coin", { scaleX: 0, svgOrigin: "1500 540" });
     prepDraw($("#coin-ring"));
     gsap.set("#coin-inner", { opacity: 0 });
-    gsap.set("#euro", { scale: 0.4, opacity: 0, svgOrigin: "540 900" });
-    tl.to("#shield", { scaleX: 0, duration: 0.24, ease: "power2.in" }, 14.1);
-    tl.to("#coin", { scaleX: 1, duration: 0.3, ease: "power2.out" }, 14.34);
-    tl.to("#coin-ring", { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, 14.3);
-    tl.to("#euro", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(2)" }, 14.42);
-    tl.to("#coin-inner", { opacity: 1, rotation: 90, svgOrigin: "540 900", duration: 3.2, ease: "none" }, 14.6);
-    tl.to("#coin", { y: -10, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: 2 }, 15.0);
-    tl.to("#coin-fill", { opacity: 0.16, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 1 }, 16.35);
+    gsap.set("#euro", { scale: 0.4, opacity: 0, svgOrigin: "1500 540" });
+    tl.to("#shield", { scaleX: 0, duration: 0.24, ease: "power2.in" }, 13.95);
+    cue(13.95, "swish", { pan: panX(1500), gain: -2 });
+    tl.to("#coin", { scaleX: 1, duration: 0.3, ease: "power2.out" }, 14.19);
+    tl.to("#coin-ring", { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, 14.15);
+    tl.to("#euro", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(2)" }, 14.27);
+    cue(14.27, "coin", { pan: panX(1500) });
+    tl.to("#coin-inner", { opacity: 1, rotation: 90, svgOrigin: "1500 540", duration: 3.2, ease: "none" }, 14.45);
+    tl.to("#coin", { y: -10, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: 2 }, 14.85);
+    tl.to("#coin-fill", { opacity: 0.16, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 1 }, 16.4);
 
     const subA = $("#s3-sub .a"), subB = $("#s3-sub .b");
     gsap.set([subA, subB], { opacity: 0, y: 26 });
     gsap.set("#s3-underline", { scaleX: 0 });
-    tl.to(subA, { opacity: 1, y: 0, duration: 0.6 }, 14.32);
-    tl.to(subB, { opacity: 1, y: 0, duration: 0.6 }, 15.42);
-    tl.to("#s3-underline", { scaleX: 1, duration: 0.55, ease: "expo.out" }, 16.3);
+    tl.to(subA, { opacity: 1, y: 0, duration: 0.6 }, 14.2);   // "une commission,"
+    tl.to(subB, { opacity: 1, y: 0, duration: 0.6 }, 15.32);  // "uniquement si l'affaire se conclut."
+    tl.to("#s3-underline", { scaleX: 1, duration: 0.55, ease: "expo.out" }, 16.35);
+    cue(15.32, "tick", { pan: -0.5, gain: -4 });
+    cue(16.35, "swish", { pan: -0.2, gain: -5 });
+    cue(16.4, "shimmer", { dur: 0.9, pan: panX(1500), gain: -8 });
 
     // exit
-    tl.to("#s3-title, #s3-sub", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in", stagger: 0.05 }, 17.55);
-    tl.to("#s3-icon", { scale: 1.35, opacity: 0, filter: "blur(12px)", duration: 0.55, ease: "power2.in" }, 17.55);
-    tl.set("#s3", { autoAlpha: 0 }, 18.15);
+    tl.to("#s3-title, #s3-sub", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in", stagger: 0.05 }, 17.6);
+    tl.to("#s3-icon", { scale: 1.35, opacity: 0, filter: "blur(12px)", duration: 0.55, ease: "power2.in" }, 17.6);
+    cue(17.6, "whoosh", { dur: 0.55, peak: 0.85, size: 0.8 });
+    tl.set("#s3", { autoAlpha: 0 }, 18.2);
 
     /* ================= SCÈNE 4 — CRM ================= */
     tl.set("#s4", { autoAlpha: 1 }, 18.0);
     // fast stylised zoom onto the CRM
-    gsap.set("#crm", { scale: 2.3, rotationX: 32, rotationZ: -15, rotationY: 8, y: 380, opacity: 0, filter: "blur(18px)" });
-    tl.to("#crm", { scale: 1, rotationX: 15, rotationZ: -5, rotationY: 4, y: 0, opacity: 1, filter: "blur(0px)", duration: 0.95, ease: "expo.out" }, 18.02);
-    tl.to("#crm", { rotationX: 9, rotationZ: -2.5, rotationY: 1, scale: 1.035, duration: 4.6, ease: "sine.inOut" }, 18.97);
+    gsap.set("#crm", { scale: 2.2, rotationY: -42, rotationX: 22, rotationZ: -8, x: -260, y: 160, opacity: 0, filter: "blur(18px)" });
+    tl.to("#crm", { scale: 1, rotationY: -18, rotationX: 8, rotationZ: -2, x: 0, y: 0, opacity: 1, filter: "blur(0px)", duration: 0.95, ease: "expo.out" }, 18.05);
+    cue(18.0, "whoosh", { dur: 0.42, peak: 0.6, size: 1, pan: 0.4 });
+    cue(18.3, "impact", { size: 0.55, pan: 0.45 });
+    tl.to("#crm", { rotationY: -10, rotationX: 5, rotationZ: -1, scale: 1.035, duration: 4.55, ease: "sine.inOut" }, 19.0);
 
-    // word wipes
+    // word wipes, synced to "Structuré, / réactif, / chaque contact est suivi…"
     $$("#s4-words .wipe").forEach((w, i) => {
-      const t = [18.3, 19.15, 19.95][i];
+      const t = [18.32, 19.3, 20.22][i];
       const txt = $(".txt", w), bar = $(".bar", w);
       gsap.set(txt, { opacity: 0 });
       gsap.set(bar, { scaleX: 0, transformOrigin: "0% 50%" });
@@ -627,11 +673,13 @@
       tl.set(txt, { opacity: 1 }, t + 0.24);
       tl.set(bar, { transformOrigin: "100% 50%" }, t + 0.24);
       tl.to(bar, { scaleX: 0, duration: 0.32, ease: "power3.out" }, t + 0.26);
+      cue(t, "swish", { pan: -0.55, gain: -2 });
+      cue(t + 0.24, "thump", { pan: -0.55, gain: -6 });
     });
 
     // status changes (card index, target pill index, time)
     const CHANGES = [
-      [0, 1, 19.0], [1, 1, 19.6], [2, 1, 20.2], [0, 2, 20.8],
+      [0, 1, 19.0], [1, 1, 19.65], [2, 1, 20.3], [0, 2, 20.85],
       [4, 1, 21.75], [5, 1, 22.35], [6, 1, 22.95],
     ];
     CRM.forEach((c) => c.pills.forEach((p, i) => gsap.set(p, { opacity: i === 0 ? 1 : 0, y: 0, scale: 1, transformOrigin: "100% 50%" })));
@@ -642,57 +690,76 @@
       tl.fromTo(next, { opacity: 0, y: 18, scale: 1 }, { opacity: 1, y: 0, duration: 0.38, ease: "back.out(2.4)", immediateRender: false }, t + 0.16);
       tl.to(next, { scale: 1.1, duration: 0.14, ease: "power2.out", yoyo: true, repeat: 1 }, t + 0.42);
       tl.fromTo(c.flash, { opacity: 0.95 }, { opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t + 0.12);
+      cue(t + 0.14, "click", { pan: 0.55 });
+      if (c.s[pi] === "conclu") cue(t + 0.42, "chime", { notes: [1319, 1760], pan: 0.55, gain: -3 });
     });
     // list scroll + tab underline micro-interaction
     gsap.set("#crm-list", { y: 0 });
     tl.to("#crm-list", { y: -288, duration: 1.5, ease: "power2.inOut" }, 21.05);
+    cue(21.05, "scroll", { dur: 1.5, pan: 0.5 });
     const tabs = $$(".crm-tabs span");
-    const tabX = (i) => tabs[i].offsetLeft - 38;
+    const tabX = (i) => tabs[i].offsetLeft - 36;
     gsap.set("#crm-tab-bar", { x: 0, width: tabs[0].offsetWidth });
-    tl.to("#crm-tab-bar", { x: tabX(2), width: tabs[2].offsetWidth, duration: 0.5, ease: "power3.inOut" }, 19.55);
-    tl.to("#crm-tab-bar", { x: tabX(0), width: tabs[0].offsetWidth, duration: 0.5, ease: "power3.inOut" }, 20.65);
-    tl.to("#crm-tab-bar", { x: tabX(4), width: tabs[4].offsetWidth, duration: 0.5, ease: "power3.inOut" }, 22.8);
+    [[19.55, 2], [20.65, 0], [22.8, 4]].forEach(([t, i]) => {
+      tl.to("#crm-tab-bar", { x: tabX(i), width: tabs[i].offsetWidth, duration: 0.5, ease: "power3.inOut" }, t);
+      cue(t, "tick", { pan: 0.45, gain: -8 });
+    });
 
     // exit
-    tl.to("#s4-words", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in" }, 23.55);
-    tl.to("#crm", { scale: 1.3, y: -160, opacity: 0, filter: "blur(12px)", duration: 0.55, ease: "power2.in" }, 23.55);
-    tl.set("#s4", { autoAlpha: 0 }, 24.15);
+    tl.to("#s4-words", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in" }, 23.6);
+    tl.to("#crm", { scale: 1.3, x: 120, opacity: 0, filter: "blur(12px)", duration: 0.55, ease: "power2.in" }, 23.6);
+    cue(23.6, "whoosh", { dur: 0.55, peak: 0.85, size: 0.9 });
+    tl.set("#s4", { autoAlpha: 0 }, 24.2);
 
     /* ================= SCÈNE 5 — APPEL À L'ACTION ================= */
     tl.set("#s5", { autoAlpha: 1 }, 24.0);
+    const MONO_PAN = panX(950 + 500);
     gsap.set("#mono", { scale: 0, rotation: -40 });
     gsap.set("#mono-letter", { yPercent: 105 });
     tl.to("#mono", { scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.7)" }, 24.12);
     tl.to("#mono-letter", { yPercent: 0, duration: 0.65, ease: "expo.out" }, 24.42);
+    cue(24.12, "impact", { size: 1, pan: MONO_PAN });
+    cue(24.14, "pop", { freq: 440, pan: MONO_PAN, gain: 1 });
+    cue(24.42, "swish", { pan: MONO_PAN, gain: -6 });
     $$("#mono-wrap .ring").forEach((r, i) => {
       gsap.set(r, { scale: 1, opacity: 0 });
       tl.fromTo(r, { scale: 1, opacity: 0.75 }, { scale: 2.0, opacity: 0, duration: 1.8, ease: "power2.out", repeat: 2, immediateRender: false }, 24.6 + i * 0.6);
+      cue(24.6 + i * 0.6, "ping", { freq: 880, pan: MONO_PAN, gain: -10 - i * 3 });
     });
     tl.to("#mono", { scale: 1.045, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 7 }, 25.25);
 
     const qLines = $$("#s5-q .line").map(splitChars);
     qLines.flat().forEach((c) => gsap.set(c, { opacity: 0, yPercent: 70, rotationX: -85, transformOrigin: "50% 100%" }));
-    tl.to(qLines[0], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.03 }, 24.35);
-    tl.to(qLines[1], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.03 }, 24.95);
+    tl.to(qLines[0], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.03 }, 24.4);   // "Besoin d'un apporteur
+    tl.to(qLines[1], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.03 }, 25.0);   //  sérieux ?"
+    cue(24.4, "swish", { pan: -0.5, gain: -5 });
+    cue(25.0, "swish", { pan: -0.5, gain: -5 });
 
     const cta = $("#s5-cta .wipe"), ctaTxt = $(".txt", cta), ctaBar = $(".bar", cta);
     gsap.set(ctaTxt, { opacity: 0 });
     gsap.set(ctaBar, { scaleX: 0, transformOrigin: "0% 50%" });
-    tl.to(ctaBar, { scaleX: 1, duration: 0.26, ease: "power3.in" }, 26.0);
-    tl.set(ctaTxt, { opacity: 1 }, 26.26);
-    tl.set(ctaBar, { transformOrigin: "100% 50%" }, 26.26);
-    tl.to(ctaBar, { scaleX: 0, duration: 0.34, ease: "power3.out" }, 26.28);
+    tl.to(ctaBar, { scaleX: 1, duration: 0.26, ease: "power3.in" }, 25.95);  // lands on "Contactez-moi."
+    tl.set(ctaTxt, { opacity: 1 }, 26.21);
+    tl.set(ctaBar, { transformOrigin: "100% 50%" }, 26.21);
+    tl.to(ctaBar, { scaleX: 0, duration: 0.34, ease: "power3.out" }, 26.23);
+    cue(25.95, "swish", { pan: -0.4 });
+    cue(26.21, "impact", { size: 0.7, pan: -0.3 });
+    cue(26.2, "sting", { dur: 3.8 });
     gsap.set("#s5-cta-line", { scaleX: 0 });
-    tl.to("#s5-cta-line", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.5);
+    tl.to("#s5-cta-line", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.45);
+    cue(26.45, "swish", { pan: -0.6, gain: -8 });
 
     const info = ["#s5-name", "#s5-tag", ...$$("#s5-contacts .contact")];
     gsap.set(info, { opacity: 0, y: 26 });
     gsap.set("#s5-div", { scaleX: 0 });
-    tl.to(info.slice(0, 2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.55);
-    tl.to("#s5-div", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.8);
-    tl.to(info.slice(2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.9);
+    tl.to(info.slice(0, 2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.6);
+    tl.to("#s5-div", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.85);
+    tl.to(info.slice(2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.95);
+    cue(26.6, "tick", { pan: MONO_PAN, gain: -4 });
+    cue(26.72, "tick", { pan: MONO_PAN, gain: -8 });
 
     tl.set({}, {}, DURATION); // pad to exactly 30 s
+    CUES.sort((a, b) => a.t - b.t);
     return tl;
   }
 
@@ -722,6 +789,7 @@
     window.__timelines[COMP_ID] = tl;
     window.__seek = (t) => { tl.seek(t, false); grainAt(t); };
     window.__duration = DURATION;
+    window.__cues = CUES;
     fitViewport();
     addEventListener("resize", fitViewport);
 

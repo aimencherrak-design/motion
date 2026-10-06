@@ -7,6 +7,7 @@
 //   --crf <n>            x264 quality, lower = better (default 16)
 //   --still <seconds>    write a single PNG at that time instead of a video (--out file.png)
 //   --from/--to <sec>    render only part of the timeline (quick checks)
+//   --cues <file.json>   only export the sound-effect cues (window.__cues) for scripts/sound.py
 import { chromium } from "playwright-core";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
@@ -19,6 +20,7 @@ const argv = process.argv.slice(2);
 const opt = (name, def) => { const i = argv.indexOf(`--${name}`); return i >= 0 ? argv[i + 1] : def; };
 const comp = argv.find((a, i) => !a.startsWith("--") && !(i > 0 && argv[i - 1].startsWith("--"))) || "apporteur-affaires-auto";
 const still = opt("still");
+const cuesOut = opt("cues");
 const out = path.resolve(ROOT, opt("out", still !== undefined ? `renders/${comp}.png` : `renders/${comp}.mp4`));
 const audio = opt("audio");
 const crf = opt("crf", "16");
@@ -41,7 +43,7 @@ const url = `http://127.0.0.1:${server.address().port}/${comp}/index.html?render
 const browser = await chromium.launch({ executablePath: findChrome(), args: ["--force-color-profile=srgb", "--hide-scrollbars"] });
 
 try {
-  const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
   page.on("pageerror", (e) => console.error("[page error]", e.message));
   page.on("console", (m) => m.type() === "error" && console.error("[console]", m.text()));
   await page.goto(url, { waitUntil: "load" });
@@ -53,13 +55,21 @@ try {
   });
   const fps = Number(opt("fps", meta.fps));
   const clip = { x: 0, y: 0, width: meta.w, height: meta.h };
-  fs.mkdirSync(path.dirname(out), { recursive: true });
+  await page.setViewportSize({ width: meta.w, height: meta.h });
 
-  if (still !== undefined) {
+  if (cuesOut) {
+    const cues = await page.evaluate(() => window.__cues || []);
+    const file = path.resolve(ROOT, cuesOut);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, JSON.stringify({ duration: meta.dur, cues }, null, 1) + "\n");
+    console.log(`${cues.length} cues → ${path.relative(ROOT, file)}`);
+  } else if (still !== undefined) {
+    fs.mkdirSync(path.dirname(out), { recursive: true });
     await page.evaluate((t) => window.__seek(t), Number(still));
     await page.screenshot({ path: out, clip, type: "png" });
     console.log(`Still @${still}s → ${path.relative(ROOT, out)}`);
   } else {
+    fs.mkdirSync(path.dirname(out), { recursive: true });
     const from = Number(opt("from", 0));
     const to = Math.min(Number(opt("to", meta.dur)), meta.dur);
     const first = Math.round(from * fps), last = Math.round(to * fps); // [first, last)
