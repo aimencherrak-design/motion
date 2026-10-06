@@ -1,16 +1,14 @@
-# Présentation — apporteur d'affaires automobile (30 s, 16:9)
+# Présentation — apporteur d'affaires automobile (22,5 s, 16:9)
 
-Vidéo horizontale 1920×1080 : fond noir mat `#121212`, accents jaune `#FFC927`, typographie Space Grotesk en capitales, aucun visage — uniquement de la typo animée, des icônes au trait et des diagrammes. Voix off masculine et bruitages synchronisés sur chaque animation.
+Motion design sans voix off, 1920×1080 : fond noir mat `#121212`, accents jaune `#FFC927`, typographie Space Grotesk en capitales, aucun visage — uniquement de la typo animée, des icônes au trait et des diagrammes. Tout le message passe par le texte à l'écran, rythmé par des bruitages synchronisés sur chaque animation.
 
 ## Fichiers livrés
 
 | Fichier | Usage |
 | --- | --- |
-| `renders/apporteur-affaires-auto_30s_16x9.mp4` | Vidéo finale : voix + bruitages |
-| `renders/apporteur-affaires-auto_30s_16x9_sans-voix.mp4` | Vidéo + bruitages seuls, pour poser ta propre voix dans CapCut |
+| `renders/apporteur-affaires-auto_16x9.mp4` | Vidéo finale (image + bruitages) |
 | `renders/couverture.png` | Image de couverture (accroche) |
-| `apporteur-affaires-auto/voix-off.srt` | Sous-titres de la voix off, à importer sur LinkedIn ou dans CapCut |
-| `apporteur-affaires-auto/audio/` | Voix sèche (`voix.flac`), mixage (`mix.m4a`), bruitages seuls (`sfx.m4a`), repères (`sfx-cues.json`) |
+| `apporteur-affaires-auto/audio/` | Piste de bruitages (`sfx.m4a`) et repères (`sfx-cues.json`) |
 
 ## Personnaliser l'écran de fin
 
@@ -20,24 +18,15 @@ Le nom, la tagline et les coordonnées sont dans [`config.js`](config.js). Les c
 
 | Temps | Scène | Texte à l'écran | Animation | Bruitages |
 | --- | --- | --- | --- | --- |
-| 0:00–0:04 | Accroche | VOUS VENDEZ. VOUS LOUEZ. VOUS CHERCHEZ. · *un véhicule qui vous correspond ?* | Lignes jaunes qui convergent, flash, lettres qui basculent une à une | Montée + impact au flash, scintillement, swish par ligne, « pop » sur chaque verbe |
-| 0:04–0:12 | L'offre | JE SUIS · APPORTEUR D'AFFAIRES AUTOMOBILE · JE METS EN RELATION | Nœud « A », orbite, 4 nœuds reliés au rythme de la voix, impulsions de données | Pop du nœud central, onde sonar, tracé de l'orbite, « zip » + note montante à chaque connexion (spatialisée gauche/droite) |
-| 0:12–0:18 | Différenciateur | SANS RISQUE. SANS ENGAGEMENT. · *Une commission, uniquement si l'affaire se conclut.* | Bouclier tracé + coche, qui pivote en pièce « € » | Tracé, carillon de validation, swish de bascule, tintement de pièce |
-| 0:18–0:24 | Preuve de sérieux | STRUCTURÉ. RÉACTIF. SUIVI SÉRIEUX. | Zoom rapide en perspective sur le CRM, statuts qui changent, défilement | Whoosh + impact du zoom, balayage des mots, clics d'interface, carillon « Conclu », cliquetis de défilement |
-| 0:24–0:30 | Appel à l'action | UN APPORTEUR SÉRIEUX ? CONTACTEZ-MOI. · AIMEN | Monogramme « A » qui pulse, nom et tagline | Impact grave, ondes, accent sur « Contactez-moi », accord chaud de fin |
+| 0:00–0:03 | Accroche | VOUS VENDEZ. VOUS LOUEZ. VOUS CHERCHEZ. · *un véhicule qui vous correspond ?* | Lignes jaunes qui convergent, flash, lettres qui basculent une à une, coup de zoom sur chaque verbe | Montée + impact au flash, scintillement, swish par ligne, « pop » sur chaque verbe |
+| 0:03–0:09 | L'offre | JE SUIS · APPORTEUR D'AFFAIRES AUTOMOBILE · JE METS EN RELATION | Balayage jaune d'entrée, nœud « A », orbite, 4 nœuds reliés en rafale, impulsions de données | Whoosh, pop du nœud central, onde sonar, « zip » + note montante à chaque connexion (spatialisée gauche/droite) |
+| 0:09–0:13 | Différenciateur | SANS RISQUE. SANS ENGAGEMENT. · *Une commission, uniquement si l'affaire se conclut.* | Zoom traversant, bouclier tracé + coche, qui pivote en pièce « € » | Tracé, carillon de validation, swish de bascule, tintement de pièce |
+| 0:13–0:17 | Preuve de sérieux | STRUCTURÉ. RÉACTIF. SUIVI SÉRIEUX. | Balayage jaune, zoom rapide en perspective sur le CRM, statuts qui changent, défilement | Whoosh + impact, balayage des mots, clics d'interface, carillon « Conclu », cliquetis de défilement |
+| 0:17–0:22 | Appel à l'action | UN APPORTEUR SÉRIEUX ? CONTACTEZ-MOI. · AIMEN | Monogramme « A » qui pulse, nom et tagline | Impact grave, ondes, accent sur « Contactez-moi », accord de fin |
 
-Chaque bruitage est déclaré dans la timeline (`cue(...)` dans `index.html`) à côté de l'animation qu'il accompagne : si une animation bouge, son bruitage suit au prochain `npm run build`. Tout est synthétisé (`scripts/sound.py`), sans banque de sons externe, et spatialisé selon la position de l'élément à l'écran.
+Chaque scène a une légère poussée de caméra continue, et les transitions alternent balayages jaunes et zooms traversants. Les temps de la timeline sont relatifs au début de chaque scène (`S1`…`S5` dans `index.html`) : pour allonger ou raccourcir une scène, il suffit de décaler ces constantes.
 
-## Voix off
-
-> Vous vendez, vous louez, ou vous cherchez un véhicule qui vous correspond ? Je suis apporteur d'affaires automobile. Je mets en relation vendeurs particuliers, garages, agences de dépôt-vente et loueurs. Sans risque, sans engagement : une commission, uniquement si l'affaire se conclut. Structuré, réactif, chaque contact est suivi sérieusement. Besoin d'un apporteur sérieux ? Contactez-moi.
-
-- **Voix :** « tom » (fr_FR-tom-medium, masculine, 44,1 kHz), générée avec Piper TTS par `scripts/voiceover.sh`. C'est la plus propre des voix masculines libres testées (bruit de fond le plus bas).
-- **Prononciation :** le texte envoyé au moteur est ajusté pour éviter deux liaisons fautives (« d'affaires-z-automobile », « cherchez-z-un »). Le texte à l'écran et les sous-titres gardent l'orthographe correcte.
-- **Traitement :** `scripts/sound.py` applique un peu de chaleur dans les graves, adoucit les aigus durs et les « s » sifflants (dé-esseur), puis une compression légère. Pas de réverbération ni de saturation.
-- **Dosage :** les bruitages sont ~7 dB sous la voix et ne baissent que de ~3 dB quand elle parle. Mixage final à −16 LUFS.
-
-Ça reste une voix de synthèse. Pour un rendu vraiment naturel, enregistre ta voix sur la version *sans-voix*, en te calant sur `voix-off.srt`.
+Chaque bruitage est déclaré dans la timeline (`cue(...)`) à côté de l'animation qu'il accompagne : si une animation bouge, son bruitage suit au prochain `npm run build`. Tout est synthétisé (`scripts/sound.py`), sans banque de sons externe, et spatialisé selon la position de l'élément à l'écran. Niveau final : −17 LUFS.
 
 ## Légende LinkedIn
 
@@ -45,6 +34,6 @@ Chaque bruitage est déclaré dans la timeline (`cue(...)` dans `index.html`) à
 
 ## Technique
 
-- `index.html` : la composition (1920×1080, 30 s), pilotée par une seule timeline GSAP en pause et exposée sur `window.__timelines["apporteur-affaires-auto"]`. Elle est déterministe (aucun `Math.random`).
+- `index.html` : la composition (1920×1080, 22,5 s), pilotée par une seule timeline GSAP en pause et exposée sur `window.__timelines["apporteur-affaires-auto"]`. Elle est déterministe (aucun `Math.random`).
 - Aperçu : `npm run preview`. Espace = lecture/pause, ←/→ = ±1 s, `?t=12.5` dans l'URL pour ouvrir à un instant précis.
 - Police : Space Grotesk (SIL Open Font License, voir `fonts/OFL-LICENSE.txt`).

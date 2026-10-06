@@ -2,14 +2,11 @@
 """Sound design for a composition.
 
 Synthesises every animation sound effect from the cue list the composition exports
-(`node scripts/render.mjs <comp> --cues cues.json`), processes the voice-over (warm EQ,
-de-essing, light compression) and mixes both, ducking the effects slightly under the voice.
+(`node scripts/render.mjs <comp> --cues cues.json`) and mixes them into one track.
 
-    python3 scripts/sound.py <cues.json> <voice.flac|none> <out-dir>
+    python3 scripts/sound.py <cues.json> <out.m4a>
 
-Writes <out-dir>/sfx.m4a (effects only, same gain as in the mix, for recording your own voice
-on top) and <out-dir>/mix.m4a (voice + effects, -16 LUFS). Needs numpy and ffmpeg.
-Everything is seeded, so the same cues always give the same audio.
+Needs numpy and ffmpeg. Everything is seeded, so the same cues always give the same audio.
 """
 import json
 import subprocess
@@ -19,8 +16,7 @@ from pathlib import Path
 import numpy as np
 
 SR = 48000
-TARGET_LUFS = -16.0
-SFX_BELOW_VOICE = 7.0  # integrated loudness of the effects relative to the voice (dB)
+TARGET_LUFS = -17.0
 
 
 # --------------------------------------------------------------------------- helpers
@@ -354,63 +350,6 @@ FX = {
 }
 
 
-# --------------------------------------------------------------------------- voice
-
-def load_voice(path, n):
-    pcm = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"],
-                         check=True, capture_output=True).stdout
-    v = np.frombuffer(pcm, np.float32).astype(float)
-    out = np.zeros(n)
-    out[: min(n, len(v))] = v[:n]
-    return out
-
-
-def envelope(x, attack, release, win=0.01):
-    """RMS envelope with separate attack/release smoothing (computed at 1 kHz, then upsampled)."""
-    hop = SR // 1000
-    frames = len(x) // hop + 1
-    padded = np.pad(x, (0, frames * hop - len(x)))
-    rms = np.sqrt(np.convolve(padded ** 2, np.ones(int(win * SR)) / int(win * SR), "same"))[::hop]
-    a, r = np.exp(-1 / (attack * 1000)), np.exp(-1 / (release * 1000))
-    env, e = np.empty_like(rms), 0.0
-    for i, v in enumerate(rms):
-        e = a * e + (1 - a) * v if v > e else r * e + (1 - r) * v
-        env[i] = e
-    return np.interp(np.arange(len(x)), np.arange(frames) * hop, env)
-
-
-def deess(x, lo=4500, hi=10000, thresh_db=-11.0, max_cut_db=8.0):
-    """STFT de-esser: when the 4.5–10 kHz band dominates a frame, turn that band down."""
-    n_fft, hop = 1024, 256
-    win = np.hanning(n_fft)
-    pad = np.pad(x, (n_fft, n_fft))
-    out = np.zeros_like(pad)
-    freqs = np.fft.rfftfreq(n_fft, 1 / SR)
-    band = (freqs >= lo) & (freqs < hi)
-    for i in range(0, len(pad) - n_fft, hop):
-        spec = np.fft.rfft(pad[i:i + n_fft] * win)
-        p = np.abs(spec) ** 2
-        ratio = 10 * np.log10(p[band].sum() / (p.sum() + 1e-12) + 1e-12)
-        if ratio > thresh_db:
-            spec[band] *= db(-min(max_cut_db, (ratio - thresh_db) * 1.5))
-        out[i:i + n_fft] += np.fft.irfft(spec, n_fft) * win
-    return out[n_fft:n_fft + len(x)] / 1.5  # Hann² overlap-add at 75 % overlap sums to 1.5
-
-
-def process_voice(v):
-    """Clean and natural: corrective EQ (a little warmth, softer highs), de-essing, light
-    compression. No reverb or saturation — they muddied the voice and added background hiss."""
-    v = eq(v, [("hp", 75), ("lowshelf", 180, 0.7, 2.0), ("peak", 4300, 0.8, -5.0),
-               ("highshelf", 8500, 0.7, -3.0)])
-    v = deess(v)
-    v = v / (np.max(np.abs(v)) + 1e-9) * db(-3)
-    env = envelope(v, 0.01, 0.15)
-    level = 20 * np.log10(env + 1e-9)
-    thr, ratio = -22.0, 1.8
-    v = v * db(np.where(level > thr, (thr - level) * (1 - 1 / ratio), 0.0))
-    return np.stack([v, v])
-
-
 # --------------------------------------------------------------------------- loudness (BS.1770)
 
 def lufs(stereo):
@@ -436,7 +375,7 @@ def encode(stereo, path):
 # --------------------------------------------------------------------------- main
 
 def main():
-    cues_path, voice_path, out_dir = sys.argv[1], sys.argv[2], Path(sys.argv[3])
+    cues_path, out_path = sys.argv[1], Path(sys.argv[2])
     data = json.loads(Path(cues_path).read_text())
     n = int(data["duration"] * SR)
     dry, send = np.zeros((2, n + SR * 4)), np.zeros((2, n + SR * 4))
@@ -453,23 +392,10 @@ def main():
         send[1, s:e] += gr * x * rev
 
     ir_l, ir_r = room_ir(0.22, 42)
-    sfx = dry + np.stack([convolve(send[0], ir_l), convolve(send[1], ir_r)]) * db(-4)
-    sfx = sfx[:, :n]
-
-    if voice_path != "none":
-        voice = process_voice(load_voice(voice_path, n))
-        sfx = sfx * db(lufs(voice) - SFX_BELOW_VOICE - lufs(sfx))
-        mono = voice.mean(axis=0)
-        duck = np.clip(envelope(mono, 0.02, 0.3, 0.03) / db(-30), 0, 1)
-        mix = voice + sfx * (1 - 0.3 * duck)  # effects dip ~3 dB under the voice
-    else:
-        mix = sfx
-
-    gain = db(TARGET_LUFS - lufs(mix))
-    out_dir.mkdir(parents=True, exist_ok=True)
-    encode(mix * gain, out_dir / "mix.m4a")
-    encode(sfx * gain, out_dir / "sfx.m4a")
-    print(f"{len(data['cues'])} effects · mix → {out_dir / 'mix.m4a'} · effects only → {out_dir / 'sfx.m4a'}")
+    mix = (dry + np.stack([convolve(send[0], ir_l), convolve(send[1], ir_r)]) * db(-4))[:, :n]
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    encode(mix * db(TARGET_LUFS - lufs(mix)), out_path)
+    print(f"{len(data['cues'])} effects → {out_path}")
 
 
 if __name__ == "__main__":

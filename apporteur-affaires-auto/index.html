@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Apporteur d'affaires automobile — 30s</title>
+<title>Apporteur d'affaires automobile</title>
 <style>
   @font-face { font-family: "Space Grotesk"; font-weight: 400; src: url(fonts/space-grotesk-latin-400-normal.woff2) format("woff2"); }
   @font-face { font-family: "Space Grotesk"; font-weight: 500; src: url(fonts/space-grotesk-latin-500-normal.woff2) format("woff2"); }
@@ -33,6 +33,7 @@
   /* ---------- ambient layers ---------- */
   #grid { inset: -400px; background-image: radial-gradient(rgba(255,255,255,.075) 1.6px, transparent 2px); background-size: 54px 54px; }
   #glow { width: 1700px; height: 1700px; left: 110px; top: -310px; border-radius: 50%; background: radial-gradient(circle, rgba(255,201,39,.15) 0%, rgba(255,201,39,.05) 35%, rgba(255,201,39,0) 62%); }
+  #wipe { left: -320px; right: -320px; background: var(--y); }
   #vignette { background: radial-gradient(ellipse 75% 85% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); pointer-events: none; }
   #grain { inset: -120px; opacity: .07; mix-blend-mode: overlay; pointer-events: none; will-change: transform; }
   .corner { position: absolute; width: 38px; height: 38px; border-color: rgba(244,241,234,.28); border-style: solid; border-width: 0; }
@@ -128,13 +129,13 @@
 </style>
 </head>
 <body>
-<div id="stage" data-composition-id="apporteur-affaires-auto" data-width="1920" data-height="1080" data-start="0" data-duration="30" data-fps="30">
+<div id="stage" data-composition-id="apporteur-affaires-auto" data-width="1920" data-height="1080" data-start="0" data-duration="22.5" data-fps="30">
 
   <!-- ambient -->
   <div class="layer" id="grid"></div>
   <div class="layer" id="glow"></div>
 
-  <!-- ===================== SCÈNE 1 — ACCROCHE (0:00–0:04) ===================== -->
+  <!-- ===================== SCÈNE 1 — ACCROCHE ===================== -->
   <section class="scene" id="s1">
     <svg class="full" viewBox="0 0 1920 1080">
       <g id="rays" style="filter: drop-shadow(0 0 10px rgba(255,201,39,.55))"></g>
@@ -149,7 +150,7 @@
     <div id="hook-sub"><span class="dash"></span><span>UN VÉHICULE QUI VOUS CORRESPOND ?</span></div>
   </section>
 
-  <!-- ===================== SCÈNE 2 — L'OFFRE (0:04–0:12) ===================== -->
+  <!-- ===================== SCÈNE 2 — L'OFFRE ===================== -->
   <section class="scene" id="s2">
     <div class="eyebrow" id="s2-eb" style="top:284px"><span class="dash"></span>JE SUIS</div>
     <div id="s2-title" class="display">
@@ -175,7 +176,7 @@
     </div>
   </section>
 
-  <!-- ===================== SCÈNE 3 — DIFFÉRENCIATEUR (0:12–0:18) ===================== -->
+  <!-- ===================== SCÈNE 3 — DIFFÉRENCIATEUR ===================== -->
   <section class="scene" id="s3">
     <div id="s3-title" class="display">
       <span class="kw fit">SANS RISQUE.</span>
@@ -204,7 +205,7 @@
     </div>
   </section>
 
-  <!-- ===================== SCÈNE 4 — PREUVE DE SÉRIEUX (0:18–0:24) ===================== -->
+  <!-- ===================== SCÈNE 4 — PREUVE DE SÉRIEUX ===================== -->
   <section class="scene" id="s4">
     <div id="s4-words" class="display">
       <div class="wipe"><span class="txt fit">STRUCTURÉ.</span><span class="bar"></span></div>
@@ -224,7 +225,7 @@
     </div>
   </section>
 
-  <!-- ===================== SCÈNE 5 — APPEL À L'ACTION (0:24–0:30) ===================== -->
+  <!-- ===================== SCÈNE 5 — APPEL À L'ACTION ===================== -->
   <section class="scene" id="s5">
     <div id="s5-q" class="display">
       <span class="line fit">UN APPORTEUR</span>
@@ -247,6 +248,7 @@
   </section>
 
   <!-- overlays -->
+  <div class="layer" id="wipe"></div>
   <div class="layer" id="vignette"></div>
   <svg class="layer" id="grain" width="2160" height="1320" viewBox="0 0 2160 1320">
     <filter id="noise" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
@@ -255,14 +257,14 @@
   <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
 </div>
 
-<div id="controls"><button id="play">❚❚</button><input id="scrub" type="range" min="0" max="30" step="0.0333" value="0"><output id="tc">0.00 / 30.00</output></div>
+<div id="controls"><button id="play">❚❚</button><input id="scrub" type="range" min="0" max="22.5" step="0.0333" value="0"><output id="tc">0.00 / 22.50</output></div>
 
 <script src="../node_modules/gsap/dist/gsap.min.js"></script>
 <script src="config.js"></script>
 <script>
 (() => {
   const COMP_ID = "apporteur-affaires-auto";
-  const W = 1920, H = 1080, DURATION = 30;
+  const W = 1920, H = 1080, DURATION = 22.5;
   const YELLOW = "#FFC927";
   const NS = "http://www.w3.org/2000/svg";
   const params = new URLSearchParams(location.search);
@@ -455,8 +457,10 @@
   }
 
   /* ------------------------------------------------------------------ */
-  /* Timeline (times are synced to the voice-over in audio/voix.flac)    */
+  /* Timeline — times are relative to each scene's start (S1…S5)         */
   /* ------------------------------------------------------------------ */
+  const S1 = 0, S2 = 3.2, S3 = 8.75, S4 = 12.85, S5 = 17.15;
+
   function build() {
     // Fit display lines to their column widths.
     const hookW = fitGroup($$("#hook .hook-line"), 1400);
@@ -471,94 +475,106 @@
 
     const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
 
+    // Slow continuous push-in on every scene, so nothing ever sits perfectly still.
+    [["#s1", S1, S2], ["#s2", S2, S3], ["#s3", S3, S4], ["#s4", S4, S5], ["#s5", S5, DURATION]].forEach(([el, a, b]) => {
+      gsap.set(el, { scale: 1, transformOrigin: "50% 50%" });
+      tl.to(el, { scale: 1.045, duration: b - a + 0.4, ease: "none" }, a);
+    });
+
+    // Full-screen yellow wipe that covers a hard cut between two scenes.
+    gsap.set("#wipe", { scaleX: 0, skewX: -14 });
+    function wipe(t, from, to, fromLeft) {
+      tl.set("#wipe", { transformOrigin: fromLeft ? "0% 50%" : "100% 50%" }, t);
+      tl.to("#wipe", { scaleX: 1, duration: 0.2, ease: "power3.in" }, t);
+      tl.set(from, { autoAlpha: 0 }, t + 0.2);
+      tl.set(to, { autoAlpha: 1 }, t + 0.2);
+      tl.set("#wipe", { transformOrigin: fromLeft ? "100% 50%" : "0% 50%" }, t + 0.2);
+      tl.to("#wipe", { scaleX: 0, duration: 0.28, ease: "power3.out" }, t + 0.2);
+      cue(t - 0.05, "whoosh", { dur: 0.42, peak: 0.6, size: 1, pan: fromLeft ? -0.3 : 0.3 });
+    }
+
     /* ---------- ambient: parallax grid + travelling glow ---------- */
-    tl.to("#grid", { x: -380, duration: DURATION, ease: "none" }, 0);
-    tl.to("#grid", { y: -140, duration: DURATION, ease: "sine.inOut" }, 0);
+    tl.to("#grid", { x: -420, duration: DURATION, ease: "none" }, 0);
+    tl.to("#grid", { y: -160, duration: DURATION, ease: "sine.inOut" }, 0);
     gsap.set("#glow", { x: 0, y: 0, scale: 0.8, opacity: 0 });
-    tl.to("#glow", { opacity: 1, scale: 1, duration: 1.4, ease: "power2.out" }, 0.3);
-    tl.to("#glow", { x: 420, duration: 1.6, ease: "power2.inOut" }, 4.15);              // → réseau
-    tl.to("#glow", { x: 540, scale: 0.75, duration: 1.4, ease: "power2.inOut" }, 11.9);  // → bouclier
-    tl.to("#glow", { x: 470, scale: 1.05, duration: 1.4, ease: "power2.inOut" }, 18.0);  // → CRM
-    tl.to("#glow", { x: 490, scale: 0.7, duration: 1.4, ease: "power2.inOut" }, 24.0);   // → monogramme
-    tl.to("#glow", { scale: 0.82, duration: 1.2, ease: "sine.inOut", repeat: 3, yoyo: true }, 25.4);
+    tl.to("#glow", { opacity: 1, scale: 1, duration: 1.0, ease: "power2.out" }, 0.2);
+    tl.to("#glow", { x: 420, duration: 1.0, ease: "power2.inOut" }, S2);              // → réseau
+    tl.to("#glow", { x: 540, scale: 0.75, duration: 1.0, ease: "power2.inOut" }, S3);  // → bouclier
+    tl.to("#glow", { x: 470, scale: 1.05, duration: 1.0, ease: "power2.inOut" }, S4);  // → CRM
+    tl.to("#glow", { x: 490, scale: 0.7, duration: 1.0, ease: "power2.inOut" }, S5);   // → monogramme
+    tl.to("#glow", { scale: 0.82, duration: 0.9, ease: "sine.inOut", repeat: 3, yoyo: true }, S5 + 1.2);
 
     /* ================= SCÈNE 1 — ACCROCHE ================= */
     gsap.set("#s1", { autoAlpha: 1 }); // visible on frame 0 (a tl.set at exactly t=0 never fires on seek(0))
     rays.forEach(prepDraw);
     gsap.set("#rays", { opacity: 1 });
     // rays are already streaking in from the edges on frame 0, then converge on the centre
-    rays.forEach((r, i) => tl.fromTo(r, { strokeDashoffset: r._L * 0.6 }, { strokeDashoffset: 0, duration: 0.7, ease: "power2.out" }, (i % 6) * 0.012));
-    cue(0, "riser", { dur: 0.68 });
-    tl.to("#rays", { rotation: 9, svgOrigin: `${CX} ${CY}`, duration: 4.4, ease: "none" }, 0);
+    rays.forEach((r, i) => tl.fromTo(r, { strokeDashoffset: r._L * 0.6 }, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out" }, (i % 6) * 0.01));
+    cue(0, "riser", { dur: 0.45 });
+    tl.to("#rays", { rotation: 12, svgOrigin: `${CX} ${CY}`, duration: 3.4, ease: "none" }, 0);
     gsap.set("#flash-dot", { scale: 0, transformOrigin: "50% 50%" });
     gsap.set("#flash-ring", { scale: 0.3, opacity: 0, transformOrigin: "50% 50%" });
-    tl.to("#flash-dot", { scale: 1, duration: 0.3, ease: "back.out(3)" }, 0.68);
-    tl.fromTo("#flash-ring", { scale: 0.3, opacity: 0.9 }, { scale: 9, opacity: 0, duration: 1.1, ease: "power2.out", immediateRender: false }, 0.7);
-    cue(0.68, "impact", { size: 0.8 });
-    cue(0.7, "shimmer", { dur: 1.3 });
-    tl.to("#flash-dot", { scale: 0, duration: 0.5, ease: "power2.in" }, 1.1);
-    tl.to("#rays", { opacity: 0.2, duration: 1.2, ease: "power2.out" }, 0.9);
+    tl.to("#flash-dot", { scale: 1, duration: 0.22, ease: "back.out(3)" }, 0.45);
+    tl.fromTo("#flash-ring", { scale: 0.3, opacity: 0.9 }, { scale: 9, opacity: 0, duration: 0.8, ease: "power2.out", immediateRender: false }, 0.46);
+    cue(0.45, "impact", { size: 0.8 });
+    cue(0.47, "shimmer", { dur: 1.0 });
+    tl.to("#flash-dot", { scale: 0, duration: 0.35, ease: "power2.in" }, 0.75);
+    tl.to("#rays", { opacity: 0.2, duration: 0.9, ease: "power2.out" }, 0.6);
 
     const hookLines = $$("#hook .hook-line").map(splitChars);
     hookLines.flat().forEach((c) => gsap.set(c, { opacity: 0, yPercent: 70, rotationX: -85, transformOrigin: "50% 100%" }));
-    const HOOK_T = [0.15, 1.0, 1.78]; // "Vous vendez," / "vous louez," / "ou vous cherchez…"
+    const HOOK_T = [0.2, 0.7, 1.2];
     HOOK_T.forEach((t, i) => {
-      tl.to(hookLines[i], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.032, ease: "power3.out" }, t);
+      tl.to(hookLines[i], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.42, stagger: 0.022, ease: "back.out(1.6)" }, t);
       cue(t, "swish", { pan: -0.15, gain: -4 });
     });
-    // soft pulse on each verb as it lands
+    // punchy pulse on each verb as it lands
     $$("#hook .y").forEach((el, i) => {
       gsap.set(el, { display: "inline-block", transformOrigin: "0% 70%" });
-      const t = HOOK_T[i] + [0.32, 0.26, 0.42][i];
-      tl.to(el, { scale: 1.05, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1 }, t);
+      const t = HOOK_T[i] + [0.24, 0.22, 0.3][i];
+      tl.to(el, { scale: 1.08, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1 }, t);
       cue(t, "pop", { freq: [520, 620, 740][i], pan: 0.1 });
     });
     gsap.set("#hook-sub", { opacity: 0, y: 24 });
     gsap.set("#hook-sub .dash", { scaleX: 0 });
-    tl.to("#hook-sub", { opacity: 1, y: 0, duration: 0.6 }, 2.45);
-    tl.to("#hook-sub .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 2.5);
-    cue(2.48, "tick", { pan: -0.3 });
-    // exit
-    tl.to(rays, { strokeDashoffset: (i, el) => -(el._L + 10), duration: 0.45, ease: "power2.in", stagger: 0.006 }, 3.72);
-    tl.to(hookLines.flat(), { opacity: 0, yPercent: -90, duration: 0.28, stagger: 0.003, ease: "power2.in" }, 3.85);
-    tl.to("#hook-sub", { opacity: 0, y: -30, duration: 0.28, ease: "power2.in" }, 3.9);
-    cue(3.75, "whoosh", { dur: 0.5, peak: 0.85, size: 0.8 });
-    tl.set("#s1", { autoAlpha: 0 }, 4.3);
+    tl.to("#hook-sub", { opacity: 1, y: 0, duration: 0.45 }, 1.75);
+    tl.to("#hook-sub .dash", { scaleX: 1, duration: 0.5, ease: "expo.out" }, 1.8);
+    cue(1.78, "tick", { pan: -0.3 });
+
+    /* ---- transition 1 → 2 : yellow wipe ---- */
+    wipe(S2 - 0.2, "#s1", "#s2", true);
 
     /* ================= SCÈNE 2 — L'OFFRE ================= */
-    tl.set("#s2", { autoAlpha: 1 }, 4.15);
     gsap.set("#s2-eb, #s2-rel", { opacity: 0, x: -24 });
     gsap.set("#s2-eb .dash, #s2-rel .dash", { scaleX: 0 });
-    tl.to("#s2-eb", { opacity: 1, x: 0, duration: 0.5 }, 4.3);
-    tl.to("#s2-eb .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 4.35);
-    cue(4.32, "tick", { pan: -0.6 });
+    tl.to("#s2-eb", { opacity: 1, x: 0, duration: 0.4 }, S2 + 0.1);
+    tl.to("#s2-eb .dash", { scaleX: 1, duration: 0.5, ease: "expo.out" }, S2 + 0.12);
+    cue(S2 + 0.1, "tick", { pan: -0.6 });
     gsap.set("#s2-title .in", { yPercent: 110 });
-    tl.to("#s2-title .in", { yPercent: 0, duration: 0.8, stagger: 0.13, ease: "expo.out" }, 4.45);
-    [0, 1, 2].forEach((i) => cue(4.45 + i * 0.13, "thump", { pan: -0.5, gain: -8 + i * 2 }));
-    cue(4.42, "swish", { pan: -0.5, gain: -6 });
+    tl.to("#s2-title .in", { yPercent: 0, duration: 0.6, stagger: 0.09, ease: "expo.out" }, S2 + 0.15);
+    [0, 1, 2].forEach((i) => cue(S2 + 0.15 + i * 0.09, "thump", { pan: -0.5, gain: -8 + i * 2 }));
 
     gsap.set("#net", { scale: 0.95, filter: "blur(0px)" });
-    tl.to("#net", { scale: 1.02, duration: 7.85, ease: "none" }, 4.15);  // slow push-in (parallax vs. grid)
+    tl.to("#net", { scale: 1.03, duration: S3 - S2, ease: "none" }, S2);
     gsap.set("#hub", { scale: 0, svgOrigin: `${HUB.x} ${HUB.y}` });
-    tl.to("#hub", { scale: 1, duration: 0.7, ease: "back.out(1.9)" }, 5.05);
-    cue(5.05, "pop", { freq: 330, pan: panX(HUB.x), gain: 2 });
-    cue(5.05, "thump", { pan: panX(HUB.x), gain: -4 });
+    tl.to("#hub", { scale: 1, duration: 0.55, ease: "back.out(2.2)" }, S2 + 0.45);
+    cue(S2 + 0.45, "pop", { freq: 330, pan: panX(HUB.x), gain: 2 });
+    cue(S2 + 0.45, "thump", { pan: panX(HUB.x), gain: -4 });
     $$("#hub .hub-ring").forEach((r, i) => {
       gsap.set(r, { svgOrigin: `${HUB.x} ${HUB.y}` });
-      tl.fromTo(r, { scale: 1, opacity: 0.7 }, { scale: 1.9, opacity: 0, duration: 1.6, ease: "power2.out", repeat: 3, repeatDelay: 0, immediateRender: false }, 5.4 + i * 0.8);
+      tl.fromTo(r, { scale: 1, opacity: 0.7 }, { scale: 1.9, opacity: 0, duration: 1.2, ease: "power2.out", repeat: 3, immediateRender: false }, S2 + 0.7 + i * 0.6);
     });
-    cue(5.4, "ping", { freq: 660, pan: panX(HUB.x), gain: -6 });
+    cue(S2 + 0.7, "ping", { freq: 660, pan: panX(HUB.x), gain: -6 });
     prepDraw($("#orbit"));
     gsap.set("#orbit", { rotation: -90, svgOrigin: `${HUB.x} ${HUB.y}` });
-    tl.to("#orbit", { strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut" }, 5.45);
-    cue(5.45, "draw", { dur: 1.6, pan: panX(HUB.x), gain: -6 });
+    tl.to("#orbit", { strokeDashoffset: 0, duration: 1.0, ease: "power2.inOut" }, S2 + 0.6);
+    cue(S2 + 0.6, "draw", { dur: 1.0, pan: panX(HUB.x), gain: -6 });
 
-    tl.to("#s2-rel", { opacity: 1, x: 0, duration: 0.5 }, 6.62);
-    tl.to("#s2-rel .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 6.67);
-    cue(6.64, "tick", { pan: -0.6 });
+    tl.to("#s2-rel", { opacity: 1, x: 0, duration: 0.4 }, S2 + 1.2);
+    tl.to("#s2-rel .dash", { scaleX: 1, duration: 0.5, ease: "expo.out" }, S2 + 1.22);
+    cue(S2 + 1.2, "tick", { pan: -0.6 });
 
-    // synced to "vendeurs particuliers / garages / agences de dépôt-vente / loueurs"
-    const NODE_T = [8.1, 9.01, 9.72, 10.88];
+    const NODE_T = [1.6, 2.1, 2.6, 3.1].map((t) => S2 + t);
     const NODE_NOTE = [659, 784, 880, 1047];
     NODES.forEach((n, i) => {
       const t = NODE_T[i];
@@ -567,59 +583,60 @@
       gsap.set(n.g, { scale: 0, opacity: 0, svgOrigin: `${n.x} ${n.y}` });
       gsap.set(n.ring, { svgOrigin: `${n.x} ${n.y}` });
       gsap.set(n.chip, { xPercent: -50, opacity: 0, y: 18 });
-      tl.to(n.spoke, { strokeDashoffset: 0, duration: 0.42, ease: "power2.out" }, t - 0.22);
-      tl.to(n.g, { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(2.2)" }, t);
-      tl.to(n.iconParts, { strokeDashoffset: 0, duration: 0.6, stagger: 0.06, ease: "power2.out" }, t + 0.08);
-      tl.fromTo(n.ring, { scale: 1, opacity: 0.85 }, { scale: 1.75, opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t + 0.05);
-      tl.to(n.chip, { opacity: 1, y: 0, duration: 0.45 }, t + 0.12);
-      cue(t - 0.22, "zip", { dur: 0.42, pan: panX(n.x) });
+      tl.to(n.spoke, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, t - 0.18);
+      tl.to(n.g, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.6)" }, t);
+      tl.to(n.iconParts, { strokeDashoffset: 0, duration: 0.45, stagger: 0.04, ease: "power2.out" }, t + 0.06);
+      tl.fromTo(n.ring, { scale: 1, opacity: 0.85 }, { scale: 1.8, opacity: 0, duration: 0.7, ease: "power2.out", immediateRender: false }, t + 0.04);
+      tl.to(n.chip, { opacity: 1, y: 0, duration: 0.35 }, t + 0.08);
+      cue(t - 0.18, "zip", { dur: 0.3, pan: panX(n.x) });
       cue(t, "pop", { freq: NODE_NOTE[i], pan: panX(n.x) });
-      cue(t + 0.14, "tick", { pan: panX(n.x), gain: -6 });
+      cue(t + 0.1, "tick", { pan: panX(n.x), gain: -6 });
       // data packets travelling hub → node until the scene ends
-      const start = t + 0.35, end = 11.5, period = 1.05;
+      const start = t + 0.3, end = S3 - 0.5, period = 0.8;
       const reps = Math.max(0, Math.floor((end - start) / period) - 1);
       tl.to(n.packet, {
         keyframes: [
-          { opacity: 1, duration: 0.08 },
-          { attr: { cx: n.ex, cy: n.ey }, duration: 0.75, ease: "power1.inOut" },
-          { opacity: 0, duration: 0.12 },
-          { duration: 0.1 },
+          { opacity: 1, duration: 0.06 },
+          { attr: { cx: n.ex, cy: n.ey }, duration: 0.55, ease: "power1.inOut" },
+          { opacity: 0, duration: 0.1 },
+          { duration: 0.09 },
         ],
         repeat: reps,
       }, start);
-      // soft breathing on each node once connected
-      tl.to(n.disc, { attr: { "stroke-width": 5 }, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 1 }, 11.0 + i * 0.1);
+      tl.to(n.disc, { attr: { "stroke-width": 5 }, duration: 0.4, ease: "sine.inOut", yoyo: true, repeat: 1 }, S2 + 4.2 + i * 0.08);
     });
 
-    // exit: zoom through the network
-    tl.to("#s2-eb, #s2-rel, #s2-title", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in", stagger: 0.04 }, 11.5);
-    tl.to("#net", { scale: 1.28, opacity: 0, filter: "blur(14px)", duration: 0.55, ease: "power2.in" }, 11.55);
-    cue(11.55, "whoosh", { dur: 0.6, peak: 0.85, size: 1 });
-    tl.set("#s2", { autoAlpha: 0 }, 12.15);
+    /* ---- transition 2 → 3 : zoom through the network ---- */
+    tl.to("#s2-eb, #s2-rel, #s2-title", { opacity: 0, y: -50, duration: 0.35, ease: "power2.in", stagger: 0.03 }, S3 - 0.55);
+    tl.to("#net", { scale: 1.35, opacity: 0, filter: "blur(14px)", duration: 0.45, ease: "power2.in" }, S3 - 0.5);
+    cue(S3 - 0.5, "whoosh", { dur: 0.5, peak: 0.85, size: 1 });
+    tl.set("#s2", { autoAlpha: 0 }, S3 + 0.05);
 
     /* ================= SCÈNE 3 — SANS RISQUE ================= */
-    tl.set("#s3", { autoAlpha: 1 }, 11.95);
-    gsap.set("#s3-icon", { scale: 0.82, opacity: 0, svgOrigin: "1500 540", filter: "blur(0px)" });
-    tl.to("#s3-icon", { scale: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 11.98);
+    tl.set("#s3", { autoAlpha: 1 }, S3 - 0.15);
+    gsap.set("#s3-icon", { scale: 0.75, opacity: 0, svgOrigin: "1500 540", filter: "blur(0px)" });
+    tl.to("#s3-icon", { scale: 1, opacity: 1, duration: 0.6, ease: "expo.out" }, S3 - 0.12);
     prepDraw($("#shield-path"));
     prepDraw($("#shield-check"));
-    tl.to("#shield-path", { strokeDashoffset: 0, duration: 1.1, ease: "power3.out" }, 12.0);
-    cue(12.0, "draw", { dur: 0.9, pan: panX(1500), gain: -2 });
-    tl.to("#shield-fill", { opacity: 0.09, duration: 0.6 }, 12.7);
-    tl.to("#shield-check", { strokeDashoffset: 0, duration: 0.42, ease: "power2.out" }, 12.8);
-    cue(12.85, "chime", { notes: [1047, 1568], pan: panX(1500) });
+    tl.to("#shield-path", { strokeDashoffset: 0, duration: 0.8, ease: "power3.out" }, S3 - 0.1);
+    cue(S3 - 0.1, "draw", { dur: 0.7, pan: panX(1500), gain: -2 });
+    tl.to("#shield-fill", { opacity: 0.09, duration: 0.5 }, S3 + 0.4);
+    tl.to("#shield-check", { strokeDashoffset: 0, duration: 0.32, ease: "power2.out" }, S3 + 0.45);
+    cue(S3 + 0.5, "chime", { notes: [1047, 1568], pan: panX(1500) });
     $$("#s3 .s3-ring").forEach((r, i) => {
       gsap.set(r, { svgOrigin: "1500 540" });
-      tl.fromTo(r, { scale: 0.9, opacity: 0.6 }, { scale: 1.55, opacity: 0, duration: 1.5, ease: "power2.out", repeat: 2, immediateRender: false }, 13.0 + i * 0.75);
+      tl.fromTo(r, { scale: 0.9, opacity: 0.6 }, { scale: 1.55, opacity: 0, duration: 1.2, ease: "power2.out", repeat: 2, immediateRender: false }, S3 + 0.6 + i * 0.6);
     });
-    cue(13.0, "ping", { freq: 523, pan: panX(1500), gain: -8 });
+    cue(S3 + 0.6, "ping", { freq: 523, pan: panX(1500), gain: -8 });
 
-    // keyword cross-fades: blur + tracking settle
+    // keyword cross-fades (blur + tracking settle), then a punch on each
     $$("#s3-title .kw").forEach((kw, i) => {
-      const t = [12.33, 13.15][i]; // "Sans risque," / "sans engagement"
-      gsap.set(kw, { opacity: 0, filter: "blur(18px)", letterSpacing: "0.14em", x: -10 });
-      tl.to(kw, { opacity: 1, filter: "blur(0px)", letterSpacing: "-0.025em", x: 0, duration: 0.75, ease: "expo.out" }, t);
+      const t = S3 + [0.2, 0.8][i];
+      gsap.set(kw, { opacity: 0, filter: "blur(18px)", letterSpacing: "0.14em", x: -10, transformOrigin: "0% 50%" });
+      tl.to(kw, { opacity: 1, filter: "blur(0px)", letterSpacing: "-0.025em", x: 0, duration: 0.55, ease: "expo.out" }, t);
+      tl.to(kw, { scale: 1.05, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1 }, t + 0.42);
       cue(t - 0.05, "swell", { pan: -0.4, gain: -3 });
+      cue(t + 0.42, "thump", { pan: -0.4, gain: -7 });
     });
 
     // shield flips into the € coin
@@ -628,137 +645,135 @@
     prepDraw($("#coin-ring"));
     gsap.set("#coin-inner", { opacity: 0 });
     gsap.set("#euro", { scale: 0.4, opacity: 0, svgOrigin: "1500 540" });
-    tl.to("#shield", { scaleX: 0, duration: 0.24, ease: "power2.in" }, 13.95);
-    cue(13.95, "swish", { pan: panX(1500), gain: -2 });
-    tl.to("#coin", { scaleX: 1, duration: 0.3, ease: "power2.out" }, 14.19);
-    tl.to("#coin-ring", { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, 14.15);
-    tl.to("#euro", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(2)" }, 14.27);
-    cue(14.27, "coin", { pan: panX(1500) });
-    tl.to("#coin-inner", { opacity: 1, rotation: 90, svgOrigin: "1500 540", duration: 3.2, ease: "none" }, 14.45);
-    tl.to("#coin", { y: -10, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: 2 }, 14.85);
-    tl.to("#coin-fill", { opacity: 0.16, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 1 }, 16.1);
+    tl.to("#shield", { scaleX: 0, duration: 0.18, ease: "power2.in" }, S3 + 1.4);
+    cue(S3 + 1.4, "swish", { pan: panX(1500), gain: -2 });
+    tl.to("#coin", { scaleX: 1, duration: 0.24, ease: "power2.out" }, S3 + 1.58);
+    tl.to("#coin-ring", { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" }, S3 + 1.55);
+    tl.to("#euro", { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.4)" }, S3 + 1.64);
+    cue(S3 + 1.64, "coin", { pan: panX(1500) });
+    tl.to("#coin-inner", { opacity: 1, rotation: 90, svgOrigin: "1500 540", duration: 2.5, ease: "none" }, S3 + 1.8);
+    tl.to("#coin", { y: -10, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 2 }, S3 + 2.1);
 
     const subA = $("#s3-sub .a"), subB = $("#s3-sub .b");
     gsap.set([subA, subB], { opacity: 0, y: 26 });
     gsap.set("#s3-underline", { scaleX: 0 });
-    tl.to(subA, { opacity: 1, y: 0, duration: 0.6 }, 14.2);   // "une commission,"
-    tl.to(subB, { opacity: 1, y: 0, duration: 0.6 }, 15.04);  // "uniquement si l'affaire se conclut."
-    tl.to("#s3-underline", { scaleX: 1, duration: 0.55, ease: "expo.out" }, 16.05);
-    cue(15.04, "tick", { pan: -0.5, gain: -4 });
-    cue(16.05, "swish", { pan: -0.2, gain: -5 });
-    cue(16.1, "shimmer", { dur: 0.9, pan: panX(1500), gain: -8 });
+    tl.to(subA, { opacity: 1, y: 0, duration: 0.45 }, S3 + 1.7);
+    tl.to(subB, { opacity: 1, y: 0, duration: 0.45 }, S3 + 2.2);
+    tl.to("#s3-underline", { scaleX: 1, duration: 0.45, ease: "expo.out" }, S3 + 2.75);
+    tl.to("#coin-fill", { opacity: 0.16, duration: 0.35, ease: "sine.inOut", yoyo: true, repeat: 1 }, S3 + 2.8);
+    cue(S3 + 1.7, "tick", { pan: -0.5, gain: -4 });
+    cue(S3 + 2.2, "tick", { pan: -0.5, gain: -4 });
+    cue(S3 + 2.75, "swish", { pan: -0.2, gain: -5 });
+    cue(S3 + 2.8, "shimmer", { dur: 0.8, pan: panX(1500), gain: -8 });
 
-    // exit
-    tl.to("#s3-title, #s3-sub", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in", stagger: 0.05 }, 17.6);
-    tl.to("#s3-icon", { scale: 1.35, opacity: 0, filter: "blur(12px)", duration: 0.55, ease: "power2.in" }, 17.6);
-    cue(17.6, "whoosh", { dur: 0.55, peak: 0.85, size: 0.8 });
-    tl.set("#s3", { autoAlpha: 0 }, 18.2);
+    /* ---- transition 3 → 4 : yellow wipe (right to left) ---- */
+    wipe(S4 - 0.2, "#s3", "#s4", false);
 
     /* ================= SCÈNE 4 — CRM ================= */
-    tl.set("#s4", { autoAlpha: 1 }, 18.0);
     // fast stylised zoom onto the CRM
     gsap.set("#crm", { scale: 2.2, rotationY: -42, rotationX: 22, rotationZ: -8, x: -260, y: 160, opacity: 0, filter: "blur(18px)" });
-    tl.to("#crm", { scale: 1, rotationY: -18, rotationX: 8, rotationZ: -2, x: 0, y: 0, opacity: 1, filter: "blur(0px)", duration: 0.95, ease: "expo.out" }, 18.05);
-    cue(18.0, "whoosh", { dur: 0.42, peak: 0.6, size: 1, pan: 0.4 });
-    cue(18.3, "impact", { size: 0.55, pan: 0.45 });
-    tl.to("#crm", { rotationY: -10, rotationX: 5, rotationZ: -1, scale: 1.035, duration: 4.55, ease: "sine.inOut" }, 19.0);
+    tl.to("#crm", { scale: 1, rotationY: -18, rotationX: 8, rotationZ: -2, x: 0, y: 0, opacity: 1, filter: "blur(0px)", duration: 0.75, ease: "expo.out" }, S4);
+    cue(S4 + 0.22, "impact", { size: 0.55, pan: 0.45 });
+    tl.to("#crm", { rotationY: -9, rotationX: 5, rotationZ: -1, scale: 1.04, duration: 3.6, ease: "sine.inOut" }, S4 + 0.75);
 
-    // word wipes, synced to "Structuré, / réactif, / chaque contact est suivi…"
+    // word wipes
     $$("#s4-words .wipe").forEach((w, i) => {
-      const t = [18.3, 19.22, 20.22][i];
+      const t = S4 + [0.2, 0.75, 1.3][i];
       const txt = $(".txt", w), bar = $(".bar", w);
       gsap.set(txt, { opacity: 0 });
       gsap.set(bar, { scaleX: 0, transformOrigin: "0% 50%" });
-      tl.to(bar, { scaleX: 1, duration: 0.24, ease: "power3.in" }, t);
-      tl.set(txt, { opacity: 1 }, t + 0.24);
-      tl.set(bar, { transformOrigin: "100% 50%" }, t + 0.24);
-      tl.to(bar, { scaleX: 0, duration: 0.32, ease: "power3.out" }, t + 0.26);
+      tl.to(bar, { scaleX: 1, duration: 0.18, ease: "power3.in" }, t);
+      tl.set(txt, { opacity: 1 }, t + 0.18);
+      tl.set(bar, { transformOrigin: "100% 50%" }, t + 0.18);
+      tl.to(bar, { scaleX: 0, duration: 0.26, ease: "power3.out" }, t + 0.2);
       cue(t, "swish", { pan: -0.55, gain: -2 });
-      cue(t + 0.24, "thump", { pan: -0.55, gain: -6 });
+      cue(t + 0.18, "thump", { pan: -0.55, gain: -6 });
     });
 
     // status changes (card index, target pill index, time)
     const CHANGES = [
-      [0, 1, 19.0], [1, 1, 19.65], [2, 1, 20.3], [0, 2, 20.85],
-      [4, 1, 21.75], [5, 1, 22.35], [6, 1, 22.95],
+      [0, 1, 0.55], [1, 1, 1.0], [2, 1, 1.45], [0, 2, 1.9],
+      [4, 1, 2.75], [5, 1, 3.15], [6, 1, 3.55],
     ];
     CRM.forEach((c) => c.pills.forEach((p, i) => gsap.set(p, { opacity: i === 0 ? 1 : 0, y: 0, scale: 1, transformOrigin: "100% 50%" })));
-    CHANGES.forEach(([ci, pi, t]) => {
+    CHANGES.forEach(([ci, pi, dt]) => {
+      const t = S4 + dt;
       const c = CRM[ci];
       const prev = c.pills[pi - 1], next = c.pills[pi];
-      tl.to(prev, { opacity: 0, y: -18, duration: 0.22, ease: "power2.in" }, t);
-      tl.fromTo(next, { opacity: 0, y: 18, scale: 1 }, { opacity: 1, y: 0, duration: 0.38, ease: "back.out(2.4)", immediateRender: false }, t + 0.16);
-      tl.to(next, { scale: 1.1, duration: 0.14, ease: "power2.out", yoyo: true, repeat: 1 }, t + 0.42);
-      tl.fromTo(c.flash, { opacity: 0.95 }, { opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t + 0.12);
-      cue(t + 0.14, "click", { pan: 0.55 });
-      if (c.s[pi] === "conclu") cue(t + 0.42, "chime", { notes: [1319, 1760], pan: 0.55, gain: -3 });
+      tl.to(prev, { opacity: 0, y: -18, duration: 0.18, ease: "power2.in" }, t);
+      tl.fromTo(next, { opacity: 0, y: 18, scale: 1 }, { opacity: 1, y: 0, duration: 0.32, ease: "back.out(2.6)", immediateRender: false }, t + 0.12);
+      tl.to(next, { scale: 1.12, duration: 0.11, ease: "power2.out", yoyo: true, repeat: 1 }, t + 0.34);
+      tl.fromTo(c.flash, { opacity: 0.95 }, { opacity: 0, duration: 0.7, ease: "power2.out", immediateRender: false }, t + 0.1);
+      cue(t + 0.12, "click", { pan: 0.55 });
+      if (c.s[pi] === "conclu") cue(t + 0.34, "chime", { notes: [1319, 1760], pan: 0.55, gain: -3 });
     });
     // list scroll + tab underline micro-interaction
     gsap.set("#crm-list", { y: 0 });
-    tl.to("#crm-list", { y: -288, duration: 1.5, ease: "power2.inOut" }, 21.05);
-    cue(21.05, "scroll", { dur: 1.5, pan: 0.5 });
+    tl.to("#crm-list", { y: -288, duration: 1.0, ease: "power2.inOut" }, S4 + 2.15);
+    cue(S4 + 2.15, "scroll", { dur: 1.0, pan: 0.5 });
     const tabs = $$(".crm-tabs span");
     const tabX = (i) => tabs[i].offsetLeft - 36;
     gsap.set("#crm-tab-bar", { x: 0, width: tabs[0].offsetWidth });
-    [[19.55, 2], [20.65, 0], [22.8, 4]].forEach(([t, i]) => {
-      tl.to("#crm-tab-bar", { x: tabX(i), width: tabs[i].offsetWidth, duration: 0.5, ease: "power3.inOut" }, t);
-      cue(t, "tick", { pan: 0.45, gain: -8 });
+    [[0.95, 2], [1.85, 0], [3.5, 4]].forEach(([dt, i]) => {
+      tl.to("#crm-tab-bar", { x: tabX(i), width: tabs[i].offsetWidth, duration: 0.35, ease: "power3.inOut" }, S4 + dt);
+      cue(S4 + dt, "tick", { pan: 0.45, gain: -8 });
     });
 
-    // exit
-    tl.to("#s4-words", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in" }, 23.6);
-    tl.to("#crm", { scale: 1.3, x: 120, opacity: 0, filter: "blur(12px)", duration: 0.55, ease: "power2.in" }, 23.6);
-    cue(23.6, "whoosh", { dur: 0.55, peak: 0.85, size: 0.9 });
-    tl.set("#s4", { autoAlpha: 0 }, 24.2);
+    /* ---- transition 4 → 5 : zoom out of the CRM ---- */
+    tl.to("#s4-words", { opacity: 0, y: -50, duration: 0.35, ease: "power2.in" }, S5 - 0.5);
+    tl.to("#crm", { scale: 1.35, x: 120, opacity: 0, filter: "blur(12px)", duration: 0.45, ease: "power2.in" }, S5 - 0.5);
+    cue(S5 - 0.5, "whoosh", { dur: 0.48, peak: 0.85, size: 0.9 });
+    tl.set("#s4", { autoAlpha: 0 }, S5 + 0.05);
 
     /* ================= SCÈNE 5 — APPEL À L'ACTION ================= */
-    tl.set("#s5", { autoAlpha: 1 }, 24.0);
+    tl.set("#s5", { autoAlpha: 1 }, S5 - 0.1);
     const MONO_PAN = panX(950 + 500);
     gsap.set("#mono", { scale: 0, rotation: -40 });
     gsap.set("#mono-letter", { yPercent: 105 });
-    tl.to("#mono", { scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.7)" }, 24.12);
-    tl.to("#mono-letter", { yPercent: 0, duration: 0.65, ease: "expo.out" }, 24.42);
-    cue(24.12, "impact", { size: 1, pan: MONO_PAN });
-    cue(24.14, "pop", { freq: 440, pan: MONO_PAN, gain: 1 });
-    cue(24.42, "swish", { pan: MONO_PAN, gain: -6 });
+    tl.to("#mono", { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" }, S5);
+    tl.to("#mono-letter", { yPercent: 0, duration: 0.5, ease: "expo.out" }, S5 + 0.22);
+    cue(S5, "impact", { size: 1, pan: MONO_PAN });
+    cue(S5 + 0.02, "pop", { freq: 440, pan: MONO_PAN, gain: 1 });
+    cue(S5 + 0.22, "swish", { pan: MONO_PAN, gain: -6 });
     $$("#mono-wrap .ring").forEach((r, i) => {
       gsap.set(r, { scale: 1, opacity: 0 });
-      tl.fromTo(r, { scale: 1, opacity: 0.75 }, { scale: 2.0, opacity: 0, duration: 1.8, ease: "power2.out", repeat: 2, immediateRender: false }, 24.6 + i * 0.6);
-      cue(24.6 + i * 0.6, "ping", { freq: 880, pan: MONO_PAN, gain: -10 - i * 3 });
+      tl.fromTo(r, { scale: 1, opacity: 0.75 }, { scale: 2.0, opacity: 0, duration: 1.5, ease: "power2.out", repeat: 2, immediateRender: false }, S5 + 0.4 + i * 0.5);
+      cue(S5 + 0.4 + i * 0.5, "ping", { freq: 880, pan: MONO_PAN, gain: -10 - i * 3 });
     });
-    tl.to("#mono", { scale: 1.045, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 7 }, 25.25);
+    tl.to("#mono", { scale: 1.05, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 7 }, S5 + 0.9);
 
     const qLines = $$("#s5-q .line").map(splitChars);
     qLines.flat().forEach((c) => gsap.set(c, { opacity: 0, yPercent: 70, rotationX: -85, transformOrigin: "50% 100%" }));
-    tl.to(qLines[0], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.03 }, 24.4);   // "Besoin d'un apporteur
-    tl.to(qLines[1], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.03 }, 25.0);   //  sérieux ?"
-    cue(24.4, "swish", { pan: -0.5, gain: -5 });
-    cue(25.0, "swish", { pan: -0.5, gain: -5 });
+    tl.to(qLines[0], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.42, stagger: 0.022, ease: "back.out(1.6)" }, S5 + 0.15);
+    tl.to(qLines[1], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.42, stagger: 0.022, ease: "back.out(1.6)" }, S5 + 0.5);
+    cue(S5 + 0.15, "swish", { pan: -0.5, gain: -5 });
+    cue(S5 + 0.5, "swish", { pan: -0.5, gain: -5 });
 
     const cta = $("#s5-cta .wipe"), ctaTxt = $(".txt", cta), ctaBar = $(".bar", cta);
     gsap.set(ctaTxt, { opacity: 0 });
     gsap.set(ctaBar, { scaleX: 0, transformOrigin: "0% 50%" });
-    tl.to(ctaBar, { scaleX: 1, duration: 0.26, ease: "power3.in" }, 26.34);  // lands on "Contactez-moi."
-    tl.set(ctaTxt, { opacity: 1 }, 26.6);
-    tl.set(ctaBar, { transformOrigin: "100% 50%" }, 26.6);
-    tl.to(ctaBar, { scaleX: 0, duration: 0.34, ease: "power3.out" }, 26.62);
-    cue(26.34, "swish", { pan: -0.4 });
-    cue(26.6, "impact", { size: 0.7, pan: -0.3 });
-    cue(26.55, "sting", { dur: 3.45 });
+    tl.to(ctaBar, { scaleX: 1, duration: 0.2, ease: "power3.in" }, S5 + 0.95);
+    tl.set(ctaTxt, { opacity: 1 }, S5 + 1.15);
+    tl.set(ctaBar, { transformOrigin: "100% 50%" }, S5 + 1.15);
+    tl.to(ctaBar, { scaleX: 0, duration: 0.28, ease: "power3.out" }, S5 + 1.17);
+    tl.fromTo(ctaTxt, { scale: 1.08 }, { scale: 1, duration: 0.35, ease: "power3.out", transformOrigin: "0% 50%", immediateRender: false }, S5 + 1.15);
+    cue(S5 + 0.95, "swish", { pan: -0.4 });
+    cue(S5 + 1.15, "impact", { size: 0.7, pan: -0.3 });
+    cue(S5 + 1.1, "sting", { dur: DURATION - S5 - 1.1 });
     gsap.set("#s5-cta-line", { scaleX: 0 });
-    tl.to("#s5-cta-line", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.85);
-    cue(26.85, "swish", { pan: -0.6, gain: -8 });
+    tl.to("#s5-cta-line", { scaleX: 1, duration: 0.5, ease: "expo.out" }, S5 + 1.35);
+    cue(S5 + 1.35, "swish", { pan: -0.6, gain: -8 });
 
     const info = ["#s5-name", "#s5-tag", ...$$("#s5-contacts .contact")];
     gsap.set(info, { opacity: 0, y: 26 });
     gsap.set("#s5-div", { scaleX: 0 });
-    tl.to(info.slice(0, 2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.95);
-    tl.to("#s5-div", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 27.2);
-    tl.to(info.slice(2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 27.3);
-    cue(26.95, "tick", { pan: MONO_PAN, gain: -4 });
-    cue(27.07, "tick", { pan: MONO_PAN, gain: -8 });
+    tl.to(info.slice(0, 2), { opacity: 1, y: 0, duration: 0.45, stagger: 0.1 }, S5 + 1.45);
+    tl.to("#s5-div", { scaleX: 1, duration: 0.5, ease: "expo.out" }, S5 + 1.65);
+    tl.to(info.slice(2), { opacity: 1, y: 0, duration: 0.45, stagger: 0.1 }, S5 + 1.75);
+    cue(S5 + 1.45, "tick", { pan: MONO_PAN, gain: -4 });
+    cue(S5 + 1.55, "tick", { pan: MONO_PAN, gain: -8 });
 
-    tl.set({}, {}, DURATION); // pad to exactly 30 s
+    tl.set({}, {}, DURATION); // pad to the exact duration
     CUES.sort((a, b) => a.t - b.t);
     return tl;
   }
