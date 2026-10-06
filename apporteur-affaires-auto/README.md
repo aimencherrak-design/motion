@@ -32,9 +32,10 @@ Chaque bruitage est déclaré dans la timeline (`cue(...)` dans `index.html`) à
 
 > Vous vendez, vous louez, ou vous cherchez un véhicule qui vous correspond ? Je suis apporteur d'affaires automobile. Je mets en relation vendeurs particuliers, garages, agences de dépôt-vente et loueurs. Sans risque, sans engagement : une commission, uniquement si l'affaire se conclut. Structuré, réactif, chaque contact est suivi sérieusement. Besoin d'un apporteur sérieux ? Contactez-moi.
 
-- **Voix :** « pierre » (corpus UPMC, CC BY-SA 4.0) générée avec Piper TTS par `scripts/voiceover.sh`. C'est la voix française masculine libre la plus grave et la plus expressive disponible ici.
-- **Traitement :** `scripts/sound.py` réchauffe les graves, adoucit les aigus durs, compresse légèrement et ajoute une petite pièce. Les bruitages baissent d'environ 5 dB quand la voix parle.
-- **Niveaux :** mixage final à −15 LUFS (standard réseaux sociaux).
+- **Voix :** « tom » (fr_FR-tom-medium, masculine, 44,1 kHz), générée avec Piper TTS par `scripts/voiceover.sh`. C'est la plus propre des voix masculines libres testées (bruit de fond le plus bas).
+- **Prononciation :** le texte envoyé au moteur est ajusté pour éviter deux liaisons fautives (« d'affaires-z-automobile », « cherchez-z-un »). Le texte à l'écran et les sous-titres gardent l'orthographe correcte.
+- **Traitement :** `scripts/sound.py` applique un peu de chaleur dans les graves, adoucit les aigus durs et les « s » sifflants (dé-esseur), puis une compression légère. Pas de réverbération ni de saturation.
+- **Dosage :** les bruitages sont ~7 dB sous la voix et ne baissent que de ~3 dB quand elle parle. Mixage final à −16 LUFS.
 
 Ça reste une voix de synthèse. Pour un rendu vraiment naturel, enregistre ta voix sur la version *sans-voix*, en te calant sur `voix-off.srt`.
 

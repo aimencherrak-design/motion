@@ -3,12 +3,12 @@
 
 Synthesises every animation sound effect from the cue list the composition exports
 (`node scripts/render.mjs <comp> --cues cues.json`), processes the voice-over (warm EQ,
-compression, light room) and mixes both, ducking the effects under the voice.
+de-essing, light compression) and mixes both, ducking the effects slightly under the voice.
 
     python3 scripts/sound.py <cues.json> <voice.flac|none> <out-dir>
 
 Writes <out-dir>/sfx.m4a (effects only, same gain as in the mix, for recording your own voice
-on top) and <out-dir>/mix.m4a (voice + effects, -15 LUFS). Needs numpy and ffmpeg.
+on top) and <out-dir>/mix.m4a (voice + effects, -16 LUFS). Needs numpy and ffmpeg.
 Everything is seeded, so the same cues always give the same audio.
 """
 import json
@@ -19,7 +19,8 @@ from pathlib import Path
 import numpy as np
 
 SR = 48000
-TARGET_LUFS = -15.0
+TARGET_LUFS = -16.0
+SFX_BELOW_VOICE = 7.0  # integrated loudness of the effects relative to the voice (dB)
 
 
 # --------------------------------------------------------------------------- helpers
@@ -302,7 +303,7 @@ def fx_scroll(c, seed):
     pos = np.where(p < 0.5, 2 * p * p, 1 - (-2 * p + 2) ** 2 / 2)
     speed = np.gradient(pos)
     speed /= speed.max()
-    x = 0.08 * svf(noise(n, seed), 900, 0.7, "lp") * speed
+    x = np.zeros(n)
     steps = np.nonzero(np.diff(np.floor(pos * 12)))[0]
     tick = osc(1800, int(0.03 * SR)) * np.exp(-secs(int(0.03 * SR)) / 0.004)
     for s in steps:
@@ -344,10 +345,10 @@ def fx_sting(c, seed):
 
 FX = {
     # type: (generator, base gain dB, reverb send)
-    "whoosh": (fx_whoosh, -12, 0.2), "swish": (fx_swish, -15, 0.15), "swell": (fx_swell, -17, 0.5),
+    "whoosh": (fx_whoosh, -12, 0.2), "swish": (fx_swish, -15, 0.15), "swell": (fx_swell, -21, 0.3),
     "riser": (fx_riser, -16, 0.25), "impact": (fx_impact, -13, 0.25), "thump": (fx_thump, -11, 0.1),
     "pop": (fx_pop, -16, 0.15), "tick": (fx_tick, -18, 0.1), "click": (fx_click, -17, 0.1),
-    "ping": (fx_ping, -19, 0.6), "zip": (fx_zip, -17, 0.15), "draw": (fx_draw, -21, 0.2),
+    "ping": (fx_ping, -19, 0.6), "zip": (fx_zip, -17, 0.15), "draw": (fx_draw, -27, 0.1),
     "chime": (fx_chime, -18, 0.5), "coin": (fx_coin, -17, 0.4), "scroll": (fx_scroll, -20, 0.1),
     "shimmer": (fx_shimmer, -21, 0.7), "sting": (fx_sting, -17, 0.4),
 }
@@ -378,20 +379,36 @@ def envelope(x, attack, release, win=0.01):
     return np.interp(np.arange(len(x)), np.arange(frames) * hop, env)
 
 
+def deess(x, lo=4500, hi=10000, thresh_db=-11.0, max_cut_db=8.0):
+    """STFT de-esser: when the 4.5–10 kHz band dominates a frame, turn that band down."""
+    n_fft, hop = 1024, 256
+    win = np.hanning(n_fft)
+    pad = np.pad(x, (n_fft, n_fft))
+    out = np.zeros_like(pad)
+    freqs = np.fft.rfftfreq(n_fft, 1 / SR)
+    band = (freqs >= lo) & (freqs < hi)
+    for i in range(0, len(pad) - n_fft, hop):
+        spec = np.fft.rfft(pad[i:i + n_fft] * win)
+        p = np.abs(spec) ** 2
+        ratio = 10 * np.log10(p[band].sum() / (p.sum() + 1e-12) + 1e-12)
+        if ratio > thresh_db:
+            spec[band] *= db(-min(max_cut_db, (ratio - thresh_db) * 1.5))
+        out[i:i + n_fft] += np.fft.irfft(spec, n_fft) * win
+    return out[n_fft:n_fft + len(x)] / 1.5  # Hann² overlap-add at 75 % overlap sums to 1.5
+
+
 def process_voice(v):
-    """Warm, close, less synthetic: EQ, gentle compression, a touch of saturation and room."""
-    v = eq(v, [("hp", 70), ("peak", 150, 0.8, 3.0), ("peak", 420, 1.0, -1.0),
-               ("peak", 3300, 1.2, -2.5), ("highshelf", 8000, 0.7, -3.5)])
+    """Clean and natural: corrective EQ (a little warmth, softer highs), de-essing, light
+    compression. No reverb or saturation — they muddied the voice and added background hiss."""
+    v = eq(v, [("hp", 75), ("lowshelf", 180, 0.7, 2.0), ("peak", 4300, 0.8, -5.0),
+               ("highshelf", 8500, 0.7, -3.0)])
+    v = deess(v)
     v = v / (np.max(np.abs(v)) + 1e-9) * db(-3)
-    env = envelope(v, 0.008, 0.12)
+    env = envelope(v, 0.01, 0.15)
     level = 20 * np.log10(env + 1e-9)
-    thr, ratio = -24.0, 2.5
-    gain_db = np.where(level > thr, (thr - level) * (1 - 1 / ratio), 0.0) + 4.0
-    v = v * db(gain_db)
-    v = 0.75 * v + 0.25 * np.tanh(1.5 * v) / np.tanh(1.5)
-    ir_l, ir_r = room_ir(0.12, 99, predelay=0.012, length=0.9)
-    wet = db(-19)
-    return np.stack([v + wet * convolve(v, ir_l), v + wet * convolve(v, ir_r)])
+    thr, ratio = -22.0, 1.8
+    v = v * db(np.where(level > thr, (thr - level) * (1 - 1 / ratio), 0.0))
+    return np.stack([v, v])
 
 
 # --------------------------------------------------------------------------- loudness (BS.1770)
@@ -441,9 +458,10 @@ def main():
 
     if voice_path != "none":
         voice = process_voice(load_voice(voice_path, n))
+        sfx = sfx * db(lufs(voice) - SFX_BELOW_VOICE - lufs(sfx))
         mono = voice.mean(axis=0)
         duck = np.clip(envelope(mono, 0.02, 0.3, 0.03) / db(-30), 0, 1)
-        mix = voice + sfx * (1 - 0.45 * duck)  # effects dip ~5 dB under the voice
+        mix = voice + sfx * (1 - 0.3 * duck)  # effects dip ~3 dB under the voice
     else:
         mix = sfx
 

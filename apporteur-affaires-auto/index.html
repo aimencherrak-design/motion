@@ -501,7 +501,7 @@
 
     const hookLines = $$("#hook .hook-line").map(splitChars);
     hookLines.flat().forEach((c) => gsap.set(c, { opacity: 0, yPercent: 70, rotationX: -85, transformOrigin: "50% 100%" }));
-    const HOOK_T = [0.15, 1.22, 2.0]; // "Vous vendez," / "vous louez," / "ou vous cherchez…"
+    const HOOK_T = [0.15, 1.0, 1.78]; // "Vous vendez," / "vous louez," / "ou vous cherchez…"
     HOOK_T.forEach((t, i) => {
       tl.to(hookLines[i], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.032, ease: "power3.out" }, t);
       cue(t, "swish", { pan: -0.15, gain: -4 });
@@ -515,9 +515,9 @@
     });
     gsap.set("#hook-sub", { opacity: 0, y: 24 });
     gsap.set("#hook-sub .dash", { scaleX: 0 });
-    tl.to("#hook-sub", { opacity: 1, y: 0, duration: 0.6 }, 2.75);
-    tl.to("#hook-sub .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 2.8);
-    cue(2.78, "tick", { pan: -0.3 });
+    tl.to("#hook-sub", { opacity: 1, y: 0, duration: 0.6 }, 2.45);
+    tl.to("#hook-sub .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 2.5);
+    cue(2.48, "tick", { pan: -0.3 });
     // exit
     tl.to(rays, { strokeDashoffset: (i, el) => -(el._L + 10), duration: 0.45, ease: "power2.in", stagger: 0.006 }, 3.72);
     tl.to(hookLines.flat(), { opacity: 0, yPercent: -90, duration: 0.28, stagger: 0.003, ease: "power2.in" }, 3.85);
@@ -553,12 +553,12 @@
     tl.to("#orbit", { strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut" }, 5.45);
     cue(5.45, "draw", { dur: 1.6, pan: panX(HUB.x), gain: -6 });
 
-    tl.to("#s2-rel", { opacity: 1, x: 0, duration: 0.5 }, 6.55);
-    tl.to("#s2-rel .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 6.6);
-    cue(6.57, "tick", { pan: -0.6 });
+    tl.to("#s2-rel", { opacity: 1, x: 0, duration: 0.5 }, 6.62);
+    tl.to("#s2-rel .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 6.67);
+    cue(6.64, "tick", { pan: -0.6 });
 
     // synced to "vendeurs particuliers / garages / agences de dépôt-vente / loueurs"
-    const NODE_T = [7.6, 8.85, 9.8, 10.72];
+    const NODE_T = [8.1, 9.01, 9.72, 10.88];
     const NODE_NOTE = [659, 784, 880, 1047];
     NODES.forEach((n, i) => {
       const t = NODE_T[i];
@@ -636,17 +636,17 @@
     cue(14.27, "coin", { pan: panX(1500) });
     tl.to("#coin-inner", { opacity: 1, rotation: 90, svgOrigin: "1500 540", duration: 3.2, ease: "none" }, 14.45);
     tl.to("#coin", { y: -10, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: 2 }, 14.85);
-    tl.to("#coin-fill", { opacity: 0.16, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 1 }, 16.4);
+    tl.to("#coin-fill", { opacity: 0.16, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 1 }, 16.1);
 
     const subA = $("#s3-sub .a"), subB = $("#s3-sub .b");
     gsap.set([subA, subB], { opacity: 0, y: 26 });
     gsap.set("#s3-underline", { scaleX: 0 });
     tl.to(subA, { opacity: 1, y: 0, duration: 0.6 }, 14.2);   // "une commission,"
-    tl.to(subB, { opacity: 1, y: 0, duration: 0.6 }, 15.32);  // "uniquement si l'affaire se conclut."
-    tl.to("#s3-underline", { scaleX: 1, duration: 0.55, ease: "expo.out" }, 16.35);
-    cue(15.32, "tick", { pan: -0.5, gain: -4 });
-    cue(16.35, "swish", { pan: -0.2, gain: -5 });
-    cue(16.4, "shimmer", { dur: 0.9, pan: panX(1500), gain: -8 });
+    tl.to(subB, { opacity: 1, y: 0, duration: 0.6 }, 15.04);  // "uniquement si l'affaire se conclut."
+    tl.to("#s3-underline", { scaleX: 1, duration: 0.55, ease: "expo.out" }, 16.05);
+    cue(15.04, "tick", { pan: -0.5, gain: -4 });
+    cue(16.05, "swish", { pan: -0.2, gain: -5 });
+    cue(16.1, "shimmer", { dur: 0.9, pan: panX(1500), gain: -8 });
 
     // exit
     tl.to("#s3-title, #s3-sub", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in", stagger: 0.05 }, 17.6);
@@ -665,7 +665,7 @@
 
     // word wipes, synced to "Structuré, / réactif, / chaque contact est suivi…"
     $$("#s4-words .wipe").forEach((w, i) => {
-      const t = [18.32, 19.3, 20.22][i];
+      const t = [18.3, 19.22, 20.22][i];
       const txt = $(".txt", w), bar = $(".bar", w);
       gsap.set(txt, { opacity: 0 });
       gsap.set(bar, { scaleX: 0, transformOrigin: "0% 50%" });
@@ -738,25 +738,25 @@
     const cta = $("#s5-cta .wipe"), ctaTxt = $(".txt", cta), ctaBar = $(".bar", cta);
     gsap.set(ctaTxt, { opacity: 0 });
     gsap.set(ctaBar, { scaleX: 0, transformOrigin: "0% 50%" });
-    tl.to(ctaBar, { scaleX: 1, duration: 0.26, ease: "power3.in" }, 25.95);  // lands on "Contactez-moi."
-    tl.set(ctaTxt, { opacity: 1 }, 26.21);
-    tl.set(ctaBar, { transformOrigin: "100% 50%" }, 26.21);
-    tl.to(ctaBar, { scaleX: 0, duration: 0.34, ease: "power3.out" }, 26.23);
-    cue(25.95, "swish", { pan: -0.4 });
-    cue(26.21, "impact", { size: 0.7, pan: -0.3 });
-    cue(26.2, "sting", { dur: 3.8 });
+    tl.to(ctaBar, { scaleX: 1, duration: 0.26, ease: "power3.in" }, 26.34);  // lands on "Contactez-moi."
+    tl.set(ctaTxt, { opacity: 1 }, 26.6);
+    tl.set(ctaBar, { transformOrigin: "100% 50%" }, 26.6);
+    tl.to(ctaBar, { scaleX: 0, duration: 0.34, ease: "power3.out" }, 26.62);
+    cue(26.34, "swish", { pan: -0.4 });
+    cue(26.6, "impact", { size: 0.7, pan: -0.3 });
+    cue(26.55, "sting", { dur: 3.45 });
     gsap.set("#s5-cta-line", { scaleX: 0 });
-    tl.to("#s5-cta-line", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.45);
-    cue(26.45, "swish", { pan: -0.6, gain: -8 });
+    tl.to("#s5-cta-line", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.85);
+    cue(26.85, "swish", { pan: -0.6, gain: -8 });
 
     const info = ["#s5-name", "#s5-tag", ...$$("#s5-contacts .contact")];
     gsap.set(info, { opacity: 0, y: 26 });
     gsap.set("#s5-div", { scaleX: 0 });
-    tl.to(info.slice(0, 2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.6);
-    tl.to("#s5-div", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.85);
-    tl.to(info.slice(2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.95);
-    cue(26.6, "tick", { pan: MONO_PAN, gain: -4 });
-    cue(26.72, "tick", { pan: MONO_PAN, gain: -8 });
+    tl.to(info.slice(0, 2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.95);
+    tl.to("#s5-div", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 27.2);
+    tl.to(info.slice(2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 27.3);
+    cue(26.95, "tick", { pan: MONO_PAN, gain: -4 });
+    cue(27.07, "tick", { pan: MONO_PAN, gain: -8 });
 
     tl.set({}, {}, DURATION); // pad to exactly 30 s
     CUES.sort((a, b) => a.t - b.t);
