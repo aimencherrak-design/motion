@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apporteur d'affaires automobile — 30s</title>
+<style>
+  @font-face { font-family: "Space Grotesk"; font-weight: 400; src: url(fonts/space-grotesk-latin-400-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Space Grotesk"; font-weight: 500; src: url(fonts/space-grotesk-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Space Grotesk"; font-weight: 700; src: url(fonts/space-grotesk-latin-700-normal.woff2) format("woff2"); }
+
+  :root {
+    --bg: #121212;
+    --y: #FFC927;
+    --ink: #F4F1EA;
+    --muted: #8D8B85;
+    --line: #2A2A2A;
+    --card: #1A1A1A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #050505; height: 100%; }
+  body { font-family: "Space Grotesk", sans-serif; color: var(--ink); overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+  /* ---------- stage ---------- */
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); transform-origin: 0 0; }
+  .layer, .scene { position: absolute; inset: 0; }
+  .scene { visibility: hidden; }
+  svg.full { position: absolute; inset: 0; width: 1080px; height: 1920px; overflow: visible; }
+  .y { color: var(--y); }
+  .ch { display: inline-block; will-change: transform, opacity; }
+  .fit { width: max-content; white-space: nowrap; }
+
+  /* ---------- ambient layers ---------- */
+  #grid { inset: -200px -200px -800px -200px; background-image: radial-gradient(rgba(255,255,255,.075) 1.6px, transparent 2px); background-size: 54px 54px; }
+  #glow { width: 1700px; height: 1700px; left: -310px; top: 60px; border-radius: 50%; background: radial-gradient(circle, rgba(255,201,39,.15) 0%, rgba(255,201,39,.05) 35%, rgba(255,201,39,0) 62%); }
+  #vignette { background: radial-gradient(ellipse 85% 70% at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); pointer-events: none; }
+  #grain { inset: -120px; opacity: .07; mix-blend-mode: overlay; pointer-events: none; will-change: transform; }
+  .corner { position: absolute; width: 38px; height: 38px; border-color: rgba(244,241,234,.28); border-style: solid; border-width: 0; }
+  .corner.tl { left: 52px; top: 52px; border-left-width: 2px; border-top-width: 2px; }
+  .corner.tr { right: 52px; top: 52px; border-right-width: 2px; border-top-width: 2px; }
+  .corner.bl { left: 52px; bottom: 52px; border-left-width: 2px; border-bottom-width: 2px; }
+  .corner.br { right: 52px; bottom: 52px; border-right-width: 2px; border-bottom-width: 2px; }
+
+  /* ---------- shared type ---------- */
+  .eyebrow { position: absolute; left: 90px; display: flex; align-items: center; gap: 18px; font-size: 30px; font-weight: 500; letter-spacing: .22em; color: var(--muted); }
+  .eyebrow .dash { width: 44px; height: 4px; background: var(--y); transform-origin: 0 50%; }
+  .mask { overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
+  .display { font-weight: 700; letter-spacing: -.025em; line-height: 1.0; }
+
+  /* ---------- scene 1 : accroche ---------- */
+  #hook { position: absolute; left: 90px; top: 690px; font-size: 118px; }
+  #hook .hook-line { perspective: 700px; }
+  #hook-sub { position: absolute; left: 90px; top: 1112px; display: flex; align-items: center; gap: 20px; font-size: 36px; font-weight: 500; letter-spacing: .1em; color: var(--muted); }
+  #hook-sub .dash { width: 56px; height: 4px; background: var(--y); transform-origin: 0 50%; }
+
+  /* ---------- scene 2 : réseau ---------- */
+  #s2-title { position: absolute; left: 90px; top: 282px; font-size: 112px; }
+  #net { transform-origin: 540px 1090px; }
+  .chip { position: absolute; padding: 11px 20px 10px; font-size: 26px; font-weight: 700; letter-spacing: .09em; line-height: 1.18; text-align: center; white-space: nowrap; background: var(--bg); border: 1.5px solid rgba(244,241,234,.16); border-radius: 14px; }
+  #hub-letter { font-family: "Space Grotesk"; font-weight: 700; }
+
+  /* ---------- scene 3 : sans risque ---------- */
+  #s3-title { position: absolute; left: 90px; top: 250px; font-size: 104px; }
+  #s3-title .kw { display: block; }
+  #s3-sub { position: absolute; left: 90px; top: 1210px; }
+  #s3-sub .a { font-size: 60px; font-weight: 700; letter-spacing: -.01em; }
+  #s3-sub .b { margin-top: 14px; font-size: 40px; font-weight: 500; letter-spacing: .02em; color: var(--muted); }
+  #s3-sub .b .y { position: relative; font-weight: 700; }
+  #s3-underline { position: absolute; left: 0; right: 0; bottom: -8px; height: 4px; background: var(--y); transform-origin: 0 50%; }
+  #euro { font-family: "Space Grotesk"; font-weight: 700; }
+
+  /* ---------- scene 4 : CRM ---------- */
+  #s4-words { position: absolute; left: 90px; top: 222px; font-size: 100px; }
+  .wipe { position: relative; display: block; width: max-content; }
+  .wipe .txt { display: block; }
+  .wipe .bar { position: absolute; left: -10px; right: -10px; top: 6%; bottom: 2%; background: var(--y); transform-origin: 0 50%; }
+  #crm-cam { position: absolute; left: 0; top: 650px; width: 1080px; height: 1270px; perspective: 2200px; -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 64%, transparent 90%); mask-image: linear-gradient(to bottom, #000 0%, #000 64%, transparent 90%); }
+  #crm { position: absolute; left: 95px; top: 30px; width: 890px; height: 1100px; border-radius: 38px; background: #171717; border: 1.5px solid #2B2B2B; box-shadow: 0 50px 140px rgba(0,0,0,.65), inset 0 1.5px 0 rgba(255,201,39,.35); transform-origin: 50% 30%; overflow: hidden; }
+  .crm-head { display: flex; align-items: center; gap: 20px; padding: 36px 38px 22px; }
+  .crm-logo { width: 56px; height: 56px; border-radius: 50%; background: var(--y); color: var(--bg); display: grid; place-items: center; font-size: 34px; font-weight: 700; }
+  .crm-title { font-size: 36px; font-weight: 700; letter-spacing: -.01em; }
+  .crm-date { margin-left: auto; font-size: 24px; color: var(--muted); font-weight: 500; }
+  .crm-tabs { position: relative; display: flex; gap: 38px; padding: 4px 38px 0; font-size: 24px; font-weight: 500; color: var(--muted); border-bottom: 1.5px solid #262626; }
+  .crm-tabs span { padding-bottom: 18px; }
+  .crm-tabs .on { color: var(--ink); }
+  #crm-tab-bar { position: absolute; left: 38px; bottom: -1.5px; height: 4px; width: 50px; background: var(--y); border-radius: 2px; }
+  .crm-list-clip { position: absolute; left: 0; right: 0; top: 182px; bottom: 0; overflow: hidden; }
+  #crm-list { padding: 24px 28px; }
+  .card { position: relative; display: flex; align-items: center; gap: 22px; height: 128px; padding: 0 24px; margin-bottom: 16px; border-radius: 24px; background: var(--card); border: 1.5px solid #252525; }
+  .card .flash { position: absolute; inset: -1.5px; border-radius: 24px; border: 2.5px solid var(--y); opacity: 0; }
+  .avatar { flex: none; width: 70px; height: 70px; border-radius: 50%; background: #242424; display: grid; place-items: center; }
+  .avatar svg { width: 40px; height: 40px; overflow: visible; }
+  .card .who { min-width: 0; }
+  .card .t { font-size: 30px; font-weight: 700; letter-spacing: -.005em; }
+  .card .m { margin-top: 6px; font-size: 23px; color: var(--muted); font-weight: 500; white-space: nowrap; }
+  .pills { position: relative; margin-left: auto; width: 214px; height: 52px; flex: none; }
+  .pill { position: absolute; right: 0; top: 0; height: 52px; display: flex; align-items: center; gap: 8px; padding: 0 20px; border-radius: 999px; font-size: 21px; font-weight: 700; letter-spacing: .09em; white-space: nowrap; }
+  .pill.nouveau  { border: 1.5px solid rgba(244,241,234,.38); color: var(--ink); }
+  .pill.contacte { background: #2C2C2C; color: var(--ink); }
+  .pill.relance  { border: 1.5px dashed rgba(141,139,133,.8); color: var(--muted); }
+  .pill.encours  { border: 2px solid var(--y); color: var(--y); }
+  .pill.conclu   { background: var(--y); color: var(--bg); }
+
+  /* ---------- scene 5 : clôture ---------- */
+  #s5 .center { position: absolute; left: 0; right: 0; text-align: center; }
+  #s5-q { top: 238px; font-size: 104px; }
+  #s5-q .line { display: block; perspective: 700px; }
+  #s5-cta { top: 470px; font-size: 104px; }
+  #s5-cta .wipe { margin: 0 auto; }
+  #s5-cta-line { position: absolute; left: 50%; top: 600px; width: 180px; height: 5px; margin-left: -90px; background: var(--y); transform-origin: 50% 50%; }
+  #mono-wrap { position: absolute; left: 540px; top: 900px; width: 0; height: 0; }
+  .ring { position: absolute; left: -118px; top: -118px; width: 236px; height: 236px; border-radius: 50%; border: 3px solid var(--y); opacity: 0; }
+  #mono { position: absolute; left: -118px; top: -118px; width: 236px; height: 236px; border-radius: 50%; background: var(--y); overflow: hidden; box-shadow: 0 0 90px rgba(255,201,39,.35); }
+  #mono-letter { position: absolute; inset: 0; display: grid; place-items: center; font-size: 150px; font-weight: 700; color: var(--bg); letter-spacing: -.02em; padding-bottom: 6px; }
+  #s5-name { top: 1080px; font-size: 66px; font-weight: 700; letter-spacing: .01em; }
+  #s5-tag { top: 1168px; font-size: 32px; font-weight: 500; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+  #s5-div { position: absolute; left: 50%; top: 1240px; width: 120px; height: 3px; margin-left: -60px; background: var(--y); }
+  #s5-contacts { top: 1282px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .contact { display: flex; align-items: center; gap: 18px; font-size: 38px; font-weight: 500; letter-spacing: .01em; }
+  .contact svg { width: 38px; height: 38px; fill: none; stroke: var(--y); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- preview chrome (hidden in render mode) ---------- */
+  #controls { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 8px 14px; border-radius: 12px; background: rgba(30,30,30,.92); color: #ddd; font: 500 13px/1 "Space Grotesk", sans-serif; z-index: 10; }
+  #controls button { width: 32px; height: 28px; border: 0; border-radius: 6px; background: #FFC927; color: #121212; font: 700 13px/1 "Space Grotesk", sans-serif; cursor: pointer; }
+  #controls input { width: 280px; accent-color: #FFC927; }
+  #controls output { width: 92px; font-variant-numeric: tabular-nums; }
+  body.render #controls { display: none; }
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="apporteur-affaires-auto" data-width="1080" data-height="1920" data-start="0" data-duration="30" data-fps="30">
+
+  <!-- ambient -->
+  <div class="layer" id="grid"></div>
+  <div class="layer" id="glow"></div>
+
+  <!-- ===================== SCÈNE 1 — ACCROCHE (0:00–0:04) ===================== -->
+  <section class="scene" id="s1">
+    <svg class="full" viewBox="0 0 1080 1920">
+      <g id="rays" style="filter: drop-shadow(0 0 10px rgba(255,201,39,.55))"></g>
+      <circle id="flash-ring" cx="540" cy="900" r="40" fill="none" stroke="#FFC927" stroke-width="3"/>
+      <circle id="flash-dot" cx="540" cy="900" r="12" fill="#FFC927"/>
+    </svg>
+    <div id="hook" class="display">
+      <div class="hook-line fit">VOUS <span class="y">VENDEZ.</span></div>
+      <div class="hook-line fit">VOUS <span class="y">LOUEZ.</span></div>
+      <div class="hook-line fit">VOUS <span class="y">CHERCHEZ.</span></div>
+    </div>
+    <div id="hook-sub"><span class="dash"></span><span>UN VÉHICULE QUI VOUS CORRESPOND ?</span></div>
+  </section>
+
+  <!-- ===================== SCÈNE 2 — L'OFFRE (0:04–0:12) ===================== -->
+  <section class="scene" id="s2">
+    <div class="eyebrow" id="s2-eb" style="top:226px"><span class="dash"></span>JE SUIS</div>
+    <div id="s2-title" class="display">
+      <div class="mask"><div class="in fit">APPORTEUR</div></div>
+      <div class="mask"><div class="in fit">D'AFFAIRES</div></div>
+      <div class="mask"><div class="in fit y">AUTOMOBILE</div></div>
+    </div>
+    <div class="eyebrow" id="s2-rel" style="top:662px"><span class="dash"></span>JE METS EN RELATION</div>
+    <div class="layer" id="net">
+      <svg class="full" viewBox="0 0 1080 1920">
+        <circle id="orbit" cx="540" cy="1090" r="366" fill="none" stroke="rgba(255,201,39,.32)" stroke-width="1.6"/>
+        <g id="spokes" style="filter: drop-shadow(0 0 9px rgba(255,201,39,.7))"></g>
+        <g id="packets" style="filter: drop-shadow(0 0 8px rgba(255,201,39,.9))"></g>
+        <g id="nodes"></g>
+        <g id="hub">
+          <circle class="hub-ring" cx="540" cy="1090" r="78" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
+          <circle class="hub-ring" cx="540" cy="1090" r="78" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
+          <circle cx="540" cy="1090" r="78" fill="#FFC927"/>
+          <text id="hub-letter" x="540" y="1090" dy="0.35em" text-anchor="middle" font-size="92" fill="#121212">A</text>
+        </g>
+      </svg>
+      <div id="chips"></div>
+    </div>
+  </section>
+
+  <!-- ===================== SCÈNE 3 — DIFFÉRENCIATEUR (0:12–0:18) ===================== -->
+  <section class="scene" id="s3">
+    <div id="s3-title" class="display">
+      <span class="kw fit">SANS RISQUE.</span>
+      <span class="kw fit y">SANS ENGAGEMENT.</span>
+    </div>
+    <svg class="full" viewBox="0 0 1080 1920">
+      <g id="s3-icon">
+        <circle class="s3-ring" cx="540" cy="900" r="170" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
+        <circle class="s3-ring" cx="540" cy="900" r="170" fill="none" stroke="#FFC927" stroke-width="2.5" opacity="0"/>
+        <g id="shield" style="filter: drop-shadow(0 0 16px rgba(255,201,39,.45))">
+          <path id="shield-fill" d="M540 745 L665 792 V885 C665 968 612 1022 540 1055 C468 1022 415 968 415 885 V792 Z" fill="#FFC927" opacity="0"/>
+          <path id="shield-path" d="M540 745 L665 792 V885 C665 968 612 1022 540 1055 C468 1022 415 968 415 885 V792 Z" fill="none" stroke="#FFC927" stroke-width="7" stroke-linejoin="round"/>
+          <path id="shield-check" d="M486 902 L526 942 L600 862" fill="none" stroke="#FFC927" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <g id="coin" style="filter: drop-shadow(0 0 18px rgba(255,201,39,.5))">
+          <circle id="coin-fill" cx="540" cy="900" r="150" fill="#FFC927" opacity=".07"/>
+          <circle id="coin-ring" cx="540" cy="900" r="150" fill="none" stroke="#FFC927" stroke-width="7"/>
+          <circle id="coin-inner" cx="540" cy="900" r="124" fill="none" stroke="rgba(255,201,39,.45)" stroke-width="2" stroke-dasharray="3 9"/>
+          <text id="euro" x="540" y="900" dy="0.35em" text-anchor="middle" font-size="190" fill="#FFC927">€</text>
+        </g>
+      </g>
+    </svg>
+    <div id="s3-sub">
+      <div class="a fit">UNE COMMISSION,</div>
+      <div class="b fit">UNIQUEMENT SI L'AFFAIRE <span class="y">SE CONCLUT.<span id="s3-underline"></span></span></div>
+    </div>
+  </section>
+
+  <!-- ===================== SCÈNE 4 — PREUVE DE SÉRIEUX (0:18–0:24) ===================== -->
+  <section class="scene" id="s4">
+    <div id="s4-words" class="display">
+      <div class="wipe"><span class="txt fit">STRUCTURÉ.</span><span class="bar"></span></div>
+      <div class="wipe"><span class="txt fit">RÉACTIF.</span><span class="bar"></span></div>
+      <div class="wipe"><span class="txt fit y">SUIVI SÉRIEUX.</span><span class="bar"></span></div>
+    </div>
+    <div id="crm-cam">
+      <div id="crm">
+        <div class="crm-head">
+          <div class="crm-logo" data-mono>A</div>
+          <div class="crm-title">Suivi des contacts</div>
+          <div class="crm-date">Aujourd'hui</div>
+        </div>
+        <div class="crm-tabs"><span class="on">Tous</span><span>Vendeurs</span><span>Garages</span><span>Dépôt-vente</span><span>Loueurs</span><i id="crm-tab-bar"></i></div>
+        <div class="crm-list-clip"><div id="crm-list"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCÈNE 5 — APPEL À L'ACTION (0:24–0:30) ===================== -->
+  <section class="scene" id="s5">
+    <div id="s5-q" class="center display">
+      <span class="line">UN APPORTEUR</span>
+      <span class="line">SÉRIEUX ?</span>
+    </div>
+    <div id="s5-cta" class="center display">
+      <div class="wipe"><span class="txt fit y">CONTACTEZ-MOI.</span><span class="bar"></span></div>
+    </div>
+    <div id="s5-cta-line"></div>
+    <div id="mono-wrap">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div id="mono"><div id="mono-letter" data-mono>A</div></div>
+    </div>
+    <div id="s5-name" class="center"></div>
+    <div id="s5-tag" class="center"></div>
+    <div id="s5-div"></div>
+    <div id="s5-contacts" class="center"></div>
+  </section>
+
+  <!-- overlays -->
+  <div class="layer" id="vignette"></div>
+  <svg class="layer" id="grain" width="1320" height="2160" viewBox="0 0 1320 2160">
+    <filter id="noise" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+    <rect width="1320" height="2160" filter="url(#noise)"/>
+  </svg>
+  <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+</div>
+
+<div id="controls"><button id="play">❚❚</button><input id="scrub" type="range" min="0" max="30" step="0.0333" value="0"><output id="tc">0.00 / 30.00</output></div>
+
+<script src="../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="config.js"></script>
+<script>
+(() => {
+  const COMP_ID = "apporteur-affaires-auto";
+  const W = 1080, H = 1920, DURATION = 30;
+  const YELLOW = "#FFC927";
+  const NS = "http://www.w3.org/2000/svg";
+  const params = new URLSearchParams(location.search);
+  const RENDER = params.has("render");
+  if (RENDER) document.body.classList.add("render");
+
+  const CFG = Object.assign({
+    monogramme: "A", nom: "PRÉNOM NOM", tagline: "Apporteur d'affaires automobile",
+    region: "", telephone: "", email: "", linkedin: "",
+  }, window.VIDEO_CONFIG || {});
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const svgEl = (tag, attrs = {}, parent) => {
+    const el = document.createElementNS(NS, tag);
+    for (const k in attrs) el.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(el);
+    return el;
+  };
+  // Deterministic PRNG (mulberry32) — no Math.random so every render is identical.
+  const rng = (seed) => () => {
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  // Minimal line icons, drawn in a 64-unit box centred on 0,0.
+  const ICONS = {
+    person: '<circle cx="0" cy="-9" r="10"/><path d="M-19 21c0-11 8.5-17 19-17s19 6 19 17"/>',
+    garage: '<path d="M-22 21V-3L0-19L22-3V21"/><path d="M-12 21V5h24v16M-12 11h24M-12 16h24"/>',
+    tag: '<g transform="rotate(-45)"><path d="M-23 0L-11-13H22V13H-11Z"/><circle cx="-8" cy="0" r="3.5"/></g>',
+    key: '<circle cx="-9" cy="-9" r="9"/><path d="M-2.6-2.6L19 19M11 11l4-4M16 16l4-4"/>',
+  };
+  const CONTACT_ICONS = {
+    telephone: '<path d="M5 3h3.5l2 5-2.5 1.6a11 11 0 0 0 6.4 6.4L16 13.5l5 2V19a2 2 0 0 1-2 2A16.5 16.5 0 0 1 3 5a2 2 0 0 1 2-2z"/>',
+    email: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/>',
+    linkedin: '<rect x="3" y="3" width="18" height="18" rx="3.5"/><path d="M8 10.5V17M8 7.2v.1M12 17v-6.5M12 13.5a2.5 2.5 0 0 1 5 0V17"/>',
+  };
+
+  /* ------------------------------------------------------------------ */
+  /* Build dynamic DOM                                                   */
+  /* ------------------------------------------------------------------ */
+
+  // Monogram + closing card from config
+  $$("[data-mono]").forEach((el) => (el.textContent = CFG.monogramme));
+  $("#hub-letter").textContent = CFG.monogramme;
+  $("#s5-name").textContent = CFG.nom;
+  $("#s5-tag").textContent = [CFG.tagline, CFG.region].filter(Boolean).join(" · ");
+  const contactsEl = $("#s5-contacts");
+  ["telephone", "email", "linkedin"].forEach((k) => {
+    if (!CFG[k]) return;
+    const row = document.createElement("div");
+    row.className = "contact";
+    row.innerHTML = `<svg viewBox="0 0 24 24">${CONTACT_ICONS[k]}</svg><span></span>`;
+    row.querySelector("span").textContent = CFG[k];
+    contactsEl.appendChild(row);
+  });
+
+  // Scene 1 — converging rays
+  const CX = 540, CY = 900;
+  const raysG = $("#rays");
+  const rand = rng(20261006);
+  const RAY_COUNT = 18;
+  const rays = [];
+  for (let i = 0; i < RAY_COUNT; i++) {
+    const a = (i / RAY_COUNT) * Math.PI * 2 + (rand() - 0.5) * 0.22;
+    const rOut = 980 + rand() * 220;
+    const rIn = 120 + rand() * 170;
+    const line = svgEl("line", {
+      x1: CX + Math.cos(a) * rOut, y1: CY + Math.sin(a) * rOut,
+      x2: CX + Math.cos(a) * rIn, y2: CY + Math.sin(a) * rIn,
+      stroke: YELLOW, "stroke-width": (1.6 + rand() * 2.4).toFixed(2), "stroke-linecap": "round",
+      opacity: (0.45 + rand() * 0.55).toFixed(2),
+    }, raysG);
+    rays.push(line);
+  }
+
+  // Scene 2 — network diagram
+  const HUB = { x: 540, y: 1090, r: 78 };
+  const NODE_R = 62;
+  const NODES = [
+    { x: 240, y: 880,  icon: "person", label: "PARTICULIERS" },
+    { x: 840, y: 880,  icon: "garage", label: "GARAGES" },
+    { x: 840, y: 1300, icon: "tag",    label: "AGENCES<br>DÉPÔT-VENTE" },
+    { x: 240, y: 1300, icon: "key",    label: "LOUEURS" },
+  ];
+  const spokesG = $("#spokes"), nodesG = $("#nodes"), packetsG = $("#packets"), chipsEl = $("#chips");
+  NODES.forEach((n) => {
+    const dx = n.x - HUB.x, dy = n.y - HUB.y, d = Math.hypot(dx, dy), ux = dx / d, uy = dy / d;
+    n.sx = HUB.x + ux * (HUB.r + 10); n.sy = HUB.y + uy * (HUB.r + 10);
+    n.ex = n.x - ux * (NODE_R + 10);  n.ey = n.y - uy * (NODE_R + 10);
+    n.spoke = svgEl("line", { x1: n.sx, y1: n.sy, x2: n.ex, y2: n.ey, stroke: YELLOW, "stroke-width": 3.5, "stroke-linecap": "round" }, spokesG);
+    n.packet = svgEl("circle", { cx: n.sx, cy: n.sy, r: 7, fill: YELLOW, opacity: 0 }, packetsG);
+    const g = svgEl("g", { class: "node" }, nodesG);
+    n.ring = svgEl("circle", { cx: n.x, cy: n.y, r: NODE_R, fill: "none", stroke: YELLOW, "stroke-width": 2.5, opacity: 0 }, g);
+    n.disc = svgEl("circle", { cx: n.x, cy: n.y, r: NODE_R, fill: "#151515", stroke: YELLOW, "stroke-width": 3 }, g);
+    const ig = svgEl("g", { transform: `translate(${n.x} ${n.y})`, fill: "none", stroke: "#F4F1EA", "stroke-width": 3.4, "stroke-linecap": "round", "stroke-linejoin": "round" }, g);
+    ig.innerHTML = ICONS[n.icon];
+    n.g = g;
+    n.iconParts = $$("path, circle", ig);
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.innerHTML = n.label;
+    chip.style.left = n.x + "px";
+    chip.style.top = n.y + NODE_R + 20 + "px";
+    chipsEl.appendChild(chip);
+    n.chip = chip;
+  });
+
+  // Scene 4 — CRM cards
+  const PILL = {
+    nouveau: "NOUVEAU", contacte: "CONTACTÉ", relance: "RELANCE",
+    encours: "EN COURS", conclu: "✓ CONCLU",
+  };
+  const CRM = [
+    { icon: "person", t: "Vendeur particulier",  m: "Peugeot 3008 · 2019 · 78 000 km", s: ["nouveau", "contacte", "encours"] },
+    { icon: "garage", t: "Garage partenaire",    m: "Recherche SUV · budget 20 k€",   s: ["encours", "conclu"] },
+    { icon: "tag",    t: "Agence dépôt-vente",   m: "Golf 8 GTD · mise en dépôt",      s: ["contacte", "encours"] },
+    { icon: "key",    t: "Loueur",               m: "Utilitaire 12 m³ · 3 mois",       s: ["nouveau"] },
+    { icon: "person", t: "Acheteur particulier", m: "Citadine · budget 9 000 €",       s: ["relance", "encours"] },
+    { icon: "garage", t: "Garage",               m: "Reprise véhicule · Colmar",       s: ["encours", "conclu"] },
+    { icon: "key",    t: "Loueur",               m: "Flotte · 5 véhicules",            s: ["nouveau", "contacte"] },
+  ];
+  const listEl = $("#crm-list");
+  CRM.forEach((c) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML =
+      `<div class="avatar"><svg viewBox="-32 -32 64 64" fill="none" stroke="#FFC927" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[c.icon]}</svg></div>` +
+      `<div class="who"><div class="t"></div><div class="m"></div></div>` +
+      `<div class="pills">${c.s.map((s) => `<div class="pill ${s}">${PILL[s]}</div>`).join("")}</div>` +
+      `<div class="flash"></div>`;
+    card.querySelector(".t").textContent = c.t;
+    card.querySelector(".m").textContent = c.m;
+    listEl.appendChild(card);
+    c.el = card;
+    c.pills = $$(".pill", card);
+    c.flash = $(".flash", card);
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Helpers                                                             */
+  /* ------------------------------------------------------------------ */
+
+  // Shrink font-size until every element of the group fits `max` px (same size for the whole group).
+  function fitGroup(els, max) {
+    let size = parseFloat(getComputedStyle(els[0]).fontSize);
+    const widest = () => Math.max(...els.map((e) => e.getBoundingClientRect().width));
+    while (widest() > max && size > 12) {
+      size -= 1;
+      els.forEach((e) => (e.style.fontSize = size + "px"));
+    }
+  }
+  // Wrap every character of an element (recursively) in a span.ch, keeping nested colour spans.
+  function splitChars(root) {
+    const out = [];
+    const walk = (node) => {
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          for (const c of n.textContent) {
+            if (c === "\n") continue;
+            const s = document.createElement("span");
+            s.className = "ch";
+            s.textContent = c === " " ? " " : c;
+            frag.appendChild(s);
+            out.push(s);
+          }
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.id !== "s3-underline") walk(n);
+      });
+    };
+    walk(root);
+    return out;
+  }
+  // Hide a stroke so it can be "drawn" by tweening strokeDashoffset to 0. The gap is longer than
+  // the path so round line caps don't leave a dot at either end while hidden.
+  function prepDraw(el) {
+    const L = el.getTotalLength();
+    el._L = L;
+    gsap.set(el, { strokeDasharray: `${L} ${L + 20}`, strokeDashoffset: L + 10 });
+    return L;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Timeline                                                            */
+  /* ------------------------------------------------------------------ */
+  function build() {
+    // Fit display lines to the 900 px safe width (90 px margins).
+    fitGroup($$("#hook .hook-line"), 900);
+    fitGroup($$("#s2-title .in"), 900);
+    fitGroup($$("#s3-title .kw"), 900);
+    fitGroup([$("#s3-sub .a")], 900);
+    fitGroup([$("#s3-sub .b")], 900);
+    fitGroup($$("#s4-words .txt"), 900);
+    fitGroup([$("#s5-cta .txt")], 900);
+    fitGroup([$("#s5-name")].map((e) => { e.style.width = "max-content"; e.style.margin = "0 auto"; return e; }), 900);
+
+    const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
+
+    /* ---------- ambient: parallax grid + travelling glow ---------- */
+    tl.to("#grid", { y: -520, duration: DURATION, ease: "none" }, 0);
+    tl.to("#grid", { x: -60, duration: DURATION, ease: "sine.inOut" }, 0);
+    gsap.set("#glow", { x: 0, y: 0, scale: 0.8, opacity: 0 });
+    tl.to("#glow", { opacity: 1, scale: 1, duration: 1.4, ease: "power2.out" }, 0.3);
+    tl.to("#glow", { x: 0, y: 190, duration: 1.6, ease: "power2.inOut" }, 4.0);    // → réseau
+    tl.to("#glow", { y: 0, scale: 0.75, duration: 1.4, ease: "power2.inOut" }, 12.0); // → bouclier
+    tl.to("#glow", { y: 280, scale: 1.05, duration: 1.4, ease: "power2.inOut" }, 18.0); // → CRM
+    tl.to("#glow", { y: 0, scale: 0.7, duration: 1.4, ease: "power2.inOut" }, 24.0);  // → monogramme
+    tl.to("#glow", { scale: 0.82, duration: 1.2, ease: "sine.inOut", repeat: 3, yoyo: true }, 25.4);
+
+    /* ================= SCÈNE 1 — ACCROCHE ================= */
+    gsap.set("#s1", { autoAlpha: 1 }); // visible on frame 0 (a tl.set at exactly t=0 never fires on seek(0))
+    rays.forEach(prepDraw);
+    gsap.set("#rays", { opacity: 1 });
+    // rays are already streaking in from the edges on frame 0, then converge on the centre
+    rays.forEach((r, i) => tl.fromTo(r, { strokeDashoffset: r._L * 0.6 }, { strokeDashoffset: 0, duration: 0.7, ease: "power2.out" }, (i % 6) * 0.012));
+    tl.to("#rays", { rotation: 9, svgOrigin: `${CX} ${CY}`, duration: 4.2, ease: "none" }, 0);
+    gsap.set("#flash-dot", { scale: 0, transformOrigin: "50% 50%" });
+    gsap.set("#flash-ring", { scale: 0.3, opacity: 0, transformOrigin: "50% 50%" });
+    tl.to("#flash-dot", { scale: 1, duration: 0.3, ease: "back.out(3)" }, 0.68);
+    tl.fromTo("#flash-ring", { scale: 0.3, opacity: 0.9 }, { scale: 7, opacity: 0, duration: 1.1, ease: "power2.out", immediateRender: false }, 0.7);
+    tl.to("#flash-dot", { scale: 0, duration: 0.5, ease: "power2.in" }, 1.25);
+    tl.to("#rays", { opacity: 0.2, duration: 1.2, ease: "power2.out" }, 0.9);
+
+    const hookLines = $$("#hook .hook-line").map(splitChars);
+    hookLines.flat().forEach((c) => gsap.set(c, { opacity: 0, yPercent: 70, rotationX: -85, transformOrigin: "50% 100%" }));
+    [0.3, 1.08, 1.88].forEach((t, i) =>
+      tl.to(hookLines[i], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.032, ease: "power3.out" }, t));
+    // soft pulse on each verb as it lands
+    $$("#hook .y").forEach((el, i) => {
+      gsap.set(el, { display: "inline-block", transformOrigin: "0% 70%" });
+      tl.to(el, { scale: 1.05, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1 }, [0.62, 1.34, 2.3][i]);
+    });
+    gsap.set("#hook-sub", { opacity: 0, y: 24 });
+    gsap.set("#hook-sub .dash", { scaleX: 0 });
+    tl.to("#hook-sub", { opacity: 1, y: 0, duration: 0.6 }, 2.55);
+    tl.to("#hook-sub .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 2.6);
+    // exit
+    tl.to(hookLines.flat(), { opacity: 0, yPercent: -90, duration: 0.28, stagger: 0.003, ease: "power2.in" }, 3.6);
+    tl.to("#hook-sub", { opacity: 0, y: -30, duration: 0.28, ease: "power2.in" }, 3.72);
+    tl.to(rays, { strokeDashoffset: (i, el) => -(el._L + 10), duration: 0.45, ease: "power2.in", stagger: 0.006 }, 3.5);
+    tl.set("#s1", { autoAlpha: 0 }, 4.15);
+
+    /* ================= SCÈNE 2 — L'OFFRE ================= */
+    tl.set("#s2", { autoAlpha: 1 }, 4.0);
+    gsap.set("#s2-eb, #s2-rel", { opacity: 0, x: -24 });
+    gsap.set("#s2-eb .dash, #s2-rel .dash", { scaleX: 0 });
+    tl.to("#s2-eb", { opacity: 1, x: 0, duration: 0.5 }, 4.15);
+    tl.to("#s2-eb .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 4.2);
+    gsap.set("#s2-title .in", { yPercent: 110 });
+    tl.to("#s2-title .in", { yPercent: 0, duration: 0.8, stagger: 0.13, ease: "expo.out" }, 4.3);
+
+    gsap.set("#net", { scale: 0.95, filter: "blur(0px)" });
+    tl.to("#net", { scale: 1.02, duration: 8, ease: "none" }, 4.0);  // slow push-in (parallax vs. grid)
+    gsap.set("#hub", { scale: 0, svgOrigin: `${HUB.x} ${HUB.y}` });
+    tl.to("#hub", { scale: 1, duration: 0.7, ease: "back.out(1.9)" }, 4.95);
+    $$("#hub .hub-ring").forEach((r, i) => {
+      gsap.set(r, { svgOrigin: `${HUB.x} ${HUB.y}` });
+      tl.fromTo(r, { scale: 1, opacity: 0.7 }, { scale: 1.9, opacity: 0, duration: 1.6, ease: "power2.out", repeat: 3, repeatDelay: 0, immediateRender: false }, 5.3 + i * 0.8);
+    });
+    prepDraw($("#orbit"));
+    gsap.set("#orbit", { rotation: -90, svgOrigin: `${HUB.x} ${HUB.y}` });
+    tl.to("#orbit", { strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut" }, 5.35);
+
+    tl.to("#s2-rel", { opacity: 1, x: 0, duration: 0.5 }, 6.45);
+    tl.to("#s2-rel .dash", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 6.5);
+
+    const NODE_T = [7.6, 8.7, 9.3, 10.35]; // synced to "vendeurs particuliers / garages / agences de dépôt-vente / loueurs"
+    NODES.forEach((n, i) => {
+      const t = NODE_T[i];
+      prepDraw(n.spoke);
+      n.iconParts.forEach(prepDraw);
+      gsap.set(n.g, { scale: 0, opacity: 0, svgOrigin: `${n.x} ${n.y}` });
+      gsap.set(n.ring, { svgOrigin: `${n.x} ${n.y}` });
+      gsap.set(n.chip, { xPercent: -50, opacity: 0, y: 18 });
+      tl.to(n.spoke, { strokeDashoffset: 0, duration: 0.42, ease: "power2.out" }, t - 0.22);
+      tl.to(n.g, { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(2.2)" }, t);
+      tl.to(n.iconParts, { strokeDashoffset: 0, duration: 0.6, stagger: 0.06, ease: "power2.out" }, t + 0.08);
+      tl.fromTo(n.ring, { scale: 1, opacity: 0.85 }, { scale: 1.75, opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t + 0.05);
+      tl.to(n.chip, { opacity: 1, y: 0, duration: 0.45 }, t + 0.12);
+      // data packets travelling hub → node until the scene ends
+      const start = t + 0.35, end = 11.4, period = 1.05;
+      const reps = Math.max(0, Math.floor((end - start) / period) - 1);
+      tl.to(n.packet, {
+        keyframes: [
+          { opacity: 1, duration: 0.08 },
+          { attr: { cx: n.ex, cy: n.ey }, duration: 0.75, ease: "power1.inOut" },
+          { opacity: 0, duration: 0.12 },
+          { duration: 0.1 },
+        ],
+        repeat: reps,
+      }, start);
+      // soft breathing on each node once connected
+      tl.to(n.disc, { attr: { "stroke-width": 5 }, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 1 }, 10.8 + i * 0.12);
+    });
+
+    // exit: zoom through the network
+    tl.to("#s2-eb, #s2-rel, #s2-title", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in", stagger: 0.04 }, 11.4);
+    tl.to("#net", { scale: 1.28, opacity: 0, filter: "blur(14px)", duration: 0.55, ease: "power2.in" }, 11.45);
+    tl.set("#s2", { autoAlpha: 0 }, 12.05);
+
+    /* ================= SCÈNE 3 — SANS RISQUE ================= */
+    tl.set("#s3", { autoAlpha: 1 }, 11.85);
+    gsap.set("#s3-icon", { scale: 0.82, opacity: 0, svgOrigin: "540 900", filter: "blur(0px)" });
+    tl.to("#s3-icon", { scale: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 11.88);
+    prepDraw($("#shield-path"));
+    prepDraw($("#shield-check"));
+    tl.to("#shield-path", { strokeDashoffset: 0, duration: 1.1, ease: "power3.out" }, 11.88);
+    tl.to("#shield-fill", { opacity: 0.09, duration: 0.6 }, 12.85);
+    tl.to("#shield-check", { strokeDashoffset: 0, duration: 0.42, ease: "power2.out" }, 12.95);
+    $$("#s3 .s3-ring").forEach((r, i) => {
+      gsap.set(r, { svgOrigin: "540 900" });
+      tl.fromTo(r, { scale: 0.9, opacity: 0.6 }, { scale: 1.55, opacity: 0, duration: 1.5, ease: "power2.out", repeat: 2, immediateRender: false }, 13.1 + i * 0.75);
+    });
+
+    // keyword cross-fades: blur + tracking settle
+    $$("#s3-title .kw").forEach((kw, i) => {
+      gsap.set(kw, { opacity: 0, filter: "blur(18px)", letterSpacing: "0.14em", x: -10 });
+      tl.to(kw, { opacity: 1, filter: "blur(0px)", letterSpacing: "-0.025em", x: 0, duration: 0.75, ease: "expo.out" }, [12.38, 13.12][i]);
+    });
+
+    // shield flips into the € coin
+    gsap.set("#shield", { svgOrigin: "540 900" });
+    gsap.set("#coin", { scaleX: 0, svgOrigin: "540 900" });
+    prepDraw($("#coin-ring"));
+    gsap.set("#coin-inner", { opacity: 0 });
+    gsap.set("#euro", { scale: 0.4, opacity: 0, svgOrigin: "540 900" });
+    tl.to("#shield", { scaleX: 0, duration: 0.24, ease: "power2.in" }, 14.1);
+    tl.to("#coin", { scaleX: 1, duration: 0.3, ease: "power2.out" }, 14.34);
+    tl.to("#coin-ring", { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, 14.3);
+    tl.to("#euro", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(2)" }, 14.42);
+    tl.to("#coin-inner", { opacity: 1, rotation: 90, svgOrigin: "540 900", duration: 3.2, ease: "none" }, 14.6);
+    tl.to("#coin", { y: -10, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: 2 }, 15.0);
+    tl.to("#coin-fill", { opacity: 0.16, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 1 }, 16.35);
+
+    const subA = $("#s3-sub .a"), subB = $("#s3-sub .b");
+    gsap.set([subA, subB], { opacity: 0, y: 26 });
+    gsap.set("#s3-underline", { scaleX: 0 });
+    tl.to(subA, { opacity: 1, y: 0, duration: 0.6 }, 14.32);
+    tl.to(subB, { opacity: 1, y: 0, duration: 0.6 }, 15.42);
+    tl.to("#s3-underline", { scaleX: 1, duration: 0.55, ease: "expo.out" }, 16.3);
+
+    // exit
+    tl.to("#s3-title, #s3-sub", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in", stagger: 0.05 }, 17.55);
+    tl.to("#s3-icon", { scale: 1.35, opacity: 0, filter: "blur(12px)", duration: 0.55, ease: "power2.in" }, 17.55);
+    tl.set("#s3", { autoAlpha: 0 }, 18.15);
+
+    /* ================= SCÈNE 4 — CRM ================= */
+    tl.set("#s4", { autoAlpha: 1 }, 18.0);
+    // fast stylised zoom onto the CRM
+    gsap.set("#crm", { scale: 2.3, rotationX: 32, rotationZ: -15, rotationY: 8, y: 380, opacity: 0, filter: "blur(18px)" });
+    tl.to("#crm", { scale: 1, rotationX: 15, rotationZ: -5, rotationY: 4, y: 0, opacity: 1, filter: "blur(0px)", duration: 0.95, ease: "expo.out" }, 18.02);
+    tl.to("#crm", { rotationX: 9, rotationZ: -2.5, rotationY: 1, scale: 1.035, duration: 4.6, ease: "sine.inOut" }, 18.97);
+
+    // word wipes
+    $$("#s4-words .wipe").forEach((w, i) => {
+      const t = [18.3, 19.15, 19.95][i];
+      const txt = $(".txt", w), bar = $(".bar", w);
+      gsap.set(txt, { opacity: 0 });
+      gsap.set(bar, { scaleX: 0, transformOrigin: "0% 50%" });
+      tl.to(bar, { scaleX: 1, duration: 0.24, ease: "power3.in" }, t);
+      tl.set(txt, { opacity: 1 }, t + 0.24);
+      tl.set(bar, { transformOrigin: "100% 50%" }, t + 0.24);
+      tl.to(bar, { scaleX: 0, duration: 0.32, ease: "power3.out" }, t + 0.26);
+    });
+
+    // status changes (card index, target pill index, time)
+    const CHANGES = [
+      [0, 1, 19.0], [1, 1, 19.6], [2, 1, 20.2], [0, 2, 20.8],
+      [4, 1, 21.75], [5, 1, 22.35], [6, 1, 22.95],
+    ];
+    CRM.forEach((c) => c.pills.forEach((p, i) => gsap.set(p, { opacity: i === 0 ? 1 : 0, y: 0, scale: 1, transformOrigin: "100% 50%" })));
+    CHANGES.forEach(([ci, pi, t]) => {
+      const c = CRM[ci];
+      const prev = c.pills[pi - 1], next = c.pills[pi];
+      tl.to(prev, { opacity: 0, y: -18, duration: 0.22, ease: "power2.in" }, t);
+      tl.fromTo(next, { opacity: 0, y: 18, scale: 1 }, { opacity: 1, y: 0, duration: 0.38, ease: "back.out(2.4)", immediateRender: false }, t + 0.16);
+      tl.to(next, { scale: 1.1, duration: 0.14, ease: "power2.out", yoyo: true, repeat: 1 }, t + 0.42);
+      tl.fromTo(c.flash, { opacity: 0.95 }, { opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t + 0.12);
+    });
+    // list scroll + tab underline micro-interaction
+    gsap.set("#crm-list", { y: 0 });
+    tl.to("#crm-list", { y: -288, duration: 1.5, ease: "power2.inOut" }, 21.05);
+    const tabs = $$(".crm-tabs span");
+    const tabX = (i) => tabs[i].offsetLeft - 38;
+    gsap.set("#crm-tab-bar", { x: 0, width: tabs[0].offsetWidth });
+    tl.to("#crm-tab-bar", { x: tabX(2), width: tabs[2].offsetWidth, duration: 0.5, ease: "power3.inOut" }, 19.55);
+    tl.to("#crm-tab-bar", { x: tabX(0), width: tabs[0].offsetWidth, duration: 0.5, ease: "power3.inOut" }, 20.65);
+    tl.to("#crm-tab-bar", { x: tabX(4), width: tabs[4].offsetWidth, duration: 0.5, ease: "power3.inOut" }, 22.8);
+
+    // exit
+    tl.to("#s4-words", { opacity: 0, y: -50, duration: 0.45, ease: "power2.in" }, 23.55);
+    tl.to("#crm", { scale: 1.3, y: -160, opacity: 0, filter: "blur(12px)", duration: 0.55, ease: "power2.in" }, 23.55);
+    tl.set("#s4", { autoAlpha: 0 }, 24.15);
+
+    /* ================= SCÈNE 5 — APPEL À L'ACTION ================= */
+    tl.set("#s5", { autoAlpha: 1 }, 24.0);
+    gsap.set("#mono", { scale: 0, rotation: -40 });
+    gsap.set("#mono-letter", { yPercent: 105 });
+    tl.to("#mono", { scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.7)" }, 24.12);
+    tl.to("#mono-letter", { yPercent: 0, duration: 0.65, ease: "expo.out" }, 24.42);
+    $$("#mono-wrap .ring").forEach((r, i) => {
+      gsap.set(r, { scale: 1, opacity: 0 });
+      tl.fromTo(r, { scale: 1, opacity: 0.75 }, { scale: 2.0, opacity: 0, duration: 1.8, ease: "power2.out", repeat: 2, immediateRender: false }, 24.6 + i * 0.6);
+    });
+    tl.to("#mono", { scale: 1.045, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 7 }, 25.25);
+
+    const qLines = $$("#s5-q .line").map(splitChars);
+    qLines.flat().forEach((c) => gsap.set(c, { opacity: 0, yPercent: 70, rotationX: -85, transformOrigin: "50% 100%" }));
+    tl.to(qLines[0], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.03 }, 24.35);
+    tl.to(qLines[1], { opacity: 1, yPercent: 0, rotationX: 0, duration: 0.55, stagger: 0.03 }, 24.95);
+
+    const cta = $("#s5-cta .wipe"), ctaTxt = $(".txt", cta), ctaBar = $(".bar", cta);
+    gsap.set(ctaTxt, { opacity: 0 });
+    gsap.set(ctaBar, { scaleX: 0, transformOrigin: "0% 50%" });
+    tl.to(ctaBar, { scaleX: 1, duration: 0.26, ease: "power3.in" }, 26.0);
+    tl.set(ctaTxt, { opacity: 1 }, 26.26);
+    tl.set(ctaBar, { transformOrigin: "100% 50%" }, 26.26);
+    tl.to(ctaBar, { scaleX: 0, duration: 0.34, ease: "power3.out" }, 26.28);
+    gsap.set("#s5-cta-line", { scaleX: 0 });
+    tl.to("#s5-cta-line", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.5);
+
+    const info = ["#s5-name", "#s5-tag", ...$$("#s5-contacts .contact")];
+    gsap.set(info, { opacity: 0, y: 26 });
+    gsap.set("#s5-div", { scaleX: 0 });
+    tl.to(info.slice(0, 2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.55);
+    tl.to("#s5-div", { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.8);
+    tl.to(info.slice(2), { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 26.9);
+
+    tl.set({}, {}, DURATION); // pad to exactly 30 s
+    return tl;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Film grain — deterministic, steps at 12 fps                         */
+  /* ------------------------------------------------------------------ */
+  const grain = $("#grain");
+  function grainAt(t) {
+    const f = Math.floor(t * 12);
+    const r = rng(f * 7919 + 13);
+    grain.style.transform = `translate(${Math.round(r() * 100 - 50)}px, ${Math.round(r() * 100 - 50)}px)`;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Boot                                                                */
+  /* ------------------------------------------------------------------ */
+  function fitViewport() {
+    const stage = $("#stage");
+    if (RENDER) { stage.style.transform = "none"; return; }
+    const s = Math.min(innerWidth / W, (innerHeight - 64) / H);
+    stage.style.transform = `translate(${(innerWidth - W * s) / 2}px, ${(innerHeight - 64 - H * s) / 2}px) scale(${s})`;
+  }
+
+  document.fonts.ready.then(() => {
+    const tl = build();
+    window.__timelines = window.__timelines || {};
+    window.__timelines[COMP_ID] = tl;
+    window.__seek = (t) => { tl.seek(t, false); grainAt(t); };
+    window.__duration = DURATION;
+    fitViewport();
+    addEventListener("resize", fitViewport);
+
+    if (RENDER) {
+      window.__seek(0);
+      window.__ready = true;
+      return;
+    }
+
+    // Preview: real-time playback, loop, scrubber, space = play/pause, arrows = ±1 s
+    const scrub = $("#scrub"), tc = $("#tc"), btn = $("#play");
+    const at = parseFloat(params.get("t"));
+    const sync = () => {
+      grainAt(tl.time());
+      scrub.value = tl.time();
+      tc.textContent = `${tl.time().toFixed(2)} / ${DURATION.toFixed(2)}`;
+    };
+    const seek = (t) => { tl.seek(Math.max(0, Math.min(DURATION, t))); sync(); };
+    tl.eventCallback("onUpdate", sync);
+    tl.eventCallback("onComplete", () => gsap.delayedCall(1.2, () => tl.restart()));
+    const setPlaying = (p) => { p ? tl.play() : tl.pause(); btn.textContent = p ? "❚❚" : "▶"; };
+    btn.onclick = () => setPlaying(tl.paused());
+    scrub.oninput = () => { setPlaying(false); seek(parseFloat(scrub.value)); };
+    addEventListener("keydown", (e) => {
+      if (e.code === "Space") { e.preventDefault(); setPlaying(tl.paused()); }
+      if (e.code === "ArrowRight") seek(tl.time() + 1);
+      if (e.code === "ArrowLeft") seek(tl.time() - 1);
+    });
+    if (!isNaN(at)) { seek(at); setPlaying(false); } else setPlaying(true);
+    window.__ready = true;
+  });
+})();
+</script>
+</body>
+</html>
