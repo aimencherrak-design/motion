@@ -5,10 +5,11 @@
   "description": "Méli-Mélo — Épisode 1 : « Le Ballon Perdu ». Court métrage d'animation 3D muet (≈3 min) généré en code.",
   "type": "module",
   "scripts": {
-    "build": "esbuild src/main.js --bundle --format=iife --minify --outfile=dist/episode.js",
+    "build": "esbuild src/main.js --bundle --format=iife --minify --outfile=dist/episode.js && node tools/build-page.mjs",
     "audio": "node audio/render-audio.js build",
     "render": "node tools/render-video.mjs --workers 4 --out build/le-ballon-perdu.mp4",
-    "preview": "http-server -c-1 -p 8080 ."
+    "preview": "http-server -c-1 -p 8080 .",
+    "page": "node tools/build-page.mjs"
   },
   "license": "MIT",
   "devDependencies": {
