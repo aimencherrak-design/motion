@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Ballon Perdu</title>
+<style>
+  :root { --bg: #fdf6ea; --ink: #2d2416; --accent: #e62f2b; --panel: #ffffff; --muted: #8a7a63; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #17130d; --ink: #f5ecdc; --panel: #241d14; --muted: #b5a48a; } }
+  :root[data-theme="dark"] { --bg: #17130d; --ink: #f5ecdc; --panel: #241d14; --muted: #b5a48a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1 { font-size: clamp(22px, 4vw, 34px); margin: 0 0 4px; }
+  p.sub { margin: 0 0 18px; color: var(--muted); }
+  .screen { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+  .screen canvas { width: 100%; height: 100%; display: block; }
+  .start { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(circle at 50% 45%, rgba(0,0,0,.05), rgba(0,0,0,.45)); border: 0; cursor: pointer; }
+  .start span { width: 92px; height: 92px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+  .start span::after { content: ""; border-left: 30px solid #fff; border-top: 18px solid transparent; border-bottom: 18px solid transparent; margin-left: 8px; }
+  .bar { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+  .bar button { width: 42px; height: 42px; border-radius: 50%; border: 0; background: var(--panel); color: var(--ink); cursor: pointer; font-size: 18px; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+  .bar input[type=range] { flex: 1; accent-color: var(--accent); }
+  .bar .time { font-variant-numeric: tabular-nums; color: var(--muted); min-width: 92px; text-align: right; font-size: 14px; }
+  .note { margin-top: 18px; font-size: 14px; color: var(--muted); }
+  .note a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Méli-Mélo — Épisode 1 : « Le Ballon Perdu »</h1>
+  <p class="sub">Court métrage d'animation 3D muet (≈ 3 min). L'image est calculée en direct dans votre navigateur ; la bande-son est pré-mixée.</p>
+  <div class="screen" id="screen">
+    <canvas id="c" width="1280" height="720"></canvas>
+    <button class="start" id="start" aria-label="Lire l'épisode"><span></span></button>
+  </div>
+  <div class="bar">
+    <button id="play" aria-label="Lecture / pause">▶</button>
+    <input id="seek" type="range" min="0" max="187" step="0.01" value="0" aria-label="Position">
+    <span class="time" id="time">0:00 / 3:07</span>
+    <button id="full" aria-label="Plein écran">⤢</button>
+  </div>
+  <p class="note">La version vidéo (MP4 1080p) se trouve dans le dossier <code>media/</code> du dépôt.</p>
+</main>
+<audio id="audio" src="media/bande-son.mp3" preload="auto"></audio>
+<script src="dist/episode.js"></script>
+<script>
+  const canvas = document.getElementById('c');
+  const audio = document.getElementById('audio');
+  const seek = document.getElementById('seek');
+  const time = document.getElementById('time');
+  const playBtn = document.getElementById('play');
+  const start = document.getElementById('start');
+  const screen = document.getElementById('screen');
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  // résolution adaptée à l'écran (plafonnée pour rester fluide)
+  const size = () => {
+    const r = Math.min(window.devicePixelRatio || 1, 1.5);
+    const w = Math.min(1920, Math.round(screen.clientWidth * r));
+    return [w, Math.round((w * 9) / 16)];
+  };
+  let [W, H] = size();
+  canvas.width = W; canvas.height = H;
+  const ep = window.MeliMelo.create(canvas, W, H);
+  seek.max = ep.duration;
+  let t = 0, last = performance.now(), playing = false;
+  ep.renderAt(0.9);
+  const tick = (now) => {
+    if (playing) {
+      // l'audio sert d'horloge ; à défaut (son bloqué), on avance avec l'horloge du navigateur
+      t = !audio.paused && audio.readyState >= 2 ? audio.currentTime : t + (now - last) / 1000;
+      if (t >= ep.duration) { t = ep.duration; setPlaying(false); }
+      seek.value = t;
+      time.textContent = `${fmt(t)} / ${fmt(ep.duration)}`;
+      ep.renderAt(t);
+    }
+    last = now;
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+  function setPlaying(p) {
+    playing = p;
+    playBtn.textContent = p ? '❚❚' : '▶';
+    start.style.display = 'none';
+    if (p) { if (t >= ep.duration - 0.05) t = 0; audio.currentTime = t; audio.play().catch(() => {}); }
+    else audio.pause();
+  }
+  start.onclick = () => setPlaying(true);
+  playBtn.onclick = () => setPlaying(!playing);
+  seek.oninput = () => { t = +seek.value; audio.currentTime = t; ep.renderAt(t); time.textContent = `${fmt(t)} / ${fmt(ep.duration)}`; };
+  document.getElementById('full').onclick = () => (document.fullscreenElement ? document.exitFullscreen() : screen.requestFullscreen?.());
+  window.addEventListener('resize', () => { [W, H] = size(); ep.resize(W, H); if (!playing) ep.renderAt(t); });
+</script>
+</body>
+</html>
