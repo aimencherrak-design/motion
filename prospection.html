@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#09090b">
-<title>Prospection · Apporteur Auto</title>
+<title>Prospection Apporteur Auto</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%2309090b'/%3E%3Cpath d='M20 7 L32 33 H27 L20 17.5 L13 33 H8 Z M16.6 25 H23.4 L24.8 28 H15.2 Z' fill='%23d8b04c'/%3E%3C/svg%3E">
 <style>
 :root {
@@ -31,6 +31,7 @@
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
@@ -47,13 +48,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* ---------- En-tête ---------- */
 .app-header {
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   z-index: 30;
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 10px 16px;
-  padding-top: max(10px, env(safe-area-inset-top));
   background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
@@ -74,6 +74,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
   white-space: nowrap;
 }
 .day-pill b { color: var(--gold); font-variant-numeric: tabular-nums; }
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
+.sync-dot.on { background: var(--gold); }
+.sync-dot.error { background: var(--red); }
 .day-pill small { color: var(--muted); font-size: 12px; }
 .meter { display: block; width: 64px; height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
 .meter > span { display: block; height: 100%; width: 0; background: var(--gold); transition: width .25s; }
@@ -567,6 +570,7 @@ button.alert.active { outline: 2px solid currentColor; }
   </nav>
 
   <button class="day-pill" id="day-pill" type="button" title="Demandes envoyées aujourd'hui">
+    <span class="sync-dot" id="sync-dot" title="Fiches enregistrées dans ce navigateur"></span>
     <b id="day-count">0 / 30</b>
     <span class="meter"><span id="day-meter"></span></span>
   </button>
@@ -748,12 +752,16 @@ button.alert.active { outline: 2px solid currentColor; }
   <section class="view" id="view-data">
     <div class="view-head">
       <h1>Données</h1>
-      <p>Tout est enregistré dans ce navigateur, sur cet appareil. Exporte en CSV pour sauvegarder ou passer dans ton CRM.</p>
+      <p>Synchronisation entre appareils, sauvegarde CSV et réglages.</p>
     </div>
     <div id="data-banner"></div>
     <div class="card">
       <h2>Chiffres</h2>
       <div class="stats" id="stats"></div>
+    </div>
+    <div class="card grid">
+      <h2 style="margin-bottom:0">Ordinateur et téléphone</h2>
+      <p class="small" style="margin:0" id="sync-status"></p>
     </div>
     <div class="card grid">
       <h2 style="margin-bottom:0">Sauvegarde</h2>
@@ -1644,6 +1652,9 @@ const Logic = (() => {
     return ymdOnly ? today(date) : date.toISOString();
   }
 
+  // Un identifiant sert aussi de clé de stockage : lettres, chiffres et _ - . ~ : @ + uniquement.
+  const isValidId = (id) => typeof id === 'string' && /^[A-Za-z0-9_\-.~:@+]{1,120}$/.test(id) && !/^\.{1,2}$/.test(id);
+
   function uid() {
     return globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
   }
@@ -1661,7 +1672,7 @@ const Logic = (() => {
         if (key) raw[key] = String(row[i] ?? '').trim().replace(/^'(?=[=+\-@\t\r])/, '');
       });
       const p = {
-        id: raw.id || uid(),
+        id: isValidId(raw.id) ? raw.id : uid(),
         name: raw.name || '',
         firstName: raw.firstName || '',
         title: raw.title || '',
@@ -1713,6 +1724,7 @@ const Logic = (() => {
     buildSearchLinks, linkedinPeopleUrl, detectCategory, decisionInfo, detectCountry, zoneInfo, suggestLang, scoreProspect,
     splitName, cleanCity, cleanCompany, buildNotes, messageFor, parseProfileText, normalizeUrl, sameUrl, applyStatus,
     followState, today, addDays, daysBetween, formatDate, countSentOn, stats, toCSV, parseCSV, fromCSV, mergeProspects, uid,
+    isValidId,
   };
 })();
 </script>
@@ -1764,15 +1776,199 @@ const Logic = (() => {
   }
   const db = load();
 
-  function save() {
+  function saveLocal() {
     try {
       localStorage.setItem(KEY, JSON.stringify(db));
       storageOk = true;
     } catch {
-      if (storageOk) toast('Enregistrement impossible dans ce navigateur : exporte ton CSV.', { kind: 'error' });
+      if (storageOk && cloud.state !== 'on') toast('Enregistrement impossible dans ce navigateur : exporte ton CSV.', { kind: 'error' });
       storageOk = false;
     }
+  }
+
+  function save() {
+    saveLocal();
     renderChrome();
+    pushCloud();
+  }
+
+  // ---------- Synchronisation entre appareils ----------
+  // Fichier ouvert en local : pas de window.claude, les fiches restent dans ce navigateur.
+  // Page ouverte depuis son lien claude.ai : les fiches sont aussi rangées dans l'espace privé
+  // de ton compte, et le même lien sur ordinateur et téléphone partage les mêmes fiches.
+  const platform = typeof window.claude?.use === 'function' ? window.claude : null;
+  const usePlatform = (name) => (platform ? platform.use(name).catch(() => null) : Promise.resolve(null));
+  const CLOUD_IDS_KEY = `${KEY}:cloud-ids`;
+  const cloud = {
+    col: null,
+    ready: false,
+    state: platform ? 'connecting' : 'local',
+    synced: new Map(), // id -> contenu confirmé dans l'espace en ligne
+    pending: new Map(), // id -> écritures en cours
+    chain: Promise.resolve(),
+    warned: false,
+  };
+  const canon = (p) => JSON.stringify(p, Object.keys(p).sort());
+
+  function loadCloudIds() {
+    try { return new Set(JSON.parse(localStorage.getItem(CLOUD_IDS_KEY) || '[]')); } catch { return new Set(); }
+  }
+
+  function saveCloudIds() {
+    try { localStorage.setItem(CLOUD_IDS_KEY, JSON.stringify([...cloud.synced.keys()])); } catch { /* facultatif */ }
+  }
+
+  const SYNC_TEXT = {
+    local: 'Fichier ouvert hors de claude.ai : les fiches restent dans ce navigateur. Pour passer d’un appareil à l’autre, exporte puis importe le CSV.',
+    connecting: 'Connexion à ton espace en ligne…',
+    on: 'Synchronisé : ouvre ce même lien sur ton ordinateur et ton téléphone, tu retrouves les mêmes fiches.',
+    unavailable: 'Synchronisation indisponible dans cette vue (connecte-toi à claude.ai). Les fiches restent dans ce navigateur.',
+    error: 'Synchronisation en pause : les fiches restent dans ce navigateur. Recharge la page pour réessayer.',
+  };
+
+  function renderSyncStatus() {
+    const status = $('#sync-status');
+    if (status) status.textContent = SYNC_TEXT[cloud.state];
+    const dot = $('#sync-dot');
+    dot.className = `sync-dot${cloud.state === 'on' ? ' on' : cloud.state === 'error' ? ' error' : ''}`;
+    dot.title = cloud.state === 'on' ? 'Fiches synchronisées entre tes appareils' : 'Fiches enregistrées dans ce navigateur';
+    $('#storage-banner').hidden = storageOk || cloud.state === 'on';
+  }
+
+  function syncFailed(error) {
+    cloud.state = 'error';
+    renderSyncStatus();
+    if (cloud.warned) return;
+    cloud.warned = true;
+    toast(error?.code === 'quota_exceeded'
+      ? 'Espace en ligne plein : supprime des fiches perdues, ou exporte-les puis efface-les.'
+      : 'Synchronisation en pause : tes fiches restent sur cet appareil.', { kind: 'error' });
+  }
+
+  async function writeOnce(write) {
+    try {
+      await write();
+    } catch (error) {
+      if (error?.code !== 'unavailable') throw error;
+      await new Promise((resolve) => setTimeout(resolve, 600 + Math.random() * 900));
+      await write();
+    }
+  }
+
+  // Une écriture à la fois, et seulement pour les fiches qui ont vraiment changé.
+  function enqueue(id, body) {
+    const ref = cloud.col.doc(id);
+    if (body === null) cloud.synced.delete(id);
+    else cloud.synced.set(id, body);
+    cloud.pending.set(id, (cloud.pending.get(id) || 0) + 1);
+    cloud.chain = cloud.chain
+      .then(() => writeOnce(() => (body === null ? ref.delete() : ref.set(JSON.parse(body)))))
+      .then(() => {
+        if (cloud.state === 'error') { cloud.state = 'on'; renderSyncStatus(); }
+      }, (error) => {
+        // On oublie ce qui n'a pas été confirmé : la prochaine modification réessaiera.
+        if (body === null) cloud.synced.set(id, '?');
+        else cloud.synced.delete(id);
+        syncFailed(error);
+      })
+      .finally(() => {
+        const left = (cloud.pending.get(id) || 1) - 1;
+        if (left) cloud.pending.set(id, left);
+        else cloud.pending.delete(id);
+        saveCloudIds();
+      });
+  }
+
+  function pushCloud() {
+    if (!cloud.col || !cloud.ready) return;
+    const present = new Set();
+    for (const p of db.prospects) {
+      if (!L.isValidId(p.id)) continue;
+      present.add(p.id);
+      const body = canon(p);
+      if (cloud.synced.get(p.id) !== body) enqueue(p.id, body);
+    }
+    for (const id of [...cloud.synced.keys()]) if (!present.has(id)) enqueue(id, null);
+  }
+
+  // Première réponse de l'espace en ligne : on fusionne avec ce que ce navigateur connaît déjà.
+  function reconcile(docs) {
+    const remote = new Map(docs.map((d) => [d.id, { ...d.data() }]));
+    const known = loadCloudIds();
+    const merged = [];
+    for (const p of db.prospects) {
+      const r = remote.get(p.id);
+      if (r) {
+        merged.push((p.updatedAt || '') > (r.updatedAt || '') ? p : r);
+        remote.delete(p.id);
+      } else if (!known.has(p.id)) {
+        merged.push(p); // créée ici, pas encore envoyée
+      } // sinon : supprimée depuis un autre appareil
+    }
+    merged.push(...remote.values());
+    cloud.synced = new Map(docs.map((d) => [d.id, canon(d.data())]));
+    db.prospects = merged;
+    cloud.ready = true;
+    cloud.state = 'on';
+    saveLocal();
+    saveCloudIds();
+    pushCloud();
+    renderChrome();
+    renderView();
+  }
+
+  // Modifications arrivées d'un autre appareil (ou confirmation des nôtres).
+  function onCloudSnapshot(snap) {
+    if (!cloud.ready) {
+      if (!snap.metadata.fromCache) reconcile(snap.docs);
+      return;
+    }
+    const local = new Map(db.prospects.map((p) => [p.id, p]));
+    const before = new Map(db.prospects.map((p) => [p.id, canon(p)]));
+    const next = [];
+    const seen = new Set();
+    for (const d of snap.docs) {
+      seen.add(d.id);
+      if (cloud.pending.has(d.id)) {
+        if (local.has(d.id)) next.push(local.get(d.id));
+        continue;
+      }
+      const body = canon(d.data());
+      cloud.synced.set(d.id, body);
+      next.push(before.get(d.id) === body ? local.get(d.id) : { ...d.data() });
+    }
+    for (const p of db.prospects) {
+      if (seen.has(p.id)) continue;
+      if (cloud.pending.has(p.id) || !cloud.synced.has(p.id)) next.push(p);
+      else cloud.synced.delete(p.id);
+    }
+    saveCloudIds();
+    const changed = next.length !== before.size || next.some((p) => before.get(p.id) !== canon(p));
+    if (!changed) return;
+    db.prospects = next;
+    saveLocal();
+    renderChrome();
+    renderView();
+  }
+
+  async function connectCloud() {
+    if (!platform) return;
+    const [store, user] = await Promise.all([usePlatform('db'), usePlatform('user')]);
+    const id = store && user ? await user.id() : null;
+    if (!id) {
+      cloud.state = 'unavailable';
+      renderSyncStatus();
+      return;
+    }
+    try {
+      cloud.col = store.doc(`data/users/${id}/app`).collection('prospects');
+      cloud.col.onSnapshot(onCloudSnapshot, (error) => {
+        cloud.col = null;
+        syncFailed(error);
+      });
+    } catch (error) {
+      syncFailed(error);
+    }
   }
 
   const byId = (id) => db.prospects.find((p) => p.id === id);
@@ -1893,7 +2089,7 @@ const Logic = (() => {
     fBadge.className = `badge ${late ? 'late' : 'today'}`;
     fBadge.hidden = due === 0;
 
-    $('#storage-banner').hidden = storageOk;
+    renderSyncStatus();
   }
 
   // ---------- Chercher ----------
@@ -2334,8 +2530,22 @@ const Logic = (() => {
       : 'Aucun export pour l’instant.';
   }
 
-  function exportCSV() {
-    download(`prospection-${L.today()}.csv`, L.toCSV(db.prospects), 'text/csv;charset=utf-8');
+  async function exportCSV() {
+    const filename = `prospection-${L.today()}.csv`;
+    const csv = L.toCSV(db.prospects);
+    if (platform) {
+      const downloads = await usePlatform('downloads');
+      if (!downloads) return toast('Export indisponible dans cette vue. Ouvre la page depuis son lien claude.ai.', { kind: 'error' });
+      try {
+        await downloads.save({ filename, data: csv });
+      } catch (error) {
+        if (error?.code === 'rate_limited') toast('Une demande de téléchargement est déjà ouverte.', { kind: 'error' });
+        else if (error?.code !== 'declined') toast('Export impossible pour le moment. Réessaie dans un instant.', { kind: 'error' });
+        return;
+      }
+    } else {
+      download(filename, csv, 'text/csv;charset=utf-8');
+    }
     db.settings.lastExport = new Date().toISOString();
     save();
     renderView();
@@ -2436,6 +2646,7 @@ const Logic = (() => {
   bind();
   navigator.storage?.persist?.().catch(() => {});
   clearForm();
+  connectCloud();
   showView(VIEWS.includes(db.settings.view) ? db.settings.view : 'search');
 })();
 </script>

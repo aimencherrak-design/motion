@@ -11,8 +11,8 @@ Deux outils pour prospecter les décideurs de l'automobile sur LinkedIn, **sans 
 
 ### Ouvrir l'outil
 - **Sur ordinateur** : télécharge `prospection.html` et double-clique dessus. Ça marche dans Opera GX, Chrome, Edge, Firefox et Safari. Ajoute-le à tes favoris.
-- **Sur mobile** : un fichier local s'ouvre mal sur téléphone. Il faut héberger la page (GitHub Pages, ou n'importe quel hébergement de fichiers statiques), puis l'ouvrir dans le navigateur du téléphone.
-- Les fiches sont enregistrées **dans le navigateur où tu ouvres la page** (stockage local). Ordinateur et téléphone ne partagent pas leurs données : passe par l'export / import CSV.
+- **Sur ordinateur et téléphone avec les mêmes fiches** : ouvre la version publiée sur claude.ai (lien privé). Connecté à ton compte, la page range tes fiches dans ton espace privé : le même lien sur l'ordinateur et sur le téléphone affiche les mêmes données. La pastille dorée dans l'en-tête indique que la synchronisation est active.
+- En fichier local, les fiches restent **dans le navigateur où tu ouvres la page**. Pour passer d'un appareil à l'autre, exporte puis importe le CSV.
 
 ### Les 5 onglets
 | Onglet | À quoi il sert |

@@ -287,3 +287,13 @@ test('statistiques : le taux d’acceptation ne dépasse jamais 100 %', () => {
   assert.equal(st.acceptance, 67);
   assert.equal(st.queued, 1);
 });
+
+test('identifiants : ceux d’un CRM qui ne conviennent pas comme clé sont remplacés', () => {
+  assert.ok(L.isValidId('a1'));
+  assert.ok(L.isValidId('6f1c9a2e-1b2c-4d5e-8f90-123456789abc'));
+  assert.ok(!L.isValidId('12 34'));
+  assert.ok(!L.isValidId('..'));
+  const [p] = L.fromCSV('id;nom\n12 34;Paul Weber\n');
+  assert.notEqual(p.id, '12 34');
+  assert.ok(L.isValidId(p.id));
+});
