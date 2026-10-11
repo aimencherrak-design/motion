@@ -18,6 +18,7 @@ export const DEFAULT_SETTINGS = {
   pendingInviteDays: 21,
   country: 'FR',
   network: 'second',
+  lastBackupAt: '',
 };
 
 const DAY = 24 * 60 * 60 * 1000;

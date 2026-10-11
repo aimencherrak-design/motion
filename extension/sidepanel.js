@@ -5,7 +5,7 @@ import {
 } from './lib/linkedin.js';
 import { CRITERIA, MAX_SCORE, PRIORITY_ADVICE, computeScore, detectSegment, prefillCriteria, priorityFor } from './lib/scoring.js';
 import { DEFAULT_TEMPLATES, INVITATION_LIMIT, TEMPLATE_LABELS, buildMessage, missingVariables } from './lib/messages.js';
-import { STATUSES, computeTodos, invitesInLastDays, stats, statusLabel, withStatus } from './lib/pipeline.js';
+import { STATUSES, computeTodos, daysSince, invitesInLastDays, stats, statusLabel, withStatus } from './lib/pipeline.js';
 import { loadState, saveProspects, saveSettings, saveTemplates } from './lib/storage.js';
 import { formatDate, mergeProspects, toCSV } from './lib/export.js';
 import { normalize } from './lib/text.js';
@@ -104,15 +104,22 @@ function download(filename, content, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+// Onglet affiché dans le navigateur. Sous Opera, le panneau peut être une fenêtre
+// à part : on prend donc l'onglet actif de la dernière fenêtre « normale ».
 async function activeTab() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  return tab;
+  try {
+    const browser = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
+    const [tab] = await chrome.tabs.query({ active: true, windowId: browser.id });
+    return tab;
+  } catch {
+    return undefined;
+  }
 }
 
 async function openUrl(url) {
   const tab = await activeTab();
   if (tab && /^https:\/\/www\.linkedin\.com\//.test(tab.url || '')) await chrome.tabs.update(tab.id, { url });
-  else await chrome.tabs.create({ url });
+  else await chrome.tabs.create({ url, windowId: tab?.windowId });
 }
 
 function findExisting(prospect) {
@@ -397,9 +404,26 @@ function editProspect(prospect) {
 // ---------- Suivi ----------
 
 function renderFollow() {
+  renderBackupReminder();
   renderStats();
   renderTodos();
   renderList();
+}
+
+// Les données ne vivent que dans le navigateur : on rappelle de les sauvegarder.
+function renderBackupReminder() {
+  const days = daysSince(state.settings.lastBackupAt);
+  const container = $('#backup-reminder');
+  if (state.prospects.length < 5 || days < 7) {
+    container.replaceChildren();
+    return;
+  }
+  container.replaceChildren(
+    h('div', { class: 'card existing' },
+      Number.isFinite(days) ? `Dernière sauvegarde il y a ${days} jours. ` : 'Tu n’as encore jamais sauvegardé ta liste. ',
+      button('Sauvegarder maintenant', exportJSON, 'link'),
+    ),
+  );
 }
 
 function renderStats() {
@@ -549,9 +573,12 @@ async function saveAllSettings() {
   toast('Réglages enregistrés.');
 }
 
-function exportJSON() {
+async function exportJSON() {
   const backup = { version: 1, exportedAt: new Date().toISOString(), ...state };
   download(`prospection-sauvegarde-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(backup, null, 2), 'application/json');
+  state.settings = { ...state.settings, lastBackupAt: backup.exportedAt };
+  await saveSettings(state.settings);
+  renderBackupReminder();
 }
 
 async function importJSON(file) {
