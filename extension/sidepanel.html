@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prospection Auto</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Prospection Auto</div>
+    <div class="quota" id="quota" title="Invitations envoyées sur les 7 derniers jours">
+      <span id="quota-text">0 / 80 cette semaine</span>
+      <span class="quota-bar"><span id="quota-fill"></span></span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="search" role="tab">Rechercher</button>
+    <button class="tab" data-tab="prospect" role="tab">Prospect</button>
+    <button class="tab" data-tab="follow" role="tab">Suivi <span class="badge" id="todo-count" hidden></span></button>
+    <button class="tab" data-tab="settings" role="tab">Réglages</button>
+  </nav>
+
+  <main>
+    <!-- RECHERCHER -->
+    <section class="panel active" id="panel-search">
+      <h2>Trouver des décideurs</h2>
+      <p class="hint">Choisis un secteur : la recherche LinkedIn s'ouvre déjà filtrée sur les dirigeants. Plus besoin de passer par chaque entreprise.</p>
+      <div class="chips" id="segment-chips"></div>
+
+      <div class="row">
+        <label>Pays
+          <select id="search-country">
+            <option value="FR">France</option>
+            <option value="ALL">Tous les pays</option>
+          </select>
+        </label>
+        <label>Réseau
+          <select id="search-network"></select>
+        </label>
+      </div>
+
+      <label>Requête (modifiable)
+        <textarea id="search-query" rows="6" spellcheck="false"></textarea>
+      </label>
+      <div class="actions">
+        <button class="primary" id="open-search">Ouvrir la recherche LinkedIn</button>
+        <button id="copy-query">Copier la requête</button>
+      </div>
+      <p class="hint small">La requête marche aussi dans Sales Navigator (champ « Mots-clés »). Pour cibler une ville ou une région, utilise ensuite le filtre « Lieux » de LinkedIn.</p>
+
+      <div class="card tips">
+        <strong>La méthode en 10 secondes par profil</strong>
+        <ol>
+          <li>Ouvre la recherche, puis les profils qui t'intéressent.</li>
+          <li>Onglet <b>Prospect</b> → <b>Récupérer ce profil</b>.</li>
+          <li>Regarde le score : si c'est C, passe ton tour.</li>
+          <li>Copie la note, clique sur « Se connecter » sur LinkedIn, colle, envoie.</li>
+          <li>Clique sur <b>Invitation envoyée</b> ici.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- PROSPECT -->
+    <section class="panel" id="panel-prospect">
+      <div class="card notice" id="profile-hint">Ouvre un profil LinkedIn puis clique sur « Récupérer ce profil ». Tu peux aussi remplir la fiche à la main.</div>
+      <div class="actions">
+        <button class="primary" id="grab-profile">Récupérer ce profil</button>
+        <button id="new-prospect">Fiche vide</button>
+      </div>
+      <div class="card existing" id="existing-banner" hidden></div>
+
+      <form id="prospect-form" autocomplete="off">
+        <div class="row">
+          <label>Prénom <input name="firstName"></label>
+          <label>Nom <input name="lastName"></label>
+        </div>
+        <label>Titre <input name="headline"></label>
+        <div class="row">
+          <label>Entreprise <input name="company"></label>
+          <label>Lieu <input name="location"></label>
+        </div>
+        <div class="row">
+          <label>Secteur <select name="segment" id="segment-select"></select></label>
+          <label>Profil (URL) <input name="url" placeholder="https://www.linkedin.com/in/…"></label>
+        </div>
+
+        <h3>Est-ce qu'il vaut le coup ?</h3>
+        <div id="criteria"></div>
+        <div class="score">
+          <span class="priority" id="priority-badge">C</span>
+          <span id="score-text">0 / 10</span>
+          <p id="priority-advice"></p>
+        </div>
+
+        <label>Notes <textarea name="notes" rows="2" placeholder="Ex. : 3 agences, poste sur le recrutement de mécaniciens…"></textarea></label>
+
+        <h3>Note d'invitation</h3>
+        <textarea id="invite-note" rows="5"></textarea>
+        <div class="note-meta">
+          <span id="note-count">0 / 300</span>
+          <button type="button" class="link" id="regenerate-note">Régénérer</button>
+        </div>
+        <p class="warning" id="note-warning" hidden></p>
+
+        <div class="actions sticky">
+          <button type="button" id="copy-note">Copier la note</button>
+          <button type="button" id="save-prospect">Enregistrer</button>
+          <button type="button" class="primary" id="mark-invited">Invitation envoyée ✓</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- SUIVI -->
+    <section class="panel" id="panel-follow">
+      <div class="stats" id="stats"></div>
+      <h2>À faire</h2>
+      <div id="todos"></div>
+
+      <h2>Tous mes prospects</h2>
+      <div class="row">
+        <input id="filter-text" placeholder="Rechercher un nom, une entreprise…">
+        <select id="filter-status"></select>
+      </div>
+      <div id="prospect-list"></div>
+    </section>
+
+    <!-- RÉGLAGES -->
+    <section class="panel" id="panel-settings">
+      <h2>Ce que tu proposes</h2>
+      <label>Ton offre en une phrase
+        <textarea id="set-offre" rows="3" placeholder="Ex. : j'aide les garages et les concessions à … grâce à …"></textarea>
+      </label>
+      <label>Lien à montrer (portfolio, site, vidéo)
+        <input id="set-lien" placeholder="https://…">
+      </label>
+
+      <h2>Rythme</h2>
+      <div class="row">
+        <label>Invitations max / 7 jours <input id="set-limit" type="number" min="1" max="200"></label>
+        <label>Relancer après (jours) <input id="set-relance" type="number" min="1" max="60"></label>
+      </div>
+      <label>Proposer de retirer une invitation en attente après (jours)
+        <input id="set-pending" type="number" min="7" max="90">
+      </label>
+
+      <h2>Modèles de messages</h2>
+      <p class="hint small">Variables : {prenom} {nom} {entreprise} {ville} {offre} {lien}. Un passage entre [crochets] disparaît si une de ses variables est vide.</p>
+      <div id="templates"></div>
+
+      <div class="actions">
+        <button class="primary" id="save-settings">Enregistrer les réglages</button>
+        <button id="reset-templates">Modèles par défaut</button>
+      </div>
+
+      <h2>Mes données</h2>
+      <p class="hint small">Tout reste dans ton navigateur. Fais une sauvegarde de temps en temps.</p>
+      <div class="actions">
+        <button id="export-csv">Exporter (Excel)</button>
+        <button id="export-json">Sauvegarder</button>
+        <button id="import-json">Restaurer</button>
+        <button class="danger" id="clear-data">Tout effacer</button>
+      </div>
+      <input type="file" id="import-file" accept="application/json" hidden>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>

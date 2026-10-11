@@ -1,0 +1,10 @@
+{
+  "name": "prospection-auto-linkedin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Extension Chrome pour prospecter les décideurs de l'automobile sur LinkedIn (envoi manuel).",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

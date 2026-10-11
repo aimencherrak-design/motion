@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Prospection Auto LinkedIn",
+  "version": "0.1.0",
+  "description": "Trouve les décideurs de l'automobile sur LinkedIn, prépare tes messages et suis tes prospects. L'envoi reste manuel.",
+  "action": {
+    "default_title": "Ouvrir le panneau de prospection"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["sidePanel", "storage", "scripting", "clipboardWrite"],
+  "host_permissions": ["https://www.linkedin.com/*"]
+}
