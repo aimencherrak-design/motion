@@ -1,0 +1,2443 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#09090b">
+<title>Prospection · Apporteur Auto</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%2309090b'/%3E%3Cpath d='M20 7 L32 33 H27 L20 17.5 L13 33 H8 Z M16.6 25 H23.4 L24.8 28 H15.2 Z' fill='%23d8b04c'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #09090b;
+  --surface: #16171b;
+  --surface-2: #1e2025;
+  --surface-3: #2a2c33;
+  --line: #2e3138;
+  --text: #f6f5f2;
+  --muted: #a3a3ad;
+  --faint: #737380;
+  --gold: #d8b04c;
+  --gold-strong: #e9c565;
+  --gold-soft: rgba(216, 176, 76, .14);
+  --on-gold: #15120a;
+  --red: #f05252;
+  --red-soft: rgba(240, 82, 82, .15);
+  --orange: #f97316;
+  --orange-soft: rgba(249, 115, 22, .16);
+  --radius: 14px;
+  --tabbar-h: 64px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+a { color: var(--gold); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ---------- En-tête ---------- */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.mono { width: 38px; height: 38px; flex: none; color: var(--gold); }
+.brand strong { display: block; font-size: 16px; letter-spacing: .02em; }
+.brand span { display: block; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.day-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.day-pill b { color: var(--gold); font-variant-numeric: tabular-nums; }
+.day-pill small { color: var(--muted); font-size: 12px; }
+.meter { display: block; width: 64px; height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+.meter > span { display: block; height: 100%; width: 0; background: var(--gold); transition: width .25s; }
+.meter.lg { width: 100%; height: 10px; border-radius: 5px; }
+
+/* ---------- Navigation : barre du bas sur mobile, dans l'en-tête sur ordinateur ---------- */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(14, 14, 17, .97);
+  border-top: 1px solid var(--line);
+}
+.tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 0;
+  background: none;
+  color: var(--faint);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tab svg { width: 22px; height: 22px; }
+.tab.active { color: var(--gold); }
+.tab .badge {
+  position: absolute;
+  top: 6px;
+  left: calc(50% + 6px);
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--surface-3);
+  color: var(--text);
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+}
+.tab .badge.late { background: var(--red); color: #fff; }
+.tab .badge.today { background: var(--orange); color: #fff; }
+
+@media (min-width: 900px) {
+  .tabbar {
+    position: static;
+    display: flex;
+    gap: 4px;
+    height: auto;
+    padding: 0;
+    background: none;
+    border: 0;
+  }
+  .tab { flex-direction: row; gap: 8px; padding: 8px 14px; border-radius: 10px; font-size: 14px; color: var(--muted); }
+  .tab svg { width: 18px; height: 18px; }
+  .tab:hover { color: var(--text); }
+  .tab.active { background: var(--gold-soft); color: var(--gold); }
+  .tab .badge { position: static; }
+  .day-pill { margin-left: 0; }
+  .app-header .brand { margin-right: auto; }
+}
+
+/* ---------- Structure ---------- */
+main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 18px 16px calc(var(--tabbar-h) + 28px + env(safe-area-inset-bottom));
+}
+@media (min-width: 900px) { main { padding: 24px 24px 48px; } }
+.view { display: none; }
+.view.active { display: block; }
+.view-head { margin-bottom: 16px; }
+.view-head h1 { margin: 0 0 4px; font-size: 24px; letter-spacing: -.01em; }
+.view-head p { margin: 0; color: var(--muted); }
+
+.card {
+  margin-bottom: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.card h2 {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.card h2 .lang-tag { color: var(--gold); }
+.muted { color: var(--muted); }
+.faint { color: var(--faint); }
+.small { font-size: 13px; }
+.empty {
+  padding: 28px 16px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  text-align: center;
+}
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  background: var(--gold-soft);
+  font-size: 14px;
+}
+.banner.error { border-color: var(--red); background: var(--red-soft); }
+
+/* ---------- Boutons, puces, champs ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--gold); }
+.btn-gold { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.btn-gold:hover { background: var(--gold-strong); border-color: var(--gold-strong); }
+.btn-outline { background: transparent; border-color: var(--gold); color: var(--gold); }
+.btn-ghost { background: transparent; }
+.btn-sm { min-height: 36px; padding: 5px 11px; font-size: 13px; }
+.btn-danger { color: var(--red); }
+.btn.confirm { background: var(--red); border-color: var(--red); color: #fff; }
+.link-btn {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.link-btn:hover { color: var(--text); }
+.link-btn.confirm { color: var(--red); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--gold); }
+.chip.active { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.chip .count { font-size: 12px; opacity: .7; font-variant-numeric: tabular-nums; }
+.chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+.chip .dot.late { background: var(--red); }
+.chip .dot.today { background: var(--orange); }
+.chip-sm { min-height: 34px; padding: 5px 12px; font-size: 13px; }
+
+.field { display: block; }
+.field > span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+.field > span em { color: var(--gold); font-style: normal; font-weight: 600; }
+input, select, textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 15px;
+}
+input::placeholder, textarea::placeholder { color: var(--faint); }
+textarea { resize: vertical; line-height: 1.45; }
+input[type="date"] { min-height: 40px; padding: 7px 10px; }
+.grid { display: grid; gap: 12px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+@media (max-width: 560px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ---------- Chercher ---------- */
+.link-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.link-row:first-of-type { border-top: 0; padding-top: 0; }
+.link-row strong { display: block; }
+.link-row .hint { display: block; color: var(--muted); font-size: 13px; }
+.link-row code {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--faint);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.link-actions { display: flex; gap: 8px; }
+.subhead { margin: 14px 0 8px; color: var(--muted); font-size: 13px; font-weight: 650; }
+.options { display: grid; gap: 14px; }
+@media (min-width: 900px) { .options { grid-template-columns: 1.2fr 1fr; } }
+
+/* ---------- Ajouter ---------- */
+.add-layout { display: grid; gap: 0 14px; grid-template-areas: "paste" "side" "fields"; }
+.add-paste { grid-area: paste; }
+.add-fields { grid-area: fields; }
+.add-side { grid-area: side; }
+@media (min-width: 900px) {
+  .add-layout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-areas: "paste side" "fields side";
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+  .add-side { position: sticky; top: 84px; }
+}
+.paste-box textarea { min-height: 96px; }
+.score-box { display: flex; align-items: center; gap: 16px; }
+.ring {
+  --p: 0;
+  --ring: var(--faint);
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: conic-gradient(var(--ring) calc(var(--p) * 1%), var(--surface-3) 0);
+}
+.ring > span {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--surface);
+  font-size: 26px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.ring.hot { --ring: var(--gold); }
+.ring.warm { --ring: #cfc6ad; }
+.level { font-weight: 800; font-size: 15px; }
+.level.hot { color: var(--gold); }
+.level.cold { color: var(--faint); }
+.explain { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.bars { display: grid; gap: 7px; margin-top: 14px; }
+.bar { display: grid; grid-template-columns: 74px 1fr 46px; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+.bar i { display: block; height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+.bar i b { display: block; height: 100%; background: var(--gold); }
+.bar span:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.dup { margin-top: 12px; }
+.note-tools { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button { min-height: 34px; padding: 4px 14px; border: 0; background: none; color: var(--muted); font-weight: 750; cursor: pointer; }
+.seg button.active { background: var(--gold-soft); color: var(--gold); }
+.note { margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+.note-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; color: var(--muted); font-size: 12px; font-weight: 650; }
+.note textarea { min-height: 78px; padding: 0; border: 0; background: none; font-size: 14px; }
+.note textarea:focus-visible { outline: none; }
+.count-ok { font-variant-numeric: tabular-nums; }
+.count-over { color: var(--red); font-weight: 800; }
+.form-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.form-actions .btn-gold { flex: 1 1 200px; }
+.kbd { color: var(--faint); font-size: 12px; }
+
+/* ---------- File du jour ---------- */
+.progress { display: grid; gap: 10px; }
+.progress-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.big-count { font-size: 40px; font-weight: 850; line-height: 1; font-variant-numeric: tabular-nums; }
+.big-count small { color: var(--muted); font-size: 18px; font-weight: 700; }
+.pcard {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.pcard.done { opacity: .62; }
+.score-badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--surface-3);
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+.score-badge.hot { background: var(--gold); color: var(--on-gold); }
+.score-badge.warm { background: var(--gold-soft); color: var(--gold); }
+.score-badge.sm { width: 40px; height: 40px; border-radius: 10px; font-size: 15px; }
+.pname { font-size: 16px; font-weight: 750; overflow-wrap: anywhere; }
+.psub { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.pexpl { margin-top: 4px; color: var(--faint); font-size: 13px; }
+.tag {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .03em;
+  vertical-align: 1px;
+}
+.pactions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.sent-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  margin-left: auto;
+  padding: 6px 14px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+  user-select: none;
+}
+.sent-check input { width: 20px; height: 20px; min-height: 0; margin: 0; accent-color: var(--gold); }
+.notes-peek { grid-column: 1 / -1; }
+.notes-peek summary { color: var(--muted); font-size: 13px; cursor: pointer; }
+.notes-peek p { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); font-size: 14px; }
+.section-title { margin: 22px 0 10px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+
+/* ---------- Suivi ---------- */
+.summary { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.alert {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.alert.late { background: var(--red-soft); color: var(--red); }
+.alert.today { background: var(--orange-soft); color: var(--orange); }
+button.alert { border: 0; cursor: pointer; min-height: 32px; }
+button.alert.active { outline: 2px solid currentColor; }
+.filters { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
+@media (min-width: 640px) { .filters { grid-template-columns: minmax(0, 1fr) 220px; } }
+.frow {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 12px 14px 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.frow::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 4px; border-radius: 0 4px 4px 0; }
+.frow.late { border-color: rgba(240, 82, 82, .55); }
+.frow.late::before { background: var(--red); }
+.frow.today { border-color: rgba(249, 115, 22, .55); }
+.frow.today::before { background: var(--orange); }
+.frow-top { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.frow-top > div { min-width: 0; }
+.frow-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: center; }
+.frow-controls select, .frow-controls input { min-height: 40px; padding: 7px 10px; font-size: 14px; }
+.frow-controls .alert { grid-column: 1 / -1; justify-self: start; }
+.frow-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+@media (min-width: 900px) {
+  .frow { grid-template-columns: minmax(0, 1fr) minmax(300px, 340px) minmax(250px, 320px); align-items: center; gap: 10px 18px; }
+  .frow-controls { grid-template-columns: minmax(0, 1fr) 150px; }
+  .frow-actions { justify-content: flex-end; }
+}
+
+/* ---------- Données ---------- */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px; }
+.stat { padding: 12px; border-radius: 12px; background: var(--surface-2); }
+.stat b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 12px; }
+.data-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.rules { margin: 0; padding-left: 18px; color: var(--muted); }
+.rules li { margin: 4px 0; }
+
+/* ---------- Message éphémère ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabbar-h) + 14px + env(safe-area-inset-bottom));
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #24262c;
+  color: var(--text);
+  font-size: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+  transform: translateX(-50%);
+}
+.toast.error { border-color: var(--red); }
+.toast-action { padding: 0; border: 0; background: none; color: var(--gold); font-weight: 800; cursor: pointer; }
+@media (min-width: 900px) { .toast { bottom: 24px; } }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <svg class="mono" viewBox="0 0 40 40" aria-hidden="true">
+      <rect x="1" y="1" width="38" height="38" rx="9" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".5"/>
+      <path d="M20 7 L32 33 H27 L20 17.5 L13 33 H8 Z" fill="currentColor"/>
+      <path d="M16.6 25 H23.4 L24.8 28 H15.2 Z" fill="currentColor"/>
+    </svg>
+    <div>
+      <strong>Prospection</strong>
+      <span>Apporteur d'affaires auto</span>
+    </div>
+  </div>
+
+  <nav class="tabbar" aria-label="Sections">
+    <button class="tab" data-view="search" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <span>Chercher</span>
+    </button>
+    <button class="tab" data-view="add" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M19 8v6M16 11h6"/></svg>
+      <span>Ajouter</span>
+    </button>
+    <button class="tab" data-view="queue" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg>
+      <span>File du jour</span>
+      <b class="badge" id="badge-queue" hidden></b>
+    </button>
+    <button class="tab" data-view="follow" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span>Suivi</span>
+      <b class="badge" id="badge-follow" hidden></b>
+    </button>
+    <button class="tab" data-view="data" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
+      <span>Données</span>
+    </button>
+  </nav>
+
+  <button class="day-pill" id="day-pill" type="button" title="Demandes envoyées aujourd'hui">
+    <b id="day-count">0 / 30</b>
+    <span class="meter"><span id="day-meter"></span></span>
+  </button>
+</header>
+
+<main>
+  <div class="banner error" id="storage-banner" hidden>Ce navigateur bloque le stockage local : tes fiches ne seront pas gardées. Ouvre la page dans un onglet normal (pas en navigation privée) ou exporte souvent en CSV.</div>
+
+  <!-- ================= CHERCHER ================= -->
+  <section class="view" id="view-search">
+    <div class="view-head">
+      <h1>Trouver des décideurs</h1>
+      <p>Choisis une cible et une zone : les recherches sont prêtes, tu les ouvres toi-même.</p>
+    </div>
+    <div class="card options">
+      <div>
+        <h2>Cible</h2>
+        <div class="chips" id="search-cats"></div>
+      </div>
+      <div>
+        <h2>Zone</h2>
+        <div class="chips" id="search-zones"></div>
+        <h2 style="margin-top:14px">Réseau</h2>
+        <div class="chips" id="search-network"></div>
+      </div>
+    </div>
+    <div id="search-results"></div>
+  </section>
+
+  <!-- ================= AJOUTER ================= -->
+  <section class="view" id="view-add">
+    <div class="view-head">
+      <h1 id="add-title">Ajouter un profil</h1>
+      <p>Colle le profil que tu viens de voir : les champs, le score et les notes se remplissent tout seuls.</p>
+    </div>
+    <form id="prospect-form" autocomplete="off" novalidate>
+      <div class="add-layout">
+          <div class="card paste-box add-paste">
+            <h2>Collage rapide</h2>
+            <label class="field">
+              <span>Sur le profil LinkedIn : Ctrl+A, Ctrl+C, puis colle ici (l'URL du profil aussi, si tu veux)</span>
+              <textarea id="f-paste" rows="4" placeholder="Colle le texte du profil ici…"></textarea>
+            </label>
+            <div class="data-actions" style="margin-top:10px">
+              <button class="btn btn-sm" type="button" id="btn-parse">Analyser le texte</button>
+              <button class="link-btn" type="button" id="btn-clear-paste">Vider</button>
+            </div>
+          </div>
+
+          <div class="card grid add-fields">
+            <h2 style="margin-bottom:0">Fiche (vérifie ou corrige)</h2>
+            <div class="grid grid-2">
+              <label class="field"><span>Nom complet</span><input id="f-name" placeholder="Jean Dupont"></label>
+              <label class="field"><span>Prénom <em>(pour la note)</em></span><input id="f-first" placeholder="Prénom"></label>
+            </div>
+            <label class="field"><span>Poste</span><input id="f-title" placeholder="Gérant chez Transports Dupont"></label>
+            <div class="grid grid-2">
+              <label class="field"><span>Entreprise</span><input id="f-company"></label>
+              <label class="field"><span>Ville / lieu</span><input id="f-city" placeholder="Mulhouse, Grand Est, France"></label>
+            </div>
+            <div class="grid grid-2">
+              <label class="field"><span>Catégorie</span>
+                <select id="f-category">
+                  <option value="auto">Auto</option>
+                  <option value="transport">Transporteur</option>
+                  <option value="depot">Dépôt-vente</option>
+                  <option value="concession">Concession</option>
+                  <option value="loueur">Loueur</option>
+                  <option value="">Autre</option>
+                </select>
+              </label>
+              <label class="field"><span>Pays</span>
+                <select id="f-country">
+                  <option value="auto">Auto</option>
+                  <option value="FR">France</option>
+                  <option value="CH">Suisse</option>
+                  <option value="DE">Allemagne</option>
+                  <option value="EU">Autre pays d'Europe</option>
+                  <option value="XX">Hors Europe</option>
+                  <option value="">Inconnu</option>
+                </select>
+              </label>
+            </div>
+            <div class="grid grid-2">
+              <label class="field"><span>Activité récente</span>
+                <select id="f-activity">
+                  <option value="">Je ne sais pas</option>
+                  <option value="recent">Publie / commente ce mois-ci</option>
+                  <option value="semester">Active ces 6 derniers mois</option>
+                  <option value="old">Ancienne ou aucune</option>
+                </select>
+              </label>
+              <label class="field"><span>URL du profil</span><input id="f-url" inputmode="url" placeholder="https://www.linkedin.com/in/…"></label>
+            </div>
+            <label class="field"><span>À propos</span><textarea id="f-about" rows="3" placeholder="Texte de la section « Infos » du profil"></textarea></label>
+            <label class="field"><span>Mes notes</span><textarea id="f-notes" rows="2" placeholder="Ex. : 3 plateaux, intervient jusqu'à Bâle"></textarea></label>
+          </div>
+
+        <div class="add-side">
+          <div class="card">
+            <h2>Score</h2>
+            <div class="score-box">
+              <div class="ring" id="score-ring"><span id="score-num">0</span></div>
+              <div>
+                <div class="level" id="score-level">—</div>
+                <p class="explain" id="score-explain">Colle un profil pour voir son score.</p>
+              </div>
+            </div>
+            <div class="bars" id="score-bars"></div>
+            <div class="banner dup" id="dup-box" hidden></div>
+          </div>
+
+          <div class="card">
+            <div class="note-tools">
+              <h2 style="margin:0">Note de connexion</h2>
+              <div class="seg" id="note-lang" role="group" aria-label="Langue de la note">
+                <button type="button" data-lang="fr">FR</button>
+                <button type="button" data-lang="de">DE</button>
+              </div>
+            </div>
+            <div class="note">
+              <div class="note-head"><span>Version douce</span><span id="count-0" class="count-ok">0 / 200</span></div>
+              <textarea id="note-0" rows="3"></textarea>
+              <button class="btn btn-sm btn-outline" type="button" data-copy-note="0">Copier</button>
+            </div>
+            <div class="note">
+              <div class="note-head"><span>Version directe</span><span id="count-1" class="count-ok">0 / 200</span></div>
+              <textarea id="note-1" rows="3"></textarea>
+              <button class="btn btn-sm btn-outline" type="button" data-copy-note="1">Copier</button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-gold" type="button" id="btn-add">Ajouter à la file</button>
+            <button class="btn" type="button" id="btn-add-sent">Ajouter + demande envoyée</button>
+            <button class="btn btn-ghost" type="button" id="btn-reset">Vider</button>
+          </div>
+          <p class="kbd">Raccourcis : Ctrl+Entrée = ajouter · Ctrl+Maj+Entrée = ajouter + envoyée</p>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- ================= FILE DU JOUR ================= -->
+  <section class="view" id="view-queue">
+    <div class="view-head">
+      <h1>File du jour</h1>
+      <p>Les meilleurs profils d'abord. Ouvre, copie la note, envoie, coche.</p>
+    </div>
+    <div class="card progress">
+      <div class="progress-top">
+        <div class="big-count" id="queue-count">0 <small>/ 30 ajoutés aujourd'hui</small></div>
+        <span class="muted small" id="queue-left"></span>
+      </div>
+      <span class="meter lg"><span id="queue-meter"></span></span>
+    </div>
+    <div class="chips" id="queue-cats" style="margin-bottom:14px"></div>
+    <div id="queue-list"></div>
+    <div id="queue-sent"></div>
+  </section>
+
+  <!-- ================= SUIVI ================= -->
+  <section class="view" id="view-follow">
+    <div class="view-head">
+      <h1>Suivi</h1>
+      <p>Statuts, relances et alertes. Rouge : relance en retard. Orange : relance prévue aujourd'hui.</p>
+    </div>
+    <div id="follow-banner"></div>
+    <div class="chips" id="follow-cats"></div>
+    <div class="summary" id="follow-summary"></div>
+    <div class="filters">
+      <input id="follow-search" type="search" placeholder="Rechercher un nom, une entreprise, une ville…">
+      <select id="follow-status"></select>
+    </div>
+    <div id="follow-list"></div>
+  </section>
+
+  <!-- ================= DONNÉES ================= -->
+  <section class="view" id="view-data">
+    <div class="view-head">
+      <h1>Données</h1>
+      <p>Tout est enregistré dans ce navigateur, sur cet appareil. Exporte en CSV pour sauvegarder ou passer dans ton CRM.</p>
+    </div>
+    <div id="data-banner"></div>
+    <div class="card">
+      <h2>Chiffres</h2>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="card grid">
+      <h2 style="margin-bottom:0">Sauvegarde</h2>
+      <div class="data-actions">
+        <button class="btn btn-gold" type="button" id="btn-export">Exporter en CSV</button>
+        <label class="btn" for="import-file">Importer un CSV</label>
+        <input type="file" id="import-file" accept=".csv,text/csv" hidden>
+      </div>
+      <p class="muted small" id="last-export"></p>
+      <p class="muted small" style="margin:0">L'import ajoute les nouvelles fiches et met à jour celles qui existent déjà (même URL, ou même nom et entreprise). Séparateur « ; » ou « , » accepté.</p>
+    </div>
+    <div class="card grid">
+      <h2 style="margin-bottom:0">Réglages</h2>
+      <label class="field" style="max-width:240px"><span>Objectif de demandes par jour</span><input id="set-goal" type="number" min="1" max="100" inputmode="numeric"></label>
+    </div>
+    <div class="card">
+      <h2>Règles pour protéger ton compte</h2>
+      <ul class="rules">
+        <li>Cet outil ne touche jamais à LinkedIn : il ne lit rien, ne clique sur rien, n'envoie rien. Tout passe par toi.</li>
+        <li>Étale tes demandes dans la journée plutôt que 30 d'un coup.</li>
+        <li>Garde un œil sur ton total de la semaine : LinkedIn limite le nombre d'invitations, et ce plafond change selon les comptes.</li>
+        <li>Retire de LinkedIn les invitations restées sans réponse au bout de 2 à 3 semaines.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Zone de danger</h2>
+      <button class="btn btn-danger" type="button" id="btn-wipe">Tout effacer</button>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- ======================================================================
+     LOGIQUE : fonctions pures (pas de DOM), testées dans test/prospection.test.js
+     ====================================================================== -->
+<script id="logic">
+const Logic = (() => {
+  'use strict';
+
+  // ---------- Texte ----------
+  // "Geschäftsführer", "Porte-Voitures" -> "geschaftsfuhrer", "porte voitures"
+  function normalize(text) {
+    return String(text ?? '')
+      .replace(/ß/g, 'ss')
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+
+  // Termes de la liste présents comme mots entiers dans le texte.
+  function findTerms(text, terms) {
+    const hay = ` ${normalize(text)} `;
+    return terms.filter((term) => {
+      const needle = normalize(term);
+      return needle !== '' && hay.includes(` ${needle} `);
+    });
+  }
+
+  const hasAny = (text, terms) => findTerms(text, terms).length > 0;
+
+  // ---------- Cibles ----------
+  const CATEGORIES = [
+    {
+      id: 'transport', label: 'Transporteurs', name: 'Transporteur', rank: 1, points: 25,
+      search: {
+        fr: {
+          titles: ['gérant', 'dirigeant', 'fondateur', 'directeur', 'responsable', "responsable d'exploitation"],
+          extra: ['gérante', 'dirigeante', 'fondatrice', 'directrice', "chef d'entreprise", 'PDG'],
+          sector: ['transport de véhicules', 'convoyage', 'convoyeur', 'porte-voitures', 'camion plateau', 'transport automobile'],
+        },
+        de: {
+          titles: ['Geschäftsführer', 'Inhaber', 'Gründer', 'Disponent', 'Leiter'],
+          extra: ['Geschäftsführerin', 'Inhaberin', 'Gründerin'],
+          sector: ['Fahrzeugtransport', 'Fahrzeugüberführung', 'Autotransport', 'Überführungsdienst', 'Fahrzeuglogistik'],
+        },
+      },
+      maps: { fr: 'transport de véhicules', de: 'Fahrzeugtransport' },
+      detect: [
+        'transport de véhicules', 'transport de véhicule', 'transport de voitures', 'transport véhicules', 'transport automobile',
+        'transports automobiles', 'convoyage', 'convoyeur', 'convoyeuse', 'convoyeurs', 'porte-voitures', 'porte-voiture',
+        'porte-véhicules', 'camion plateau', 'plateau', 'plateaux', 'dépanneuse', 'remorquage', 'jockeying',
+        'Fahrzeugtransport', 'Fahrzeugtransporte', 'Fahrzeugüberführung', 'Fahrzeugüberführungen', 'Überführung', 'Überführungen',
+        'Überführungsfahrer', 'Autotransport', 'Autotransporte', 'Autotransporter', 'Fahrzeuglogistik', 'Abschleppdienst',
+        'car transport', 'vehicle transport', 'vehicle logistics', 'car carrier',
+      ],
+    },
+    {
+      id: 'depot', label: 'Dépôts-ventes', name: 'Dépôt-vente', rank: 2, points: 22,
+      search: {
+        fr: {
+          titles: ['gérant', 'dirigeant', 'fondateur', 'directeur', 'responsable', 'chef des ventes'],
+          extra: ['gérante', 'dirigeante', 'fondatrice', 'directrice', "chef d'entreprise"],
+          sector: ['dépôt-vente', 'dépôt vente automobile', 'dépôt-vente auto', 'vente en dépôt'],
+        },
+        de: {
+          titles: ['Inhaber', 'Geschäftsführer', 'Verkaufsleiter', 'Gründer'],
+          extra: ['Inhaberin', 'Geschäftsführerin'],
+          sector: ['Kommissionsverkauf', 'Kommissionshandel', 'Gebrauchtwagenhandel', 'Gebrauchtwagen'],
+        },
+      },
+      maps: { fr: 'dépôt-vente automobile', de: 'Gebrauchtwagen Kommissionsverkauf' },
+      detect: [
+        'dépôt-vente', 'dépôt vente', 'dépôts-ventes', 'dépôts ventes', 'dépôt-vente automobile', 'vente en dépôt',
+        'dépôt de véhicules', "véhicules d'occasion", "voitures d'occasion", 'Kommissionsverkauf', 'Kommissionshandel',
+        'Gebrauchtwagen', 'Gebrauchtwagenhandel', 'Gebrauchtwagenhändler', 'consignment', 'used cars',
+      ],
+    },
+    {
+      id: 'concession', label: 'Concessions', name: 'Concession', rank: 3, points: 18,
+      search: {
+        fr: {
+          titles: ['dirigeant', 'gérant', 'directeur', 'directeur de concession', 'chef des ventes', 'responsable'],
+          extra: ['dirigeante', 'gérante', 'directrice', 'directeur de site', 'directeur général', 'chef de ventes'],
+          sector: ['concession', 'concessionnaire', 'agent automobile', 'distributeur automobile', 'groupe automobile'],
+        },
+        de: {
+          titles: ['Geschäftsführer', 'Inhaber', 'Verkaufsleiter', 'Betriebsleiter', 'Niederlassungsleiter'],
+          extra: ['Geschäftsführerin', 'Inhaberin', 'Verkaufsleiterin'],
+          sector: ['Autohaus', 'Vertragshändler', 'Autohändler', 'Automobilhandel'],
+        },
+      },
+      maps: { fr: 'concessionnaire automobile', de: 'Autohaus' },
+      detect: [
+        'concession', 'concessions', 'concessionnaire', 'concessionnaires', 'agent automobile', 'distributeur automobile',
+        'distribution automobile', 'groupe automobile', 'VN', 'VN/VO', 'véhicules neufs', 'Autohaus', 'Autohäuser',
+        'Vertragshändler', 'Autohändler', 'Automobilhandel', 'dealership', 'car dealer', 'dealer', 'Renault', 'Peugeot',
+        'Citroën', 'Volkswagen', 'Toyota', 'BMW', 'Mercedes', 'Audi', 'Ford', 'Opel', 'Kia', 'Hyundai', 'Dacia', 'Skoda',
+        'Fiat', 'Nissan', 'Volvo', 'Mazda', 'Suzuki', 'Honda', 'Stellantis',
+      ],
+    },
+    {
+      id: 'loueur', label: 'Loueurs', name: 'Loueur', rank: 4, points: 15,
+      search: {
+        fr: {
+          titles: ['gérant', 'dirigeant', 'fondateur', "responsable d'agence", 'responsable de flotte', 'directeur'],
+          extra: ['gérante', 'dirigeante', 'fondatrice', 'franchisé', 'gestionnaire de flotte', "directeur d'agence"],
+          sector: ['location de véhicules', 'location de voitures', "location d'utilitaires", 'agence de location', 'loueur'],
+        },
+        de: {
+          titles: ['Inhaber', 'Geschäftsführer', 'Fuhrparkleiter', 'Stationsleiter', 'Filialleiter'],
+          extra: ['Inhaberin', 'Geschäftsführerin', 'Franchisenehmer'],
+          sector: ['Autovermietung', 'Mietwagen', 'Fahrzeugvermietung', 'Transportervermietung'],
+        },
+      },
+      maps: { fr: 'location de voitures', de: 'Autovermietung' },
+      detect: [
+        'location de véhicules', 'location de véhicule', 'location de voitures', 'location de voiture', 'location véhicules',
+        'location voitures', "location d'utilitaires", 'location utilitaires', 'location automobile', 'location courte durée',
+        'location longue durée', 'agence de location', 'loueur', 'loueurs', 'location', 'LLD', 'rent a car', 'car rental',
+        'rental', 'leasing', 'Autovermietung', 'Autovermieter', 'Mietwagen', 'Fahrzeugvermietung', 'Vermietung',
+        'Transportervermietung', 'Europcar', 'Hertz', 'Sixt', 'Ucar', 'Getaround', 'Leasys', 'Free2Move',
+      ],
+    },
+  ];
+
+  const getCategory = (id) => CATEGORIES.find((c) => c.id === id) || null;
+  const categoryName = (id) => getCategory(id)?.name || 'Autre';
+
+  const EXCLUDED_SEARCH = {
+    fr: ['stagiaire', 'alternant', 'étudiant', 'recruteur'],
+    de: ['Praktikant', 'Werkstudent', 'Azubi', 'Student'],
+  };
+
+  // ---------- Zones ----------
+  // Identifiants LinkedIn des pays (filtre « Lieux »).
+  const GEO_URN = { FR: '105015875', CH: '106693272', DE: '101282230' };
+  const COUNTRY_LABEL = { FR: 'France', CH: 'Suisse', DE: 'Allemagne', EU: 'Europe', XX: 'Hors Europe' };
+
+  const ZONES = [
+    {
+      id: 'local', label: 'Mulhouse + 50 km',
+      geo: { fr: ['FR', 'CH'], de: ['DE', 'CH'] },
+      cities: {
+        fr: ['Mulhouse', 'Colmar', 'Saint-Louis', 'Belfort', 'Bâle', 'Altkirch'],
+        de: ['Basel', 'Lörrach', 'Freiburg', 'Müllheim', 'Weil am Rhein', 'Mulhouse'],
+      },
+      maps: [['Mulhouse', 'fr'], ['Colmar', 'fr'], ['Saint-Louis', 'fr'], ['Belfort', 'fr'], ['Basel', 'de'], ['Lörrach', 'de'], ['Freiburg im Breisgau', 'de']],
+    },
+    { id: 'fr', label: 'France', geo: { fr: ['FR'] }, places: { fr: ['France'] } },
+    { id: 'ch', label: 'Suisse', geo: { fr: ['CH'], de: ['CH'] }, places: { fr: ['Suisse'], de: ['Schweiz'] } },
+    { id: 'de', label: 'Allemagne', geo: { de: ['DE'] }, places: { de: ['Deutschland'] } },
+    { id: 'eu', label: 'Toute l’Europe', geo: { fr: [], de: [] }, places: {} },
+  ];
+  const getZone = (id) => ZONES.find((z) => z.id === id) || ZONES[0];
+
+  // Villes à moins de ~50 km de Mulhouse : [nom, km à vol d'oiseau (≈), pays, langue].
+  const PLACES = [
+    ['Mulhouse', 0, 'FR', 'fr'], ['Illzach', 4, 'FR', 'fr'], ['Riedisheim', 3, 'FR', 'fr'], ['Kingersheim', 5, 'FR', 'fr'],
+    ['Wittenheim', 7, 'FR', 'fr'], ['Rixheim', 6, 'FR', 'fr'], ['Pfastatt', 4, 'FR', 'fr'], ['Lutterbach', 5, 'FR', 'fr'],
+    ['Brunstatt', 4, 'FR', 'fr'], ['Didenheim', 4, 'FR', 'fr'], ['Sausheim', 6, 'FR', 'fr'], ['Habsheim', 9, 'FR', 'fr'],
+    ['Richwiller', 6, 'FR', 'fr'], ['Wittelsheim', 11, 'FR', 'fr'], ['Staffelfelden', 11, 'FR', 'fr'], ['Ensisheim', 15, 'FR', 'fr'],
+    ['Cernay', 16, 'FR', 'fr'], ['Thann', 20, 'FR', 'fr'], ['Altkirch', 18, 'FR', 'fr'], ['Guebwiller', 22, 'FR', 'fr'],
+    ['Soultz-Haut-Rhin', 19, 'FR', 'fr'], ['Bollwiller', 15, 'FR', 'fr'], ['Ottmarsheim', 15, 'FR', 'fr'], ['Sierentz', 15, 'FR', 'fr'],
+    ['Kembs', 16, 'FR', 'fr'], ['Masevaux', 26, 'FR', 'fr'], ['Dannemarie', 24, 'FR', 'fr'], ['Saint-Louis', 26, 'FR', 'fr'],
+    ['St-Louis', 26, 'FR', 'fr'], ['Huningue', 28, 'FR', 'fr'], ['Hégenheim', 28, 'FR', 'fr'], ['Hésingue', 26, 'FR', 'fr'],
+    ['Village-Neuf', 27, 'FR', 'fr'], ['Blotzheim', 22, 'FR', 'fr'], ['Ferrette', 30, 'FR', 'fr'], ['Rouffach', 27, 'FR', 'fr'],
+    ['Neuf-Brisach', 37, 'FR', 'fr'], ['Colmar', 40, 'FR', 'fr'], ['Wintzenheim', 40, 'FR', 'fr'], ['Horbourg-Wihr', 40, 'FR', 'fr'],
+    ['Saint-Amarin', 30, 'FR', 'fr'], ['Belfort', 40, 'FR', 'fr'], ['Delle', 37, 'FR', 'fr'], ['Giromagny', 40, 'FR', 'fr'],
+    ['Valdoie', 41, 'FR', 'fr'], ['Héricourt', 47, 'FR', 'fr'], ['Montbéliard', 50, 'FR', 'fr'], ['Audincourt', 50, 'FR', 'fr'],
+    ['Kaysersberg', 46, 'FR', 'fr'],
+    ['Bâle', 30, 'CH', 'de'], ['Basel', 30, 'CH', 'de'], ['Basle', 30, 'CH', 'de'], ['Allschwil', 29, 'CH', 'de'],
+    ['Binningen', 31, 'CH', 'de'], ['Riehen', 33, 'CH', 'de'], ['Birsfelden', 33, 'CH', 'de'], ['Muttenz', 35, 'CH', 'de'],
+    ['Pratteln', 37, 'CH', 'de'], ['Münchenstein', 34, 'CH', 'de'], ['Liestal', 42, 'CH', 'de'], ['Porrentruy', 40, 'CH', 'fr'],
+    ['Delémont', 48, 'CH', 'fr'],
+    ['Lörrach', 32, 'DE', 'de'], ['Weil am Rhein', 28, 'DE', 'de'], ['Müllheim', 22, 'DE', 'de'], ['Neuenburg am Rhein', 18, 'DE', 'de'],
+    ['Bad Bellingen', 22, 'DE', 'de'], ['Schliengen', 25, 'DE', 'de'], ['Kandern', 30, 'DE', 'de'], ['Grenzach-Wyhlen', 35, 'DE', 'de'],
+    ['Heitersheim', 28, 'DE', 'de'], ['Bad Krozingen', 33, 'DE', 'de'], ['Breisach', 38, 'DE', 'de'], ['Rheinfelden', 42, 'DE', 'de'],
+    ['Schopfheim', 38, 'DE', 'de'], ['Freiburg', 48, 'DE', 'de'], ['Fribourg-en-Brisgau', 48, 'DE', 'de'],
+  ];
+
+  const ALSACE_TERMS = ['Haut-Rhin', 'Alsace', 'Elsass', 'Bas-Rhin', 'Sundgau', 'Territoire de Belfort'];
+  const SOUTH_BADEN_TERMS = ['Südbaden', 'Markgräflerland', 'Breisgau', 'Dreiland', 'Dreiländereck', 'Nordwestschweiz', 'Basel-Landschaft', 'Bâle-Campagne'];
+  const COUNTRY_TERMS = {
+    FR: ['France', 'Frankreich', 'Île-de-France', 'Grand Est', 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Occitanie',
+      'Hauts-de-France', 'Normandie', 'Bretagne', 'Nouvelle-Aquitaine', "Provence-Alpes-Côte d'Azur", 'Pays de la Loire',
+      'Centre-Val de Loire', 'Corse', 'Paris', 'Lyon', 'Strasbourg', 'Marseille', 'Lille', 'Nancy', 'Metz', 'Dijon', 'Besançon'],
+    CH: ['Suisse', 'Schweiz', 'Switzerland', 'Svizzera', 'Zurich', 'Zürich', 'Genève', 'Geneva', 'Lausanne', 'Berne', 'Bern',
+      'Lucerne', 'Luzern', 'Vaud', 'Neuchâtel', 'Argovie', 'Aargau', 'Soleure', 'Solothurn', 'Saint-Gall', 'St. Gallen'],
+    DE: ['Allemagne', 'Deutschland', 'Germany', 'Baden-Württemberg', 'Bade-Wurtemberg', 'Bayern', 'Bavière', 'Hessen',
+      'Rheinland-Pfalz', 'Saarland', 'Nordrhein-Westfalen', 'Berlin', 'Hamburg', 'München', 'Stuttgart', 'Karlsruhe', 'Frankfurt'],
+    EU: ['Belgique', 'Belgium', 'België', 'Luxembourg', 'Luxemburg', 'Italie', 'Italia', 'Italy', 'Espagne', 'España', 'Spain',
+      'Autriche', 'Österreich', 'Austria', 'Pays-Bas', 'Nederland', 'Netherlands', 'Pologne', 'Polska', 'Poland', 'Portugal',
+      'Tchéquie', 'Czechia', 'Danemark', 'Denmark', 'Suède', 'Sweden', 'Norvège', 'Norway', 'Roumanie', 'Romania', 'Hongrie',
+      'Hungary', 'Irlande', 'Ireland', 'Royaume-Uni', 'United Kingdom', 'Angleterre', 'England', 'Slovénie', 'Croatie', 'Grèce'],
+  };
+  const SWISS_GERMAN_TERMS = ['Basel', 'Bâle', 'Zurich', 'Zürich', 'Bern', 'Berne', 'Luzern', 'Lucerne', 'Aargau', 'Argovie',
+    'Solothurn', 'Soleure', 'St. Gallen', 'Saint-Gall', 'Winterthur', 'Zug', 'Schaffhausen', 'Thurgau', 'Liestal', 'Basel-Landschaft'];
+
+  function placeIn(text) {
+    const hits = PLACES.filter(([name]) => hasAny(text, [name]));
+    return hits.sort((a, b) => a[1] - b[1])[0] || null;
+  }
+
+  const COUNTRY_NAMES = {
+    FR: ['France', 'Frankreich'],
+    CH: ['Suisse', 'Schweiz', 'Switzerland', 'Svizzera'],
+    DE: ['Allemagne', 'Deutschland', 'Germany'],
+  };
+
+  function detectCountry(text) {
+    const place = placeIn(text);
+    if (place) return place[2];
+    for (const code of ['FR', 'CH', 'DE']) if (hasAny(text, COUNTRY_NAMES[code])) return code;
+    for (const code of ['EU', 'CH', 'DE', 'FR']) if (hasAny(text, COUNTRY_TERMS[code])) return code;
+    if (hasAny(text, ALSACE_TERMS)) return 'FR';
+    return '';
+  }
+
+  function zoneInfo(location, country) {
+    const place = placeIn(location);
+    if (place) {
+      const [name, km] = place;
+      return { points: 25, text: km === 0 ? 'à Mulhouse' : `à ≈ ${km} km de Mulhouse (${name})` };
+    }
+    if (hasAny(location, ALSACE_TERMS)) return { points: 20, text: 'en Alsace' };
+    if (hasAny(location, SOUTH_BADEN_TERMS)) return { points: 20, text: 'dans la région des trois frontières' };
+    const code = country || detectCountry(location);
+    if (code === 'FR') return { points: 15, text: 'en France, hors zone Mulhouse' };
+    if (code === 'CH') return { points: 15, text: 'en Suisse, hors zone Mulhouse' };
+    if (code === 'DE') return { points: 15, text: 'en Allemagne, hors zone Mulhouse' };
+    if (code === 'EU') return { points: 8, text: 'ailleurs en Europe' };
+    if (code === 'XX') return { points: 2, text: 'hors Europe' };
+    return { points: 5, text: 'lieu inconnu' };
+  }
+
+  function suggestLang(country, location) {
+    const place = placeIn(location);
+    if (place) return place[3];
+    if (country === 'DE') return 'de';
+    if (country === 'CH') return hasAny(location, SWISS_GERMAN_TERMS) ? 'de' : 'fr';
+    return 'fr';
+  }
+
+  // ---------- Poste ----------
+  const TOP_ROLES = [
+    'directeur général', 'directrice générale', 'gérant', 'gérante', 'dirigeant', 'dirigeante', 'fondateur', 'fondatrice',
+    'cofondateur', 'co-fondateur', 'cofondatrice', 'co-fondatrice', 'founder', 'co-founder', 'cofounder', 'CEO', 'PDG', 'DG',
+    'président', 'présidente', 'propriétaire', 'owner', "chef d'entreprise", 'managing director', 'general manager',
+    'Geschäftsführer', 'Geschäftsführerin', 'Inhaber', 'Inhaberin', 'Gründer', 'Gründerin', 'associé', 'associée', 'patron', 'patronne',
+  ];
+  const MID_ROLES = [
+    'directeur', 'directrice', 'director', 'chef des ventes', 'chef de ventes', 'chef de vente', 'responsable', 'manager',
+    'head of', "chef d'agence", 'gestionnaire de flotte', 'fleet manager', 'Leiter', 'Leiterin', 'Verkaufsleiter',
+    'Verkaufsleiterin', 'Betriebsleiter', 'Filialleiter', 'Fuhrparkleiter', 'Niederlassungsleiter', 'Stationsleiter',
+    'Disponent', 'Prokurist',
+  ];
+  const JUNIOR_ROLES = [
+    'stagiaire', 'stage', 'alternant', 'alternante', 'alternance', 'étudiant', 'étudiante', 'apprenti', 'apprentie',
+    'Praktikant', 'Praktikantin', 'Werkstudent', 'Werkstudentin', 'Azubi', 'Auszubildender', 'Auszubildende', 'intern',
+    'internship', 'student',
+  ];
+
+  function decisionInfo(title) {
+    if (!normalize(title)) return { points: 5, text: 'poste inconnu' };
+    if (hasAny(title, JUNIOR_ROLES)) return { points: 0, text: 'stagiaire ou étudiant' };
+    const top = findTerms(title, TOP_ROLES)[0];
+    if (top) return { points: 35, text: `${top} = décideur direct` };
+    const mid = findTerms(title, MID_ROLES)[0];
+    if (mid) return { points: 25, text: `${mid} = poste à responsabilité` };
+    return { points: 8, text: 'poste non décisionnaire' };
+  }
+
+  // ---------- Catégorie ----------
+  // Le titre et l'entreprise comptent double, le texte « À propos » simple.
+  // En cas d'égalité, la cible la plus prioritaire l'emporte.
+  function detectCategory({ title = '', company = '', about = '' } = {}) {
+    let best = '';
+    let bestScore = 0;
+    for (const category of CATEGORIES) {
+      const score = findTerms(`${title} ${company}`, category.detect).length * 2 + findTerms(about, category.detect).length;
+      if (score > bestScore) {
+        best = category.id;
+        bestScore = score;
+      }
+    }
+    return best;
+  }
+
+  // ---------- Score ----------
+  const ACTIVITY = {
+    recent: { points: 15, text: 'actif ce mois-ci' },
+    semester: { points: 9, text: 'actif ces 6 derniers mois' },
+    old: { points: 2, text: 'peu actif sur LinkedIn' },
+    '': { points: 5, text: 'activité inconnue' },
+  };
+  const OPEN_TERMS = ['partenariat', 'partenariats', 'partenaire', 'partenaires', 'apporteur', 'apporteurs', "apporteur d'affaires",
+    'recommandation', 'nouveaux clients', 'développement commercial', 'Partner', 'Partnerschaft', 'Kooperation',
+    'Zusammenarbeit', 'Provision', 'Empfehlung', 'partnership', 'referral'];
+
+  function scoreProspect(p) {
+    const category = getCategory(p.category);
+    const parts = {
+      category: category
+        ? { points: category.points, max: 25, text: `${category.name.toLowerCase()} (cible n°${category.rank})` }
+        : { points: 0, max: 25, text: 'catégorie non reconnue' },
+      decision: { max: 35, ...decisionInfo(p.title) },
+      zone: { max: 25, ...zoneInfo(p.city, p.country) },
+      activity: { max: 15, ...(ACTIVITY[p.activity] || ACTIVITY['']) },
+    };
+    const open = hasAny(p.about, OPEN_TERMS);
+    const raw = parts.category.points + parts.decision.points + parts.zone.points + parts.activity.points + (open ? 5 : 0);
+    const score = Math.max(0, Math.min(100, raw));
+    const sentence = [parts.category.text, parts.decision.text, parts.zone.text, parts.activity.text]
+      .concat(open ? ['ouvert aux partenariats'] : [])
+      .join(', ');
+    return {
+      score,
+      level: score >= 75 ? 'hot' : score >= 50 ? 'warm' : 'cold',
+      levelLabel: score >= 75 ? 'Prioritaire' : score >= 50 ? 'À ajouter' : 'Faible',
+      parts,
+      bonus: open ? 5 : 0,
+      explanation: `${sentence.charAt(0).toUpperCase()}${sentence.slice(1)}.`,
+    };
+  }
+
+  // ---------- Noms, villes, entreprises ----------
+  // "Jean-Pierre Martin, MBA 🚗" -> Jean-Pierre / Martin ; "DUPONT Jean" -> Jean / DUPONT
+  function splitName(fullName) {
+    const cleaned = String(fullName || '')
+      .split(/[,|(]/)[0]
+      .replace(/[^\p{L}\s'’-]/gu, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    const tokens = cleaned.split(' ').filter(Boolean);
+    if (!tokens.length) return { firstName: '', lastName: '' };
+    const upper = (t) => t.length > 1 && t === t.toUpperCase();
+    if (tokens.length > 1 && upper(tokens[0]) && !upper(tokens[tokens.length - 1])) {
+      const i = tokens.findIndex((t) => !upper(t));
+      return { firstName: tokens.slice(i).join(' '), lastName: tokens.slice(0, i).join(' ') };
+    }
+    return { firstName: tokens[0], lastName: tokens.slice(1).join(' ') };
+  }
+
+  const CITY_NAMES = {
+    fr: { basel: 'Bâle', basle: 'Bâle', freiburg: 'Fribourg-en-Brisgau', 'freiburg im breisgau': 'Fribourg-en-Brisgau' },
+    de: { bale: 'Basel', 'fribourg en brisgau': 'Freiburg' },
+  };
+
+  const REGION_NAMES = [
+    'France', 'Suisse', 'Schweiz', 'Switzerland', 'Allemagne', 'Deutschland', 'Germany', 'Europe', 'Grand Est', 'Alsace',
+    'Haut-Rhin', 'Bas-Rhin', 'Île-de-France', 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Occitanie', 'Hauts-de-France',
+    'Normandie', 'Bretagne', 'Nouvelle-Aquitaine', "Provence-Alpes-Côte d'Azur", 'Pays de la Loire', 'Centre-Val de Loire',
+    'Baden-Württemberg', 'Bayern', 'Hessen', 'Rheinland-Pfalz', 'Saarland', 'Nordrhein-Westfalen', 'Nordwestschweiz',
+  ];
+
+  // "Greater Basel Area" -> "Basel" ; "Mulhouse et périphérie, Grand Est" -> "Mulhouse" ; "Grand Est, France" -> ""
+  function cleanCity(location, lang = 'fr') {
+    const city = String(location || '')
+      .split(/[,·|]/)[0]
+      .replace(/^(région de|region|greater)\s+/i, '')
+      .replace(/\s+(et périphérie|area|metropolitan area|region|und umgebung)$/i, '')
+      .trim();
+    if (REGION_NAMES.some((name) => normalize(name) === normalize(city))) return '';
+    return CITY_NAMES[lang]?.[normalize(city)] || city;
+  }
+
+  function cleanCompany(company) {
+    let name = String(company || '').trim();
+    const legal = /[\s,]+(sarl|sas|sasu|eurl|sa|snc|sàrl|gmbh|gmbh & co\.? kg|ag|kg|ug|ltd|inc)\.?$/i;
+    while (legal.test(name)) name = name.replace(legal, '').trim();
+    return name;
+  }
+
+  // ---------- Notes de connexion (200 caractères max) ----------
+  const NOTE_MAX = 200;
+  // [ … ] = passage retiré si une variable à l'intérieur est vide, ou si la note est trop longue.
+  const NOTES = {
+    fr: {
+      transport: [
+        "Bonjour[ {prenom}], votre activité de transport de véhicules[ chez {entreprise}] a retenu mon attention. Je travaille avec beaucoup de pros de l'auto, au plaisir d'échanger !",
+        "Bonjour[ {prenom}], apporteur d'affaires dans l'automobile[ autour de {ville}], j'ai régulièrement des besoins de transport de véhicules. Au plaisir d'échanger avec vous.",
+      ],
+      depot: [
+        "Bonjour[ {prenom}], votre dépôt-vente[ {entreprise}] a retenu mon attention. Je croise souvent des particuliers qui veulent vendre leur véhicule, au plaisir d'échanger !",
+        "Bonjour[ {prenom}], apporteur d'affaires dans l'automobile[ autour de {ville}], je rencontre souvent des vendeurs de véhicules. Au plaisir d'échanger avec vous.",
+      ],
+      concession: [
+        "Bonjour[ {prenom}], j'échange avec les acteurs de la distribution automobile[ autour de {ville}] et votre parcours[ chez {entreprise}] a retenu mon attention. Au plaisir !",
+        "Bonjour[ {prenom}], apporteur d'affaires dans l'automobile[ autour de {ville}], je suis en contact avec des acheteurs et des vendeurs. Au plaisir d'échanger avec vous.",
+      ],
+      loueur: [
+        "Bonjour[ {prenom}], je développe mon réseau auprès des loueurs de véhicules[ autour de {ville}] et votre agence[ {entreprise}] a retenu mon attention. Au plaisir !",
+        "Bonjour[ {prenom}], apporteur d'affaires dans l'automobile[ autour de {ville}], je croise souvent des besoins de location de véhicules. Au plaisir d'échanger avec vous.",
+      ],
+      autre: [
+        "Bonjour[ {prenom}], je développe mon réseau auprès des professionnels de l'automobile[ autour de {ville}]. Votre parcours a retenu mon attention, au plaisir d'échanger !",
+        "Bonjour[ {prenom}], apporteur d'affaires dans l'automobile[ autour de {ville}], ce serait un plaisir de vous compter dans mon réseau.",
+      ],
+    },
+    de: {
+      transport: [
+        'Hallo[ {prenom}], Ihre Arbeit im Fahrzeugtransport[ bei {entreprise}] ist mir aufgefallen. Ich arbeite mit vielen Kfz-Profis zusammen und freue mich auf den Austausch!',
+        'Hallo[ {prenom}], als Vermittler in der Automobilbranche[ rund um {ville}] habe ich regelmäßig Bedarf an Fahrzeugtransporten. Ich freue mich auf den Austausch.',
+      ],
+      depot: [
+        'Hallo[ {prenom}], Ihr Kommissionsverkauf[ bei {entreprise}] ist mir aufgefallen. Ich treffe oft Privatleute, die ihr Fahrzeug verkaufen möchten. Freue mich auf den Austausch!',
+        'Hallo[ {prenom}], als Vermittler in der Automobilbranche[ rund um {ville}] treffe ich oft Fahrzeugverkäufer. Ich freue mich auf den Austausch.',
+      ],
+      concession: [
+        'Hallo[ {prenom}], ich vernetze mich mit Akteuren des Autohandels[ rund um {ville}] und Ihr Profil[ bei {entreprise}] ist mir aufgefallen. Ich freue mich auf den Austausch!',
+        'Hallo[ {prenom}], als Vermittler in der Automobilbranche[ rund um {ville}] habe ich Kontakt zu Käufern und Verkäufern. Ich freue mich auf den Austausch.',
+      ],
+      loueur: [
+        'Hallo[ {prenom}], ich vernetze mich mit Autovermietern[ rund um {ville}] und Ihr Unternehmen[ {entreprise}] ist mir aufgefallen. Ich freue mich auf den Austausch!',
+        'Hallo[ {prenom}], als Vermittler in der Automobilbranche[ rund um {ville}] sehe ich oft Bedarf an Mietfahrzeugen. Ich freue mich auf den Austausch.',
+      ],
+      autre: [
+        'Hallo[ {prenom}], ich vernetze mich mit Profis der Automobilbranche[ rund um {ville}]. Ihr Profil ist mir aufgefallen, ich freue mich auf den Austausch!',
+        'Hallo[ {prenom}], als Vermittler in der Automobilbranche[ rund um {ville}] würde ich mich freuen, Sie in meinem Netzwerk zu haben.',
+      ],
+    },
+  };
+
+  // Messages à envoyer après l'acceptation, puis en relance.
+  const MESSAGES = {
+    fr: {
+      transport: "Merci pour la connexion[, {prenom}] !\n\nJe suis apporteur d'affaires dans l'automobile[ autour de {ville}] : je suis régulièrement en contact avec des garages, des particuliers et des pros qui doivent faire transporter un véhicule.\n\nJe peux vous envoyer ces demandes, avec une commission uniquement sur les transports réalisés. Est-ce que ça pourrait vous intéresser ?",
+      depot: "Merci pour la connexion[, {prenom}] !\n\nJe suis apporteur d'affaires dans l'automobile[ autour de {ville}] et je croise souvent des particuliers qui veulent vendre leur véhicule sans s'en occuper.\n\nJe peux vous les orienter : vous ne payez qu'un forfait quand un vendeur signe un mandat chez vous. On en parle ?",
+      concession: "Merci pour la connexion[, {prenom}] !\n\nJe suis apporteur d'affaires dans l'automobile[ autour de {ville}] : je suis en contact avec des personnes qui cherchent un véhicule ou veulent vendre le leur.\n\nJe peux vous recommander ces clients, avec une commission uniquement sur les ventes conclues. Est-ce un fonctionnement que vous pratiquez ?",
+      loueur: "Merci pour la connexion[, {prenom}] !\n\nJe suis apporteur d'affaires dans l'automobile[ autour de {ville}] et je croise régulièrement des particuliers et des entreprises qui ont besoin de louer un véhicule.\n\nJe peux vous les envoyer, avec une commission uniquement sur les locations réalisées. Est-ce que ça pourrait vous intéresser ?",
+      autre: "Merci pour la connexion[, {prenom}] !\n\nJe suis apporteur d'affaires dans l'automobile[ autour de {ville}] : je mets des clients en relation avec des professionnels, contre une commission uniquement sur résultat. Est-ce que ça pourrait vous intéresser d'en discuter ?",
+      relance: "Bonjour[ {prenom}], je me permets de revenir vers vous au sujet de mon message. Est-ce que ce type de partenariat, rémunéré uniquement au résultat, pourrait vous intéresser ? Si ce n'est pas le moment, aucun souci.",
+    },
+    de: {
+      transport: 'Danke für die Vernetzung[, {prenom}]!\n\nIch bin Vermittler in der Automobilbranche[ rund um {ville}] und habe regelmäßig Kontakt zu Werkstätten, Privatleuten und Unternehmen, die ein Fahrzeug transportieren lassen müssen.\n\nIch kann Ihnen diese Anfragen weiterleiten, gegen eine Provision nur auf durchgeführte Transporte. Wäre das interessant für Sie?',
+      depot: 'Danke für die Vernetzung[, {prenom}]!\n\nIch bin Vermittler in der Automobilbranche[ rund um {ville}] und treffe oft Privatleute, die ihr Fahrzeug verkaufen möchten, ohne sich selbst darum zu kümmern.\n\nIch kann sie an Sie vermitteln: Sie zahlen nur eine Pauschale, wenn ein Verkäufer bei Ihnen einen Auftrag unterschreibt. Sollen wir darüber sprechen?',
+      concession: 'Danke für die Vernetzung[, {prenom}]!\n\nIch bin Vermittler in der Automobilbranche[ rund um {ville}] und habe Kontakt zu Menschen, die ein Fahrzeug suchen oder ihres verkaufen möchten.\n\nIch kann Ihnen diese Kunden empfehlen, gegen eine Provision nur auf abgeschlossene Verkäufe. Arbeiten Sie mit solchen Partnern?',
+      loueur: 'Danke für die Vernetzung[, {prenom}]!\n\nIch bin Vermittler in der Automobilbranche[ rund um {ville}] und treffe regelmäßig Privatleute und Unternehmen, die ein Fahrzeug mieten müssen.\n\nIch kann sie an Sie weiterleiten, gegen eine Provision nur auf tatsächliche Vermietungen. Wäre das interessant für Sie?',
+      autre: 'Danke für die Vernetzung[, {prenom}]!\n\nIch bin Vermittler in der Automobilbranche[ rund um {ville}] und bringe Kunden mit Fachbetrieben zusammen, gegen Provision und nur bei Erfolg. Wäre ein Austausch interessant für Sie?',
+      relance: 'Hallo[ {prenom}], ich wollte kurz an meine Nachricht erinnern. Wäre eine Zusammenarbeit auf Provisionsbasis, nur bei Erfolg, interessant für Sie? Falls es gerade nicht passt, kein Problem.',
+    },
+  };
+
+  function fill(template, vars) {
+    const value = (name) => String(vars[name] ?? '').trim();
+    return template
+      .replace(/\[([^[\]]*)\]/g, (_, inner) => ([...inner.matchAll(/\{(\w+)\}/g)].every(([, n]) => value(n)) ? inner : ''))
+      .replace(/\{(\w+)\}/g, (_, n) => value(n))
+      .replace(/ {2,}/g, ' ');
+  }
+
+  function fitNote(template, vars, max = NOTE_MAX) {
+    let current = template;
+    let text = fill(current, vars);
+    const optional = template.match(/\[[^[\]]*\]/g) || [];
+    for (let i = optional.length - 1; i >= 0 && text.length > max; i -= 1) {
+      current = current.replace(optional[i], '');
+      text = fill(current, vars);
+    }
+    return text.length <= max ? text : `${text.slice(0, max - 1).trimEnd()}…`;
+  }
+
+  function noteVars(p, lang) {
+    return {
+      prenom: p.firstName || splitName(p.name).firstName,
+      entreprise: cleanCompany(p.company),
+      ville: cleanCity(p.city, lang),
+    };
+  }
+
+  const langOf = (p) => p.lang || suggestLang(p.country, p.city);
+
+  function buildNotes(p) {
+    const lang = langOf(p);
+    const set = NOTES[lang][p.category] || NOTES[lang].autre;
+    const vars = noteVars(p, lang);
+    return set.map((template) => fitNote(template, vars));
+  }
+
+  function messageFor(p) {
+    const lang = langOf(p);
+    let key = null;
+    let label = '';
+    if (p.status === 'accepte') { key = MESSAGES[lang][p.category] ? p.category : 'autre'; label = '1er message'; }
+    if (p.status === 'message' || p.status === 'relance') { key = 'relance'; label = 'Relance'; }
+    return key ? { label, text: fill(MESSAGES[lang][key], noteVars(p, lang)) } : null;
+  }
+
+  // ---------- Lecture d'un profil collé ----------
+  const DEGREE = '(?:1er|2e|3e\\+?|1st|2nd|3rd\\+?|[123]\\.)';
+  const DEGREE_ONLY = new RegExp(`^(?:·\\s*)?${DEGREE}(?:\\s+(?:degré|degree|Grades?))?$`, 'i');
+  const NAME_WITH_DEGREE = new RegExp(`^(.{2,80}?)\\s*·\\s*${DEGREE}`, 'i');
+  const NOISE = [
+    DEGREE_ONLY,
+    /^(?:coordonnées|contact info|kontaktinfo\w*)$/i,
+    /^[\d\s.,  ]+\+?\s*(?:relations?|connections?|kontakte|abonnés|followers?)$/i,
+    /^(?:se connecter|connect|message|envoyer un message|suivre|follow|plus|more|vernetzen|nachricht|folgen|mehr|enregistrer en pdf|·)$/i,
+    /^(?:il|elle|iel|he|she|they|er|sie)\s*\/\s*\S+$/i,
+  ];
+  const NAV = ['accueil', 'mon reseau', 'reseau', 'emplois', 'messagerie', 'notifications', 'vous', 'pour les entreprises',
+    'passer au contenu principal', 'home', 'my network', 'jobs', 'messaging', 'me', 'for business', 'skip to main content',
+    'startseite', 'mein netzwerk', 'nachrichten', 'mitteilungen', 'sie', 'rechercher', 'search', 'premium'];
+  const ABOUT_HEADERS = ['infos', 'info', 'a propos', 'about', 'uber mich'];
+  const ACTIVITY_HEADERS = ['activite', 'activity', 'aktivitaten', 'aktivitat'];
+  const EXPERIENCE_HEADERS = ['experience', 'berufserfahrung', 'erfahrung'];
+  const SECTION_HEADERS = [...ABOUT_HEADERS, ...ACTIVITY_HEADERS, ...EXPERIENCE_HEADERS, 'formation', 'education', 'ausbildung',
+    'competences', 'skills', 'kenntnisse', 'recommandations', 'recommendations', 'empfehlungen', 'langues', 'languages',
+    'sprachen', 'centres d interet', 'interests', 'interessen', 'licences et certifications', 'licenses certifications',
+    'benevolat', 'volunteering', 'projets', 'projects', 'publications', 'en vedette', 'vedette', 'featured', 'services',
+    'prestations', 'ressources', 'resources', 'analyses', 'analytics', 'dienstleistungen', 'people also viewed',
+    'autres profils consultes', 'personnes que vous pourriez connaitre', 'pages pour vous'];
+
+  const isNoise = (line) => NOISE.some((re) => re.test(line));
+
+  function looksLikeName(line) {
+    if (!line || line.length > 60 || /[\d@|:/]/.test(line) || isNoise(line)) return false;
+    if (NAV.includes(normalize(line)) || SECTION_HEADERS.includes(normalize(line))) return false;
+    if (/\b(?:chez|at|bei)\b/i.test(line)) return false;
+    const words = line.split(/\s+/);
+    return words.length >= 2 && words.length <= 6 && /^\p{Lu}/u.test(line);
+  }
+
+  function looksLikeLocation(line) {
+    if (!line || line.length > 100 || /[|@]/.test(line) || /\b(?:chez|at|bei)\b/i.test(line)) return false;
+    return Boolean(placeIn(line) || detectCountry(line) || hasAny(line, ALSACE_TERMS) || hasAny(line, SOUTH_BADEN_TERMS));
+  }
+
+  function nextMeaningful(lines, from) {
+    for (let i = from + 1; i < lines.length; i += 1) if (!isNoise(lines[i])) return i;
+    return -1;
+  }
+
+  function previousMeaningful(lines, from) {
+    for (let i = from - 1; i >= 0; i -= 1) if (!isNoise(lines[i])) return i;
+    return -1;
+  }
+
+  function sectionLines(lines, headers) {
+    const start = lines.findIndex((line) => headers.includes(normalize(line)));
+    if (start === -1) return [];
+    const out = [];
+    for (let i = start + 1; i < lines.length && !SECTION_HEADERS.includes(normalize(lines[i])); i += 1) out.push(lines[i]);
+    return out;
+  }
+
+  function companyFromHeadline(title) {
+    const at = /(?:\bchez\b|\bat\b|\bbei\b|@)\s*(.+)$/i.exec(title || '');
+    if (at) return at[1].split(/\s[|•·–—-]\s|[|•·,]/)[0].trim();
+    // "Gérant - Transports Dupont" / "Inhaber | Autohaus Müller"
+    const parts = String(title || '').split(/\s[|•·–—-]\s/).map((s) => s.trim()).filter(Boolean);
+    if (parts.length >= 2 && hasAny(parts[0], [...TOP_ROLES, ...MID_ROLES]) && !hasAny(parts[1], [...TOP_ROLES, ...MID_ROLES])) {
+      return parts[1];
+    }
+    return '';
+  }
+
+  function companyFromExperience(lines) {
+    const exp = sectionLines(lines, EXPERIENCE_HEADERS);
+    if (exp.length < 2) return '';
+    const isDuration = (s) => /\d/.test(s) && /\b(?:ans?|mois|yrs?|mos?|Jahre?|Monate?|aujourd'hui|present|heute)\b/i.test(s);
+    if (exp[1].includes(' · ') && !isDuration(exp[1])) return exp[1].split(' · ')[0].trim();
+    if (isDuration(exp[1])) return exp[0];
+    return exp[1].length <= 80 ? exp[1] : '';
+  }
+
+  const UNIT_DAYS = { min: 0, h: 0, std: 0, j: 1, d: 1, t: 1, tg: 1, sem: 7, w: 7, wo: 7, mois: 30, mo: 30, mon: 30, an: 365, ans: 365, yr: 365, yrs: 365 };
+
+  function activityFrom(lines) {
+    if (!lines.length) return '';
+    const text = lines.slice(0, 40).join('\n');
+    if (/n['’]a (?:encore )?(?:rien )?(?:pas )?(?:encore )?publi|hasn['’]t posted|has not posted|noch nichts|keine beiträge/i.test(text)) return 'old';
+    const re = /(?:^|\s)(\d{1,3})\s?(min|h|std|j|d|tg|t|sem|w|wo|mois|mo|mon|ans|an|yrs|yr)\.?(?=\s*(?:[•·]|$))/gim;
+    let best = Infinity;
+    for (const [, n, unit] of text.matchAll(re)) {
+      const days = Number(n) * UNIT_DAYS[unit.toLowerCase()];
+      if (days < best) best = days;
+    }
+    if (best === Infinity) return '';
+    return best <= 31 ? 'recent' : best <= 183 ? 'semester' : 'old';
+  }
+
+  function parseProfileText(raw) {
+    const text = String(raw || '');
+    const out = { name: '', title: '', company: '', location: '', about: '', activity: '', url: '' };
+    const url = text.match(/https?:\/\/(?:[a-z]{2,3}\.)?(?:www\.)?linkedin\.com\/in\/[^\s?#"'<>)]+/i);
+    if (url) out.url = normalizeUrl(url[0]);
+
+    const lines = text.split(/\r?\n/)
+      .map((line) => line.replace(/\s+/g, ' ').trim())
+      .filter(Boolean)
+      .filter((line, i, all) => line !== all[i - 1]);
+    if (!lines.length) return out;
+
+    // Nom : la ligne juste avant le degré de relation (« · 2e »), sinon la première ligne qui ressemble à un nom.
+    let cursor = -1;
+    for (let i = 0; i < lines.length && cursor === -1; i += 1) {
+      const inline = NAME_WITH_DEGREE.exec(lines[i]);
+      if (inline && looksLikeName(inline[1].trim())) {
+        out.name = inline[1].trim();
+        cursor = i;
+      } else if (DEGREE_ONLY.test(lines[i])) {
+        const prev = previousMeaningful(lines, i);
+        if (prev >= 0 && looksLikeName(lines[prev])) {
+          out.name = lines[prev];
+          cursor = i;
+        }
+      }
+    }
+    if (cursor === -1) {
+      cursor = lines.findIndex(looksLikeName);
+      if (cursor >= 0) out.name = lines[cursor];
+    }
+    if (cursor >= 0) {
+      const titleIndex = nextMeaningful(lines, cursor);
+      if (titleIndex >= 0 && !looksLikeLocation(lines[titleIndex])) {
+        out.title = lines[titleIndex];
+        cursor = titleIndex;
+      }
+      for (let i = cursor + 1; i < Math.min(lines.length, cursor + 8); i += 1) {
+        const line = lines[i].replace(/\s*·?\s*(?:coordonnées|contact info|kontaktinfo\w*)\s*$/i, '').trim();
+        if (looksLikeLocation(line)) {
+          out.location = line;
+          break;
+        }
+      }
+    }
+
+    out.about = sectionLines(lines, ABOUT_HEADERS).join('\n')
+      .replace(/…?\s*(?:voir plus|afficher la suite|see more|mehr anzeigen)\s*$/i, '')
+      .trim()
+      .slice(0, 2000);
+    out.activity = activityFrom(sectionLines(lines, ACTIVITY_HEADERS));
+    out.company = companyFromHeadline(out.title) || companyFromExperience(lines);
+    return out;
+  }
+
+  // ---------- URL ----------
+  function normalizeUrl(url) {
+    const value = String(url || '').trim();
+    const match = /linkedin\.com\/in\/([^/?#\s]+)/i.exec(value);
+    return match ? `https://www.linkedin.com/in/${match[1]}` : value;
+  }
+
+  const sameUrl = (a, b) => Boolean(a && b) && normalizeUrl(a).toLowerCase() === normalizeUrl(b).toLowerCase();
+
+  // ---------- Recherches ----------
+  const quote = (term) => (/[\s'’-]/.test(term) ? `"${term}"` : term);
+  const orGroup = (terms) => (terms.length > 1 ? `(${terms.map(quote).join(' OR ')})` : quote(terms[0]));
+
+  function linkedinPeopleUrl({ keywords, geo = [], network = 'wide' }) {
+    const params = [
+      ['keywords', keywords],
+      ['origin', 'FACETED_SEARCH'],
+      ['network', JSON.stringify(network === 'second' ? ['S'] : ['S', 'O'])],
+    ];
+    if (geo.length) params.push(['geoUrn', JSON.stringify(geo.map((code) => GEO_URN[code]))]);
+    return `https://www.linkedin.com/search/results/people/?${params.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&')}`;
+  }
+
+  const googleUrl = (query) => `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+  const mapsUrl = (query) => `https://www.google.com/maps/search/${encodeURIComponent(query)}`;
+
+  function buildSearchLinks(categoryId, zoneId, network = 'wide') {
+    const category = getCategory(categoryId) || CATEGORIES[0];
+    const zone = getZone(zoneId);
+    const groups = Object.entries(zone.geo).map(([lang, geo]) => {
+      const terms = category.search[lang];
+      const roles = orGroup([...terms.titles, ...terms.extra]);
+      const sector = orGroup(terms.sector);
+      const base = `${roles} AND ${sector}`;
+      const geoText = geo.length ? geo.map((code) => COUNTRY_LABEL[code]).join(' + ') : 'tous pays';
+      const links = [{
+        label: 'LinkedIn · tous les décideurs',
+        hint: zone.cities
+          ? `Filtre pays : ${geoText}. Dans LinkedIn, ajoute le filtre « Lieux » (ex. Mulhouse) pour resserrer.`
+          : `Filtre pays : ${geoText}.`,
+        keywords: `${base} NOT ${orGroup(EXCLUDED_SEARCH[lang])}`,
+      }];
+      if (zone.cities) {
+        links.push({
+          label: 'LinkedIn · villes autour de Mulhouse',
+          hint: 'Les villes sont dans les mots-clés : résultats plus locaux, mais moins nombreux.',
+          keywords: `${base} AND ${orGroup(zone.cities[lang])}`,
+        });
+      }
+      links.forEach((link) => { link.url = linkedinPeopleUrl({ keywords: link.keywords, geo, network }); });
+
+      const places = zone.cities?.[lang] || zone.places?.[lang] || [];
+      const xray = ['site:linkedin.com/in', orGroup(terms.titles.slice(0, 4)), orGroup(terms.sector.slice(0, 3))]
+        .concat(places.length ? [orGroup(places)] : [])
+        .join(' ');
+      links.push({
+        label: 'Google · profils LinkedIn',
+        hint: 'Google fouille les profils publics : souvent plus précis pour une ville.',
+        keywords: xray,
+        url: googleUrl(xray),
+      });
+
+      const titles = terms.titles.map((title) => {
+        const keywords = `${quote(title)} AND ${sector}`;
+        return { label: title, keywords, url: linkedinPeopleUrl({ keywords, geo, network }) };
+      });
+      return { lang, title: lang === 'fr' ? 'Profils francophones' : 'Profils germanophones', geoText, links, titles };
+    });
+    const maps = (zone.maps || []).map(([city, lang]) => ({ label: city, url: mapsUrl(`${category.maps[lang]} ${city}`) }));
+    return { groups, maps };
+  }
+
+  // ---------- Dates ----------
+  const pad = (n) => String(n).padStart(2, '0');
+  const today = (now = new Date()) => `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const parseYmd = (ymd) => { const [y, m, d] = String(ymd).split('-').map(Number); return new Date(y, m - 1, d); };
+  const addDays = (ymd, days) => { const d = parseYmd(ymd); d.setDate(d.getDate() + days); return today(d); };
+  const daysBetween = (from, to) => Math.round((Date.UTC(...ymdParts(to)) - Date.UTC(...ymdParts(from))) / 86400000);
+  function ymdParts(ymd) { const [y, m, d] = String(ymd).split('-').map(Number); return [y, m - 1, d]; }
+  function formatDate(value) {
+    if (!value) return '';
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(value) ? parseYmd(value) : new Date(value);
+    return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  // ---------- Statuts et relances ----------
+  // follow : nombre de jours avant la prochaine relance ; 'keep' garde la date ; null l'efface.
+  const STATUSES = [
+    { id: 'identifie', label: 'Identifié', follow: null },
+    { id: 'envoyee', label: 'Demande envoyée', follow: 7 },
+    { id: 'accepte', label: 'Accepté', follow: 0 },
+    { id: 'message', label: '1er message', follow: 4 },
+    { id: 'relance', label: 'Relance', follow: 7 },
+    { id: 'rdv', label: 'RDV', follow: 'keep' },
+    { id: 'signe', label: 'Signé', follow: null },
+    { id: 'perdu', label: 'Perdu', follow: null },
+  ];
+  const statusLabel = (id) => STATUSES.find((s) => s.id === id)?.label || id;
+
+  function applyStatus(p, status, now = new Date()) {
+    const rule = STATUSES.find((s) => s.id === status);
+    const at = now.toISOString();
+    const next = { ...p, status, statusAt: at, updatedAt: at };
+    if (status === 'identifie') next.sentAt = '';
+    if (status === 'envoyee' && !p.sentAt) next.sentAt = at;
+    if (typeof rule?.follow === 'number') next.followUp = addDays(today(now), rule.follow);
+    else if (rule?.follow !== 'keep') next.followUp = '';
+    return next;
+  }
+
+  function followState(p, ymd = today()) {
+    if (!p.followUp || p.status === 'signe' || p.status === 'perdu') return { state: '', days: 0, label: '' };
+    const diff = daysBetween(ymd, p.followUp);
+    if (diff < 0) return { state: 'late', days: -diff, label: `En retard · ${-diff} j` };
+    if (diff === 0) return { state: 'today', days: 0, label: "Aujourd'hui" };
+    return { state: 'later', days: diff, label: diff === 1 ? 'Demain' : `Dans ${diff} j` };
+  }
+
+  const countSentOn = (prospects, ymd = today()) =>
+    prospects.filter((p) => p.sentAt && today(new Date(p.sentAt)) === ymd).length;
+
+  const ACCEPTED_STATUSES = ['accepte', 'message', 'relance', 'rdv', 'signe'];
+
+  function stats(prospects) {
+    const by = (status) => prospects.filter((p) => p.status === status).length;
+    // Une fiche passée directement en « Accepté » (sans cocher « envoyée ») compte aussi comme envoyée.
+    const sent = prospects.filter((p) => p.sentAt || p.status === 'envoyee' || ACCEPTED_STATUSES.includes(p.status)).length;
+    const accepted = prospects.filter((p) => ACCEPTED_STATUSES.includes(p.status)).length;
+    return {
+      total: prospects.length,
+      queued: by('identifie'),
+      sent,
+      accepted,
+      meetings: by('rdv'),
+      signed: by('signe'),
+      acceptance: sent ? Math.round((accepted / sent) * 100) : null,
+    };
+  }
+
+  // ---------- CSV ----------
+  const CSV_COLUMNS = [
+    ['id', (p) => p.id], ['nom', (p) => p.name], ['prenom', (p) => p.firstName], ['poste', (p) => p.title],
+    ['entreprise', (p) => p.company], ['ville', (p) => p.city], ['pays', (p) => p.country], ['url', (p) => p.url],
+    ['categorie', (p) => categoryName(p.category)], ['score', (p) => scoreProspect(p).score], ['activite', (p) => p.activity],
+    ['statut', (p) => statusLabel(p.status)], ['date_relance', (p) => p.followUp], ['ajoute_le', (p) => p.addedAt],
+    ['envoye_le', (p) => p.sentAt], ['statut_le', (p) => p.statusAt], ['langue', (p) => p.lang], ['notes', (p) => p.notes],
+    ['a_propos', (p) => p.about],
+  ];
+
+  function csvCell(value) {
+    let text = String(value ?? '');
+    if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`; // évite qu'Excel l'interprète comme une formule
+    return /[";,\n\r]/.test(text) || /^\s|\s$/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  }
+
+  // Format Excel français : séparateur « ; » et BOM pour les accents.
+  function toCSV(prospects) {
+    const rows = [CSV_COLUMNS.map(([name]) => name), ...prospects.map((p) => CSV_COLUMNS.map(([, get]) => get(p)))];
+    return `﻿${rows.map((row) => row.map(csvCell).join(';')).join('\r\n')}\r\n`;
+  }
+
+  function parseCSV(text) {
+    const src = String(text || '').replace(/^﻿/, '');
+    const header = src.split(/\r?\n/, 1)[0] || '';
+    const count = (d) => header.split(d).length - 1;
+    const delim = [';', ',', '\t'].sort((a, b) => count(b) - count(a))[0];
+    const rows = [];
+    let row = [];
+    let field = '';
+    let quoted = false;
+    for (let i = 0; i < src.length; i += 1) {
+      const c = src[i];
+      if (quoted) {
+        if (c === '"' && src[i + 1] === '"') { field += '"'; i += 1; } else if (c === '"') quoted = false;
+        else field += c;
+      } else if (c === '"') quoted = true;
+      else if (c === delim) { row.push(field); field = ''; } else if (c === '\n' || c === '\r') {
+        if (c === '\r' && src[i + 1] === '\n') i += 1;
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = '';
+      } else field += c;
+    }
+    if (field !== '' || row.length) { row.push(field); rows.push(row); }
+    return rows.filter((r) => r.some((v) => v.trim() !== ''));
+  }
+
+  const CSV_ALIASES = {
+    id: ['id'], name: ['nom', 'name', 'nom complet', 'full name'], firstName: ['prenom', 'first name', 'firstname'],
+    title: ['poste', 'titre', 'title', 'headline', 'fonction'], company: ['entreprise', 'societe', 'company', 'organisation'],
+    city: ['ville', 'lieu', 'location', 'localisation', 'city'], country: ['pays', 'country'],
+    url: ['url', 'profil', 'linkedin', 'profile', 'lien', 'url linkedin'], category: ['categorie', 'category', 'cible', 'segment'],
+    activity: ['activite', 'activity'], status: ['statut', 'status', 'etape'],
+    followUp: ['date relance', 'relance', 'follow up', 'prochaine relance', 'date de relance'],
+    addedAt: ['ajoute le', 'date ajout', 'added at', 'created at'], sentAt: ['envoye le', 'demande envoyee le', 'sent at'],
+    statusAt: ['statut le', 'status at'], lang: ['langue', 'lang', 'language'], notes: ['notes', 'note', 'commentaire'],
+    about: ['a propos', 'about', 'infos', 'resume'],
+  };
+
+  function categoryFrom(value) {
+    const v = normalize(value);
+    if (!v || v === 'autre') return '';
+    const found = CATEGORIES.find((c) => [c.id, c.name, c.label].some((s) => normalize(s) === v));
+    return found ? found.id : detectCategory({ title: value });
+  }
+
+  function statusFrom(value) {
+    const v = normalize(value);
+    return (STATUSES.find((s) => normalize(s.id) === v || normalize(s.label) === v) || STATUSES[0]).id;
+  }
+
+  function dateFrom(value, ymdOnly) {
+    const v = String(value || '').trim();
+    if (!v) return '';
+    const fr = /^(\d{1,2})[/.](\d{1,2})[/.](\d{4})$/.exec(v);
+    const date = fr ? new Date(Number(fr[3]), Number(fr[2]) - 1, Number(fr[1])) : /^\d{4}-\d{2}-\d{2}$/.test(v) ? parseYmd(v) : new Date(v);
+    if (Number.isNaN(date.getTime())) return '';
+    return ymdOnly ? today(date) : date.toISOString();
+  }
+
+  function uid() {
+    return globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  function fromCSV(text) {
+    const rows = parseCSV(text);
+    if (rows.length < 2) return [];
+    const keys = rows[0].map((h) => {
+      const n = normalize(h);
+      return Object.keys(CSV_ALIASES).find((key) => CSV_ALIASES[key].includes(n)) || null;
+    });
+    return rows.slice(1).map((row) => {
+      const raw = {};
+      keys.forEach((key, i) => {
+        if (key) raw[key] = String(row[i] ?? '').trim().replace(/^'(?=[=+\-@\t\r])/, '');
+      });
+      const p = {
+        id: raw.id || uid(),
+        name: raw.name || '',
+        firstName: raw.firstName || '',
+        title: raw.title || '',
+        company: raw.company || '',
+        city: raw.city || '',
+        country: ['FR', 'CH', 'DE', 'EU', 'XX'].includes((raw.country || '').toUpperCase()) ? raw.country.toUpperCase() : detectCountry(raw.country || raw.city || ''),
+        url: normalizeUrl(raw.url || ''),
+        category: raw.category !== undefined ? categoryFrom(raw.category) : detectCategory(raw),
+        activity: ['recent', 'semester', 'old'].includes(raw.activity) ? raw.activity : '',
+        status: statusFrom(raw.status),
+        followUp: dateFrom(raw.followUp, true),
+        addedAt: dateFrom(raw.addedAt) || new Date().toISOString(),
+        sentAt: dateFrom(raw.sentAt),
+        statusAt: dateFrom(raw.statusAt),
+        lang: ['fr', 'de'].includes(raw.lang) ? raw.lang : '',
+        notes: raw.notes || '',
+        about: raw.about || '',
+      };
+      p._present = Object.keys(raw);
+      return p;
+    }).filter((p) => p.name || p.url);
+  }
+
+  // Ajoute les nouvelles fiches, met à jour les existantes (même id, même URL, ou même nom + entreprise).
+  function mergeProspects(current, incoming) {
+    const list = current.map((p) => ({ ...p }));
+    let added = 0;
+    let updated = 0;
+    for (const item of incoming) {
+      const { _present: present = Object.keys(item), ...p } = item;
+      const index = list.findIndex((x) => x.id === p.id
+        || sameUrl(x.url, p.url)
+        || (!p.url && normalize(x.name) === normalize(p.name) && normalize(x.company) === normalize(p.company)));
+      if (index === -1) {
+        list.push(p);
+        added += 1;
+      } else {
+        const merged = { ...list[index] };
+        for (const key of present) if (key !== 'id' && p[key] !== '' && p[key] !== undefined) merged[key] = p[key];
+        list[index] = merged;
+        updated += 1;
+      }
+    }
+    return { list, added, updated };
+  }
+
+  return {
+    normalize, findTerms, CATEGORIES, getCategory, categoryName, ZONES, getZone, STATUSES, statusLabel, ACTIVITY, NOTE_MAX,
+    buildSearchLinks, linkedinPeopleUrl, detectCategory, decisionInfo, detectCountry, zoneInfo, suggestLang, scoreProspect,
+    splitName, cleanCity, cleanCompany, buildNotes, messageFor, parseProfileText, normalizeUrl, sameUrl, applyStatus,
+    followState, today, addDays, daysBetween, formatDate, countSentOn, stats, toCSV, parseCSV, fromCSV, mergeProspects, uid,
+  };
+})();
+</script>
+
+<!-- ======================================================================
+     INTERFACE
+     ====================================================================== -->
+<script>
+(() => {
+  'use strict';
+  const L = Logic;
+  const KEY = 'apporteur-auto-prospection-v1';
+  const DEFAULT_SETTINGS = {
+    dailyGoal: 30, lastExport: '', view: 'search', searchCat: 'transport', searchZone: 'local', network: 'wide',
+    queueCat: 'all', followCat: 'all',
+  };
+
+  const VIEWS = ['search', 'add', 'queue', 'follow', 'data'];
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+  function h(tag, attrs = {}, ...children) {
+    const el = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) {
+      if (value === null || value === undefined || value === false) continue;
+      if (key === 'class') el.className = value;
+      else if (key === 'style') el.style.cssText = value;
+      else if (key.startsWith('on')) el.addEventListener(key.slice(2), value);
+      else if (key === 'checked' || key === 'value') el[key] = value;
+      else el.setAttribute(key, value === true ? '' : value);
+    }
+    el.append(...children.flat().filter((c) => c !== null && c !== undefined && c !== false && c !== ''));
+    return el;
+  }
+
+  // ---------- Stockage ----------
+  let storageOk = true;
+  function load() {
+    try {
+      const data = JSON.parse(localStorage.getItem(KEY) || '{}');
+      return {
+        prospects: Array.isArray(data.prospects) ? data.prospects : [],
+        settings: { ...DEFAULT_SETTINGS, ...(data.settings || {}) },
+      };
+    } catch {
+      storageOk = false;
+      return { prospects: [], settings: { ...DEFAULT_SETTINGS } };
+    }
+  }
+  const db = load();
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(db));
+      storageOk = true;
+    } catch {
+      if (storageOk) toast('Enregistrement impossible dans ce navigateur : exporte ton CSV.', { kind: 'error' });
+      storageOk = false;
+    }
+    renderChrome();
+  }
+
+  const byId = (id) => db.prospects.find((p) => p.id === id);
+  function updateProspect(next) {
+    const i = db.prospects.findIndex((p) => p.id === next.id);
+    if (i >= 0) db.prospects[i] = next;
+    save();
+  }
+
+  // ---------- Petits outils ----------
+  let toastTimer;
+  function toast(message, { kind = '', action } = {}) {
+    const el = $('#toast');
+    el.className = `toast ${kind}`;
+    el.replaceChildren(...[
+      h('span', {}, message),
+      action && h('button', { class: 'toast-action', type: 'button', onclick: () => { el.hidden = true; action.run(); } }, action.label),
+    ].filter(Boolean));
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.hidden = true; }, action ? 6000 : 3200);
+  }
+
+  async function copy(text, message = 'Copié !') {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const area = h('textarea', { style: 'position:fixed;opacity:0' }, text);
+      document.body.append(area);
+      area.select();
+      const ok = document.execCommand('copy');
+      area.remove();
+      if (!ok) return toast('Copie impossible : sélectionne le texte à la main.', { kind: 'error' });
+    }
+    toast(message);
+  }
+
+  // Deux clics pour les actions définitives.
+  function confirmClick(button, action) {
+    if (button.dataset.armed) {
+      clearTimeout(Number(button.dataset.armed));
+      delete button.dataset.armed;
+      button.classList.remove('confirm');
+      button.textContent = button.dataset.label;
+      action();
+      return;
+    }
+    button.dataset.label = button.textContent;
+    button.textContent = 'Confirmer ?';
+    button.classList.add('confirm');
+    button.dataset.armed = String(setTimeout(() => {
+      delete button.dataset.armed;
+      button.classList.remove('confirm');
+      button.textContent = button.dataset.label;
+    }, 3000));
+  }
+
+  function download(name, content, type) {
+    const url = URL.createObjectURL(new Blob([content], { type }));
+    const a = h('a', { href: url, download: name });
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  const chip = (label, active, onclick, extra = {}) =>
+    h('button', { type: 'button', class: `chip${active ? ' active' : ''}`, onclick, ...extra }, label);
+
+  const scoreBadge = (s, small) => h('div', { class: `score-badge ${s.level}${small ? ' sm' : ''}`, title: s.explanation }, String(s.score));
+
+  const profileLink = (p, label = 'Profil ↗') =>
+    p.url && h('a', { class: 'btn btn-sm', href: p.url, target: '_blank', rel: 'noopener noreferrer' }, label);
+
+  function subline(p) {
+    const company = p.company && !L.normalize(p.title).includes(L.normalize(p.company)) ? p.company : '';
+    return [p.title, company, L.cleanCity(p.city)].filter(Boolean).join(' · ');
+  }
+
+  const sentToday = () => L.countSentOn(db.prospects);
+
+  // ---------- Navigation ----------
+  function showView(view) {
+    db.settings.view = view;
+    $$('.view').forEach((el) => el.classList.toggle('active', el.id === `view-${view}`));
+    $$('.tab').forEach((el) => el.classList.toggle('active', el.dataset.view === view));
+    save();
+    renderView();
+    window.scrollTo(0, 0);
+    if (view === 'add' && matchMedia('(min-width: 900px)').matches) $('#f-paste').focus();
+  }
+
+  function renderView() {
+    const view = db.settings.view;
+    if (view === 'search') renderSearch();
+    if (view === 'queue') renderQueue();
+    if (view === 'follow') renderFollow();
+    if (view === 'data') renderData();
+    if (view === 'add') updatePreview();
+  }
+
+  function renderChrome() {
+    const goal = db.settings.dailyGoal;
+    const done = sentToday();
+    $('#day-count').textContent = `${done} / ${goal}`;
+    $('#day-meter').style.width = `${Math.min(100, (done / goal) * 100)}%`;
+
+    const queued = db.prospects.filter((p) => p.status === 'identifie').length;
+    const qBadge = $('#badge-queue');
+    qBadge.textContent = queued;
+    qBadge.hidden = queued === 0;
+
+    const states = db.prospects.map((p) => L.followState(p).state);
+    const late = states.filter((s) => s === 'late').length;
+    const due = late + states.filter((s) => s === 'today').length;
+    const fBadge = $('#badge-follow');
+    fBadge.textContent = due;
+    fBadge.className = `badge ${late ? 'late' : 'today'}`;
+    fBadge.hidden = due === 0;
+
+    $('#storage-banner').hidden = storageOk;
+  }
+
+  // ---------- Chercher ----------
+  function renderSearch() {
+    const s = db.settings;
+    const pick = (key, value) => () => { s[key] = value; save(); renderSearch(); };
+    $('#search-cats').replaceChildren(...L.CATEGORIES.map((c) => chip(`${c.rank}. ${c.label}`, s.searchCat === c.id, pick('searchCat', c.id))));
+    $('#search-zones').replaceChildren(...L.ZONES.map((z) => chip(z.label, s.searchZone === z.id, pick('searchZone', z.id))));
+    $('#search-network').replaceChildren(
+      chip('2e + 3e degré', s.network !== 'second', pick('network', 'wide')),
+      chip('2e degré seulement', s.network === 'second', pick('network', 'second')),
+    );
+
+    const { groups, maps } = L.buildSearchLinks(s.searchCat, s.searchZone, s.network);
+    const cards = groups.map((group) => h('div', { class: 'card' },
+      h('h2', {}, group.title, ' · ', h('span', { class: 'lang-tag' }, group.geoText)),
+      ...group.links.map((link) => h('div', { class: 'link-row' },
+        h('div', {},
+          h('strong', {}, link.label),
+          h('span', { class: 'hint' }, link.hint),
+          h('code', { title: link.keywords }, link.keywords),
+        ),
+        h('div', { class: 'link-actions' },
+          h('button', { type: 'button', class: 'btn btn-sm btn-ghost', onclick: () => copy(link.keywords, 'Requête copiée') }, 'Copier'),
+          h('a', { class: 'btn btn-sm btn-gold', href: link.url, target: '_blank', rel: 'noopener noreferrer' }, 'Ouvrir ↗'),
+        ),
+      )),
+      h('div', { class: 'subhead' }, 'Par titre (recherches plus courtes) :'),
+      h('div', { class: 'chips' }, ...group.titles.map((t) =>
+        h('a', { class: 'chip chip-sm', href: t.url, target: '_blank', rel: 'noopener noreferrer', title: t.keywords }, t.label))),
+    ));
+    if (maps.length) {
+      cards.push(h('div', { class: 'card' },
+        h('h2', {}, 'Google Maps · trouver les entreprises'),
+        h('p', { class: 'muted small', style: 'margin:0 0 10px' }, 'Les petites structures sont rarement bien référencées sur LinkedIn : repère-les sur la carte, puis cherche leur gérant sur LinkedIn.'),
+        h('div', { class: 'chips' }, ...maps.map((m) =>
+          h('a', { class: 'chip chip-sm', href: m.url, target: '_blank', rel: 'noopener noreferrer' }, `${m.label} ↗`))),
+      ));
+    }
+    $('#search-results').replaceChildren(...cards);
+  }
+
+  // ---------- Ajouter / modifier ----------
+  const form = { editingId: null, langOverride: null, notesEdited: [false, false] };
+  const f = (id) => $(`#f-${id}`);
+  const TEXT_FIELDS = ['name', 'first', 'title', 'company', 'city', 'url', 'about', 'notes'];
+
+  function readDraft() {
+    const draft = {
+      name: f('name').value.trim(),
+      firstName: f('first').value.trim(),
+      title: f('title').value.trim(),
+      company: f('company').value.trim(),
+      city: f('city').value.trim(),
+      url: L.normalizeUrl(f('url').value),
+      about: f('about').value.trim(),
+      notes: f('notes').value.trim(),
+      activity: f('activity').value,
+    };
+    if (!draft.firstName) draft.firstName = L.splitName(draft.name).firstName;
+    const detected = L.detectCategory(draft);
+    draft.category = f('category').value === 'auto' ? detected : f('category').value;
+    const detectedCountry = L.detectCountry(draft.city);
+    draft.country = f('country').value === 'auto' ? detectedCountry : f('country').value;
+    draft.lang = form.langOverride || '';
+    return { draft, detected, detectedCountry };
+  }
+
+  function findDuplicate(d) {
+    const name = L.normalize(d.name);
+    return db.prospects.find((p) => p.id !== form.editingId && (
+      (d.url && L.sameUrl(p.url, d.url))
+      || (name && L.normalize(p.name) === name && L.normalize(p.company) === L.normalize(d.company))));
+  }
+
+  function updatePreview() {
+    const { draft, detected, detectedCountry } = readDraft();
+    f('category').options[0].textContent = `Auto · ${detected ? L.categoryName(detected) : 'non reconnue'}`;
+    const countryNames = { FR: 'France', CH: 'Suisse', DE: 'Allemagne', EU: 'Europe' };
+    f('country').options[0].textContent = `Auto · ${countryNames[detectedCountry] || 'inconnu'}`;
+    f('first').placeholder = L.splitName(draft.name).firstName || 'Prénom';
+
+    const empty = !draft.name && !draft.title && !draft.company && !draft.city;
+    const s = L.scoreProspect(draft);
+    const ring = $('#score-ring');
+    ring.className = `ring ${empty ? '' : s.level}`;
+    ring.style.setProperty('--p', empty ? 0 : s.score);
+    $('#score-num').textContent = empty ? '0' : s.score;
+    $('#score-level').textContent = empty ? '—' : s.levelLabel;
+    $('#score-level').className = `level ${empty ? '' : s.level}`;
+    $('#score-explain').textContent = empty ? 'Colle un profil pour voir son score.' : s.explanation;
+    const bar = (label, part) => h('div', { class: 'bar' },
+      h('span', {}, label), h('i', {}, h('b', { style: `width:${(part.points / part.max) * 100}%` })), h('span', {}, `${part.points}/${part.max}`));
+    $('#score-bars').replaceChildren(
+      bar('Catégorie', s.parts.category), bar('Poste', s.parts.decision), bar('Zone', s.parts.zone), bar('Activité', s.parts.activity),
+      s.bonus ? h('div', { class: 'bar' }, h('span', {}, 'Bonus'), h('i', {}, h('b', { style: 'width:100%' })), h('span', {}, `+${s.bonus}`)) : null,
+    );
+
+    const lang = form.langOverride || L.suggestLang(draft.country, draft.city);
+    $$('#note-lang button').forEach((b) => b.classList.toggle('active', b.dataset.lang === lang));
+    const notes = L.buildNotes({ ...draft, lang });
+    [0, 1].forEach((i) => {
+      const area = $(`#note-${i}`);
+      if (!form.notesEdited[i]) area.value = empty ? '' : notes[i];
+      updateNoteCount(i);
+    });
+
+    const dup = findDuplicate(draft);
+    const box = $('#dup-box');
+    box.hidden = !dup;
+    if (dup) {
+      box.replaceChildren(
+        h('span', {}, `Déjà dans ta liste : ${dup.name || dup.url} (${L.statusLabel(dup.status)}, ajouté le ${L.formatDate(dup.addedAt)}).`),
+        h('button', { type: 'button', class: 'link-btn', onclick: () => editProspect(dup.id) }, 'Ouvrir la fiche'),
+      );
+    }
+  }
+
+  function updateNoteCount(i) {
+    const length = $(`#note-${i}`).value.length;
+    const el = $(`#count-${i}`);
+    el.textContent = `${length} / ${L.NOTE_MAX}`;
+    el.className = length > L.NOTE_MAX ? 'count-over' : 'count-ok';
+  }
+
+  function resetForm({ keepPaste = false } = {}) {
+    TEXT_FIELDS.forEach((id) => { f(id).value = ''; });
+    if (!keepPaste) f('paste').value = '';
+    f('category').value = 'auto';
+    f('country').value = 'auto';
+    f('activity').value = '';
+    form.langOverride = null;
+    form.notesEdited = [false, false];
+  }
+
+  function clearForm() {
+    resetForm();
+    form.editingId = null;
+    $('#add-title').textContent = 'Ajouter un profil';
+    $('#btn-add').textContent = 'Ajouter à la file';
+    $('#btn-add-sent').textContent = 'Ajouter + demande envoyée';
+    $('#btn-add-sent').hidden = false;
+    $('#btn-reset').textContent = 'Vider';
+    updatePreview();
+  }
+
+  function applyPaste() {
+    const parsed = L.parseProfileText(f('paste').value);
+    if (!parsed.name && !parsed.title && !parsed.url) {
+      toast('Rien de reconnu : remplis les champs à la main.', { kind: 'error' });
+      return;
+    }
+    if (!form.editingId) resetForm({ keepPaste: true });
+    if (parsed.name) f('name').value = parsed.name;
+    if (parsed.title) f('title').value = parsed.title;
+    if (parsed.company) f('company').value = parsed.company;
+    if (parsed.location) f('city').value = parsed.location;
+    if (parsed.url) f('url').value = parsed.url;
+    if (parsed.about) f('about').value = parsed.about;
+    if (parsed.activity) f('activity').value = parsed.activity;
+    form.notesEdited = [false, false];
+    updatePreview();
+    if (parsed.name) toast(`Profil lu : ${parsed.name}. Vérifie les champs.`);
+    else toast('URL ajoutée. Colle maintenant le texte du profil.');
+  }
+
+  function submitDraft(sent) {
+    const { draft } = readDraft();
+    if (!draft.name && !draft.url) {
+      toast('Ajoute au moins le nom ou l’URL du profil.', { kind: 'error' });
+      f('name').focus();
+      return;
+    }
+    const now = new Date();
+    const fields = {
+      name: draft.name, firstName: draft.firstName, title: draft.title, company: draft.company, city: draft.city,
+      country: draft.country, url: draft.url, category: draft.category, activity: draft.activity, about: draft.about,
+      notes: draft.notes, lang: draft.lang,
+    };
+
+    if (form.editingId) {
+      let p = { ...byId(form.editingId), ...fields, updatedAt: now.toISOString() };
+      if (sent && p.status === 'identifie') p = L.applyStatus(p, 'envoyee', now);
+      updateProspect(p);
+      toast('Fiche mise à jour.');
+      clearForm();
+      showView('follow');
+      return;
+    }
+
+    const dup = findDuplicate(draft);
+    if (dup) {
+      toast(`Déjà dans ta liste (${L.statusLabel(dup.status)}).`, { kind: 'error' });
+      return;
+    }
+    let p = { id: L.uid(), ...fields, status: 'identifie', followUp: '', sentAt: '', addedAt: now.toISOString(), statusAt: now.toISOString(), updatedAt: now.toISOString() };
+    if (sent) p = L.applyStatus(p, 'envoyee', now);
+    db.prospects.push(p);
+    save();
+    const score = L.scoreProspect(p).score;
+    toast(sent ? `Ajouté (score ${score}) · ${sentToday()} / ${db.settings.dailyGoal} aujourd'hui` : `Ajouté à la file (score ${score})`, {
+      action: { label: 'Annuler', run: () => { db.prospects = db.prospects.filter((x) => x.id !== p.id); save(); renderView(); } },
+    });
+    clearForm();
+    f('paste').focus();
+  }
+
+  function editProspect(id) {
+    const p = byId(id);
+    if (!p) return;
+    resetForm();
+    form.editingId = id;
+    f('name').value = p.name || '';
+    f('first').value = p.firstName && p.firstName !== L.splitName(p.name).firstName ? p.firstName : '';
+    f('title').value = p.title || '';
+    f('company').value = p.company || '';
+    f('city').value = p.city || '';
+    f('url').value = p.url || '';
+    f('about').value = p.about || '';
+    f('notes').value = p.notes || '';
+    f('activity').value = p.activity || '';
+    f('category').value = p.category || '';
+    f('country').value = p.country || 'auto';
+    form.langOverride = p.lang || null;
+    $('#add-title').textContent = `Modifier : ${p.name || 'fiche'}`;
+    $('#btn-add').textContent = 'Enregistrer';
+    $('#btn-add-sent').textContent = 'Enregistrer + demande envoyée';
+    $('#btn-add-sent').hidden = p.status !== 'identifie';
+    $('#btn-reset').textContent = 'Annuler';
+    showView('add');
+  }
+
+  // ---------- File du jour ----------
+  function renderQueue() {
+    const goal = db.settings.dailyGoal;
+    const done = sentToday();
+    $('#queue-count').replaceChildren(String(done), ' ', h('small', {}, `/ ${goal} ajoutés aujourd'hui`));
+    $('#queue-meter').style.width = `${Math.min(100, (done / goal) * 100)}%`;
+    $('#queue-left').textContent = done >= goal ? 'Objectif atteint, bravo.' : `Encore ${goal - done} demande${goal - done > 1 ? 's' : ''} pour l'objectif.`;
+
+    const waiting = db.prospects.filter((p) => p.status === 'identifie');
+    const cat = db.settings.queueCat;
+    const count = (id) => waiting.filter((p) => id === 'all' || p.category === id).length;
+    const pickCat = (id) => () => { db.settings.queueCat = id; save(); renderQueue(); };
+    $('#queue-cats').replaceChildren(
+      chip(h('span', {}, 'Toutes ', h('span', { class: 'count' }, String(count('all')))), cat === 'all', pickCat('all')),
+      ...L.CATEGORIES.map((c) => chip(h('span', {}, `${c.label} `, h('span', { class: 'count' }, String(count(c.id)))), cat === c.id, pickCat(c.id))),
+    );
+
+    const items = waiting
+      .filter((p) => cat === 'all' || p.category === cat)
+      .map((p) => ({ p, s: L.scoreProspect(p) }))
+      .sort((a, b) => b.s.score - a.s.score || (a.p.addedAt || '').localeCompare(b.p.addedAt || ''));
+
+    $('#queue-list').replaceChildren(...(items.length ? items.map(({ p, s }) => queueCard(p, s)) : [
+      h('div', { class: 'empty' }, waiting.length ? 'Aucun profil dans cette catégorie.' : 'La file est vide. Ajoute des profils depuis « Ajouter ».'),
+    ]));
+
+    const sentList = db.prospects
+      .filter((p) => p.sentAt && L.today(new Date(p.sentAt)) === L.today())
+      .sort((a, b) => b.sentAt.localeCompare(a.sentAt));
+    $('#queue-sent').replaceChildren(...(sentList.length ? [
+      h('div', { class: 'section-title' }, `Envoyées aujourd'hui (${sentList.length})`),
+      ...sentList.map((p) => queueCard(p, L.scoreProspect(p), true)),
+    ] : []));
+  }
+
+  function queueCard(p, s, done = false) {
+    const notes = L.buildNotes(p);
+    const check = h('input', {
+      type: 'checkbox',
+      checked: done,
+      disabled: done && p.status !== 'envoyee',
+      onchange: (e) => (e.target.checked ? markSent(p.id) : unmarkSent(p.id)),
+    });
+    return h('div', { class: `pcard${done ? ' done' : ''}` },
+      scoreBadge(s),
+      h('div', {},
+        h('div', { class: 'pname' }, p.name || p.url),
+        h('div', { class: 'psub' }, h('span', { class: 'tag' }, L.categoryName(p.category)), subline(p)),
+        !done && h('div', { class: 'pexpl' }, s.explanation),
+      ),
+      h('div', { class: 'pactions' },
+        profileLink(p),
+        !done && h('button', { type: 'button', class: 'btn btn-sm btn-outline', onclick: () => copy(notes[0], 'Note douce copiée') }, 'Note 1'),
+        !done && h('button', { type: 'button', class: 'btn btn-sm btn-outline', onclick: () => copy(notes[1], 'Note directe copiée') }, 'Note 2'),
+        !done && h('button', { type: 'button', class: 'link-btn', onclick: () => editProspect(p.id) }, 'Modifier'),
+        !done && h('button', { type: 'button', class: 'link-btn', onclick: () => discard(p.id) }, 'Écarter'),
+        h('label', { class: 'sent-check' }, check, done ? 'Envoyée' : 'Demande envoyée'),
+      ),
+      !done && h('details', { class: 'notes-peek' },
+        h('summary', {}, 'Voir les notes'),
+        h('p', {}, notes[0]),
+        h('p', {}, notes[1]),
+      ),
+    );
+  }
+
+  function markSent(id) {
+    const before = byId(id);
+    updateProspect(L.applyStatus(before, 'envoyee'));
+    renderQueue();
+    const goal = db.settings.dailyGoal;
+    toast(`Demande envoyée · ${sentToday()} / ${goal}`, { action: { label: 'Annuler', run: () => { updateProspect(before); renderView(); } } });
+  }
+
+  function unmarkSent(id) {
+    updateProspect(L.applyStatus(byId(id), 'identifie'));
+    renderQueue();
+    toast('Remis dans la file.');
+  }
+
+  function discard(id) {
+    const before = byId(id);
+    updateProspect(L.applyStatus(before, 'perdu'));
+    renderQueue();
+    toast('Profil écarté (statut « Perdu »).', { action: { label: 'Annuler', run: () => { updateProspect(before); renderView(); } } });
+  }
+
+  // ---------- Suivi ----------
+  const followFilter = { text: '', status: '', due: '' };
+
+  function backupBanner(container) {
+    const last = db.settings.lastExport;
+    const days = last ? L.daysBetween(L.today(new Date(last)), L.today()) : Infinity;
+    container.replaceChildren(...(db.prospects.length >= 10 && days >= 7 ? [h('div', { class: 'banner' },
+      h('span', {}, last ? `Dernier export il y a ${days} jours.` : 'Tu n’as encore jamais exporté tes fiches.'),
+      h('button', { type: 'button', class: 'btn btn-sm btn-gold', onclick: exportCSV }, 'Exporter en CSV'),
+    )] : []));
+  }
+
+  function renderFollow() {
+    backupBanner($('#follow-banner'));
+    const ymd = L.today();
+    const withState = db.prospects.map((p) => ({ p, f: L.followState(p, ymd), s: L.scoreProspect(p) }));
+    const cat = db.settings.followCat;
+    const inCat = (x, id) => id === 'all' || (id === 'autre' ? !L.getCategory(x.p.category) : x.p.category === id);
+    const tabs = [{ id: 'all', label: 'Tous' }, ...L.CATEGORIES.map((c) => ({ id: c.id, label: c.label }))];
+    if (withState.some((x) => !L.getCategory(x.p.category))) tabs.push({ id: 'autre', label: 'Autres' });
+    if (!tabs.some((t) => t.id === cat)) db.settings.followCat = 'all';
+
+    $('#follow-cats').replaceChildren(...tabs.map((t) => {
+      const list = withState.filter((x) => inCat(x, t.id));
+      const late = list.some((x) => x.f.state === 'late');
+      const today = list.some((x) => x.f.state === 'today');
+      return chip([
+        `${t.label} `,
+        h('span', { class: 'count' }, String(list.length)),
+        (late || today) && h('span', { class: `dot ${late ? 'late' : 'today'}`, title: late ? 'Relance en retard' : "Relance aujourd'hui" }),
+      ], db.settings.followCat === t.id, () => { db.settings.followCat = t.id; save(); renderFollow(); });
+    }));
+
+    const scoped = withState.filter((x) => inCat(x, db.settings.followCat));
+    const lateCount = scoped.filter((x) => x.f.state === 'late').length;
+    const todayCount = scoped.filter((x) => x.f.state === 'today').length;
+    const toggleDue = (state) => () => { followFilter.due = followFilter.due === state ? '' : state; renderFollow(); };
+    $('#follow-summary').replaceChildren(
+      h('button', { type: 'button', class: `alert late${followFilter.due === 'late' ? ' active' : ''}`, onclick: toggleDue('late') }, `${lateCount} en retard`),
+      h('button', { type: 'button', class: `alert today${followFilter.due === 'today' ? ' active' : ''}`, onclick: toggleDue('today') }, `${todayCount} aujourd'hui`),
+      followFilter.due && h('button', { type: 'button', class: 'link-btn', onclick: toggleDue('') }, 'Tout afficher'),
+    );
+
+    const text = L.normalize(followFilter.text);
+    const rank = (x) => ({ late: 0, today: 1, later: 2 }[x.f.state] ?? 3);
+    const list = scoped
+      .filter((x) => !followFilter.status || x.p.status === followFilter.status)
+      .filter((x) => !followFilter.due || x.f.state === followFilter.due)
+      .filter((x) => !text || L.normalize(`${x.p.name} ${x.p.company} ${x.p.city} ${x.p.title}`).includes(text))
+      .sort((a, b) => rank(a) - rank(b)
+        || (a.f.state === 'late' ? b.f.days - a.f.days : a.f.days - b.f.days)
+        || b.s.score - a.s.score);
+
+    $('#follow-list').replaceChildren(...(list.length ? list.map(followRow) : [
+      h('div', { class: 'empty' }, db.prospects.length ? 'Aucune fiche ne correspond.' : 'Aucune fiche pour l’instant.'),
+    ]));
+  }
+
+  function followRow({ p, f: state, s }) {
+    const status = h('select', { 'aria-label': 'Statut', onchange: (e) => changeStatus(p.id, e.target.value) },
+      ...L.STATUSES.map((st) => h('option', { value: st.id, selected: st.id === p.status }, st.label)));
+    const date = h('input', {
+      type: 'date', value: p.followUp || '', 'aria-label': 'Date de relance',
+      onchange: (e) => { updateProspect({ ...byId(p.id), followUp: e.target.value }); renderFollow(); },
+    });
+    const message = L.messageFor(p);
+    const remove = h('button', { type: 'button', class: 'link-btn', onclick: (e) => confirmClick(e.currentTarget, () => {
+      db.prospects = db.prospects.filter((x) => x.id !== p.id);
+      save();
+      renderFollow();
+      toast('Fiche supprimée.');
+    }) }, 'Supprimer');
+    return h('div', { class: `frow ${state.state}` },
+      h('div', { class: 'frow-top' },
+        scoreBadge(s, true),
+        h('div', {},
+          h('div', { class: 'pname' }, p.name || p.url),
+          h('div', { class: 'psub' }, db.settings.followCat === 'all' ? h('span', { class: 'tag' }, L.categoryName(p.category)) : null, subline(p)),
+        ),
+      ),
+      h('div', { class: 'frow-controls' },
+        status,
+        date,
+        state.label ? h('span', { class: `alert ${state.state}` }, state.label) : null,
+      ),
+      h('div', { class: 'frow-actions' },
+        message && h('button', { type: 'button', class: 'btn btn-sm btn-outline', onclick: () => copy(message.text, `${message.label} copié`) }, `Copier : ${message.label}`),
+        profileLink(p),
+        h('button', { type: 'button', class: 'link-btn', onclick: () => editProspect(p.id) }, 'Modifier'),
+        remove,
+      ),
+    );
+  }
+
+  function changeStatus(id, status) {
+    const next = L.applyStatus(byId(id), status);
+    updateProspect(next);
+    renderFollow();
+    const when = next.followUp ? ` · relance ${next.followUp === L.today() ? "aujourd'hui" : `le ${L.formatDate(next.followUp)}`}` : '';
+    toast(`${L.statusLabel(status)}${when}`);
+  }
+
+  // ---------- Données ----------
+  function renderData() {
+    backupBanner($('#data-banner'));
+    const st = L.stats(db.prospects);
+    const stat = (value, label) => h('div', { class: 'stat' }, h('b', {}, String(value)), h('span', {}, label));
+    $('#stats').replaceChildren(
+      stat(st.total, 'fiches'),
+      stat(st.queued, 'dans la file'),
+      stat(st.sent, 'demandes envoyées'),
+      stat(st.acceptance === null ? '–' : `${st.acceptance} %`, 'acceptation (approx.)'),
+      stat(st.meetings, 'RDV en cours'),
+      stat(st.signed, 'signés'),
+    );
+    $('#set-goal').value = db.settings.dailyGoal;
+    $('#last-export').textContent = db.settings.lastExport
+      ? `Dernier export : ${L.formatDate(db.settings.lastExport)}.`
+      : 'Aucun export pour l’instant.';
+  }
+
+  function exportCSV() {
+    download(`prospection-${L.today()}.csv`, L.toCSV(db.prospects), 'text/csv;charset=utf-8');
+    db.settings.lastExport = new Date().toISOString();
+    save();
+    renderView();
+    toast(`${db.prospects.length} fiche${db.prospects.length > 1 ? 's' : ''} exportée${db.prospects.length > 1 ? 's' : ''}.`);
+  }
+
+  async function importCSV(file) {
+    try {
+      const incoming = L.fromCSV(await file.text());
+      if (!incoming.length) return toast('Aucune fiche reconnue dans ce fichier.', { kind: 'error' });
+      const { list, added, updated } = L.mergeProspects(db.prospects, incoming);
+      db.prospects = list;
+      save();
+      renderView();
+      toast(`Import : ${added} ajoutée${added > 1 ? 's' : ''}, ${updated} mise${updated > 1 ? 's' : ''} à jour.`);
+    } catch {
+      toast('Fichier illisible.', { kind: 'error' });
+    }
+  }
+
+  // ---------- Démarrage ----------
+  function bind() {
+    $$('.tab').forEach((tab) => tab.addEventListener('click', () => {
+      if (tab.dataset.view === 'add' && form.editingId) clearForm();
+      showView(tab.dataset.view);
+    }));
+    $('#day-pill').addEventListener('click', () => showView('queue'));
+
+    f('paste').addEventListener('paste', () => setTimeout(applyPaste, 0));
+    $('#btn-parse').addEventListener('click', applyPaste);
+    $('#btn-clear-paste').addEventListener('click', () => { f('paste').value = ''; f('paste').focus(); });
+    $('#prospect-form').addEventListener('input', (e) => {
+      if (e.target.id === 'f-paste') return;
+      const note = /^note-(\d)$/.exec(e.target.id);
+      if (note) {
+        form.notesEdited[Number(note[1])] = true;
+        updateNoteCount(Number(note[1]));
+        return;
+      }
+      updatePreview();
+    });
+    $('#prospect-form').addEventListener('change', (e) => { if (e.target.tagName === 'SELECT') updatePreview(); });
+    $('#prospect-form').addEventListener('submit', (e) => e.preventDefault());
+    $$('#note-lang button').forEach((b) => b.addEventListener('click', () => {
+      form.langOverride = b.dataset.lang;
+      form.notesEdited = [false, false];
+      updatePreview();
+    }));
+    $$('[data-copy-note]').forEach((b) => b.addEventListener('click', () => {
+      const text = $(`#note-${b.dataset.copyNote}`).value;
+      if (!text) return toast('La note est vide.', { kind: 'error' });
+      copy(text, text.length > L.NOTE_MAX ? 'Copiée, mais plus de 200 caractères.' : 'Note copiée');
+    }));
+    $('#btn-add').addEventListener('click', () => submitDraft(false));
+    $('#btn-add-sent').addEventListener('click', () => submitDraft(true));
+    $('#btn-reset').addEventListener('click', () => {
+      const wasEditing = Boolean(form.editingId);
+      clearForm();
+      if (wasEditing) showView('follow');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (db.settings.view === 'add' && (e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        submitDraft(e.shiftKey);
+      }
+    });
+
+    $('#follow-search').addEventListener('input', (e) => { followFilter.text = e.target.value; renderFollow(); });
+    $('#follow-status').replaceChildren(
+      h('option', { value: '' }, 'Tous les statuts'),
+      ...L.STATUSES.map((s) => h('option', { value: s.id }, s.label)),
+    );
+    $('#follow-status').addEventListener('change', (e) => { followFilter.status = e.target.value; renderFollow(); });
+
+    $('#btn-export').addEventListener('click', exportCSV);
+    $('#import-file').addEventListener('change', (e) => {
+      if (e.target.files[0]) importCSV(e.target.files[0]);
+      e.target.value = '';
+    });
+    $('#set-goal').addEventListener('change', (e) => {
+      const goal = Math.min(100, Math.max(1, Number.parseInt(e.target.value, 10) || 30));
+      db.settings.dailyGoal = goal;
+      e.target.value = goal;
+      save();
+      toast(`Objectif : ${goal} demandes par jour.`);
+    });
+    $('#btn-wipe').addEventListener('click', (e) => confirmClick(e.currentTarget, () => {
+      db.prospects = [];
+      save();
+      renderView();
+      toast('Toutes les fiches ont été effacées.');
+    }));
+
+    // Relances : on recalcule les alertes quand on revient sur la page (nouveau jour, autre onglet).
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderChrome(); renderView(); } });
+  }
+
+  bind();
+  navigator.storage?.persist?.().catch(() => {});
+  clearForm();
+  showView(VIEWS.includes(db.settings.view) ? db.settings.view : 'search');
+})();
+</script>
+</body>
+</html>
