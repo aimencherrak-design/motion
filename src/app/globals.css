@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/* ─────────────  Charte : noir profond, anthracite, jaune doré  ───────────── */
+@theme {
+  --color-fond: #0a0a0b;
+  --color-surface: #141416;
+  --color-surface-2: #1b1b1e;
+  --color-surface-3: #232327;
+  --color-ligne: #2a2a2f;
+  --color-ligne-forte: #3a3a41;
+  --color-texte: #f4f4f1;
+  --color-doux: #a3a3a9;
+  --color-discret: #6f6f77;
+  --color-or: #e9b43a;
+  --color-or-clair: #f5c75a;
+  --color-or-sombre: #3a2e12;
+  --color-sur-or: #151004;
+  --color-rouge: #f0625a;
+  --color-rouge-fond: #33140f;
+  --color-orange: #f59a33;
+  --color-orange-fond: #33210c;
+  --color-vert: #4cc38a;
+  --color-vert-fond: #0f2a1e;
+  --color-bleu: #6aa8ff;
+  --color-bleu-fond: #12213a;
+
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-titre: "Space Grotesk Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-carte: 14px;
+  --shadow-carte: 0 1px 0 0 rgb(255 255 255 / 0.03) inset, 0 8px 24px -12px rgb(0 0 0 / 0.6);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  background: var(--color-fond);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-fond);
+  color: var(--color-texte);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .titre {
+  font-family: var(--font-titre);
+  letter-spacing: -0.015em;
+}
+
+::selection {
+  background: var(--color-or);
+  color: var(--color-sur-or);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-or);
+  outline-offset: 2px;
+}
+
+/* Barres de défilement discrètes */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ligne-forte) transparent;
+}
+
+/* Champs de date : icône du calendrier lisible sur fond sombre */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.75);
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
