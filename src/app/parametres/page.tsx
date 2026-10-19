@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Database, Download, FolderOpen, History } from "lucide-react";
+import { Database, Download, FolderOpen, History, Target, UserRound } from "lucide-react";
 import { AncreBouton } from "@/components/ui/Bouton";
 import { Carte, EnTeteCarte } from "@/components/ui/Carte";
 import { EnTetePage } from "@/components/ui/EnTetePage";
@@ -7,6 +7,8 @@ import { dossierDonnees } from "@/lib/chemins";
 import { formatDateHeure } from "@/lib/dates";
 import { listerSauvegardes } from "@/lib/sauvegarde";
 import { compterDonnees } from "@/lib/statistiques";
+import { lireObjectifs, lireProfil } from "@/lib/donnees/parametres";
+import { FormulaireObjectifs, FormulaireProfil } from "./Reglages";
 import { RestaurerSauvegarde } from "./RestaurerSauvegarde";
 
 export const metadata: Metadata = { title: "Paramètres" };
@@ -28,9 +30,23 @@ export default function PageParametres() {
 
   return (
     <>
-      <EnTetePage surtitre="Réglages" titre="Paramètres" description="Sauvegarde de tes données et réglages de l'outil." />
+      <EnTetePage surtitre="Réglages" titre="Paramètres" description="Ton profil, tes objectifs du jour et la sauvegarde de tes données." />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
+        <Carte>
+          <EnTeteCarte
+            icone={<UserRound />}
+            titre="Mon profil"
+            description="Utilisé pour remplir {mon_prénom}, {mon_téléphone}… dans les messages et l'en-tête des PDF."
+          />
+          <FormulaireProfil profil={lireProfil()} />
+        </Carte>
+
+        <Carte>
+          <EnTeteCarte icone={<Target />} titre="Objectifs du jour" description="Affichés sur le tableau de bord." />
+          <FormulaireObjectifs objectifs={lireObjectifs()} />
+        </Carte>
+
         <Carte>
           <EnTeteCarte
             icone={<Download />}

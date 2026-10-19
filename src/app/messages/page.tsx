@@ -1,20 +1,28 @@
 import type { Metadata } from "next";
 import { EnTetePage } from "@/components/ui/EnTetePage";
-import { ModuleAVenir } from "@/components/ModuleAVenir";
+import { listerContactsCourts } from "@/lib/donnees/contacts";
+import { initialiserModeles, listerModeles } from "@/lib/donnees/modeles";
+import { lireProfil } from "@/lib/donnees/parametres";
+import { BanqueMessages } from "./BanqueMessages";
 
 export const metadata: Metadata = { title: "Messages" };
 
-export default function Page() {
+export default async function PageMessages({ searchParams }: PageProps<"/messages">) {
+  initialiserModeles();
+  const sp = await searchParams;
+  const contact = typeof sp.contact === "string" ? Number(sp.contact) : null;
   return (
     <>
-      <EnTetePage surtitre="Module 3" titre="Messages" description="Tes modèles de messages prêts à copier." />
-      <ModuleAVenir
-        numero={3}
-        points={[
-          "Modèles par cible : 1er contact et relance",
-          "Variables {prénom}, {entreprise}, {ville}",
-          "Bouton copier en un clic",
-        ]}
+      <EnTetePage
+        surtitre="Banque de messages"
+        titre="Messages"
+        description="Choisis un contact, copie le message personnalisé, colle-le dans LinkedIn ou ta messagerie."
+      />
+      <BanqueMessages
+        modeles={listerModeles()}
+        contacts={listerContactsCourts()}
+        profil={lireProfil()}
+        contactInitial={Number.isInteger(contact) ? contact : null}
       />
     </>
   );
