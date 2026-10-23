@@ -10,7 +10,7 @@ import {FONT} from '../ui/ui';
 import {SceneProps, drift, slideOf} from './common';
 import {CouchRoom} from './Age20';
 
-export const TEXT_AT = 150;
+export const TEXT_AT = 172;
 
 const Summit: React.FC<{f: number; dur: number}> = ({f, dur}) => {
   const SC = 0.86;
@@ -71,7 +71,7 @@ export const Age30: React.FC<SceneProps> = (props) => {
   return (
     <>
       <Panel side="left" slide={slide} cam={camL} svg={<CouchRoom f={f + 40} dur={props.dur} worn hunch={1} reflId="w" />}>
-        <div style={{position: 'absolute', top: 420, width: 540, textAlign: 'center', fontFamily: FONT, fontSize: 30, fontWeight: 500, letterSpacing: '0.2em', color: '#9AA3B2', opacity: clamp((f - 30) / 12)}}>
+        <div style={{position: 'absolute', top: 420, width: 540, textAlign: 'center', fontFamily: FONT, fontSize: 30, fontWeight: 500, letterSpacing: '0.2em', color: '#9AA3B2', opacity: clamp((f - 60) / 12)}}>
           TOUJOURS LE MÊME
           <br />
           CANAPÉ

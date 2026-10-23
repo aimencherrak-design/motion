@@ -5,14 +5,14 @@
   "vol": 0.6
  },
  {
-  "frame": 28,
-  "file": "whoosh-soft.mp3",
-  "vol": 0.4
- },
- {
   "frame": 42,
   "file": "shimmer.mp3",
   "vol": 0.45
+ },
+ {
+  "frame": 56,
+  "file": "whoosh-soft.mp3",
+  "vol": 0.35
  },
  {
   "frame": 80,
@@ -715,14 +715,14 @@
   "vol": 0.22
  },
  {
-  "frame": 1520,
-  "file": "warm-shimmer.mp3",
-  "vol": 0.45
- },
- {
   "frame": 1539,
   "file": "scroll-echo.mp3",
   "vol": 0.22
+ },
+ {
+  "frame": 1545,
+  "file": "warm-shimmer.mp3",
+  "vol": 0.4
  },
  {
   "frame": 1561,
@@ -750,8 +750,8 @@
   "vol": 0.35
  },
  {
-  "frame": 1728,
+  "frame": 1735,
   "file": "boom.mp3",
-  "vol": 0.6
+  "vol": 0.55
  }
 ]

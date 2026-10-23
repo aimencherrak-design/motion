@@ -153,10 +153,10 @@ export const Age20: React.FC<SceneProps> = (props) => {
   return (
     <>
       <Panel side="left" slide={slide} cam={cam} svg={<CouchRoom f={f} dur={props.dur} reflId="a" />}>
-        <Stat big="3H" label="DE SCROLL" at={34} x={40} y={410} w={460} color="#AEB6C2" />
+        <Stat big="3H" label="DE SCROLL" at={84} x={40} y={410} w={460} color="#AEB6C2" />
       </Panel>
       <Panel side="right" slide={slide} cam={cam} svg={<DeskRoom f={f} reflId="a" pose={pose} flip={flip} lines={lines} nearHand={f < 112 || f > 212 ? pen : null} acc={{backpack: true}} />}>
-        <Stat big="1H" label="D'APPRENTISSAGE" at={70} x={0} y={410} w={400} color={C.goldLight} glow="rgba(212,175,55,0.55)" />
+        <Stat big="1H" label="D'APPRENTISSAGE" at={152} x={0} y={410} w={400} color={C.goldLight} glow="rgba(212,175,55,0.55)" />
       </Panel>
     </>
   );

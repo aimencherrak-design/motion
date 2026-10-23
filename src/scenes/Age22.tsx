@@ -166,7 +166,7 @@ export const Age22: React.FC<SceneProps> = (props) => {
   return (
     <>
       <Panel side="left" slide={slide} cam={camL} svg={<Parking f={f} />}>
-        <KText words={[{t: 'AVOIR', at: 20}, {t: "L'AIR", at: 26}, {t: 'RICHE', at: 32, color: '#C9D3E6'}]} x={20} y={430} w={500} size={46} weight={600} color="#AEB6C2" out={STAMP_AT - 14} />
+        <KText words={[{t: 'AVOIR', at: 26}, {t: "L'AIR", at: 34}, {t: 'RICHE', at: 42, color: '#C9D3E6'}]} x={20} y={430} w={500} size={46} weight={600} color="#AEB6C2" out={STAMP_AT - 14} />
       </Panel>
       <Panel side="right" slide={slide} cam={camR} svg={<DeskRoom f={f} tidy reflId="b" pose={pose} extra={<Coins f={f} jarX={hand[0] - 6} dropY={hand[1] + 14} />} lampX={-70} acc={{backpack: true}} lines={0} />}>
         <Stat big={`+${thousands(landed * 200)} €`} label="+200 € / MOIS" at={COIN_TIMES[0] + COIN_FALL} x={0} y={410} w={400} color={C.goldLight} glow="rgba(212,175,55,0.55)" bigSize={80} pulse={pulse} />

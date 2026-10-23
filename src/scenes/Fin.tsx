@@ -9,7 +9,7 @@ import {FONT, KText, Spell} from '../ui/ui';
 import {SceneProps, Stage, drift, slideOf} from './common';
 import {screenColor} from './Age20';
 
-export const QUESTION_AT = 78;
+export const QUESTION_AT = 85;
 
 export const Fin: React.FC<SceneProps> = (props) => {
   const f = useF();
@@ -32,7 +32,7 @@ export const Fin: React.FC<SceneProps> = (props) => {
         <Spell text="LE BÂTISSEUR" at={16} x={0} y={690} w={480} size={28} color={C.goldLight} glow="rgba(212,175,55,0.6)" />
       </Panel>
       <div style={{position: 'absolute', inset: 0, transform: `translateX(${slide}px)`}}>
-        <KText words={[{t: 'MÊMES', at: 8}, {t: '24', at: 14, color: C.goldLight}, {t: 'HEURES.', at: 20}]} x={120} y={330} w={800} size={46} weight={500} out={QUESTION_AT - 6} />
+        <KText words={[{t: 'MÊMES', at: 38}, {t: '24', at: 46, color: C.goldLight}, {t: 'HEURES.', at: 56}]} x={120} y={330} w={800} size={46} weight={500} out={QUESTION_AT - 6} />
         {f >= QUESTION_AT && (
           <div
             style={{

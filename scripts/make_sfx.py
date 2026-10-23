@@ -357,7 +357,7 @@ def cue(frame, name, vol):
 
 # accroche
 cue(0, 'boom', 0.6)
-cue(28, 'whoosh-soft', 0.4)
+cue(56, 'whoosh-soft', 0.35)
 cue(42, 'shimmer', 0.45)
 # transitions : glissement latéral
 for k in ['age20', 'age22', 'age24', 'age26', 'age28', 'age30', 'fin']:
@@ -432,10 +432,10 @@ for i in range(40, 300, 22):
     if a + i - 40 < S['fin'] - 10:
         cue(a + i - 40 + 5, 'scroll-echo', 0.22)
 cue(a, 'wind-high', 0.22)
-cue(a + 140, 'warm-shimmer', 0.45)
+cue(a + 165, 'warm-shimmer', 0.4)
 
 # fin : boom sur la question puis silence
-cue(S['fin'] + 78, 'boom', 0.6)
+cue(S['fin'] + 85, 'boom', 0.55)
 
 if __name__ == '__main__':
     used = sorted({c['file'][:-4] for c in cues})

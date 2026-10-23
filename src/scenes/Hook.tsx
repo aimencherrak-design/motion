@@ -26,10 +26,10 @@ export const Hook: React.FC<SceneProps> = (props) => {
   return (
     <>
       <Panel side="left" slide={slide} cam={cam} svg={<Stage seed="hkl" beamX={270} charNode={left} reflId="hkl" />}>
-        <Spell text="LE SCROLLEUR" at={30} x={0} y={690} w={540} size={28} color="#B9C2D0" />
+        <Spell text="LE SCROLLEUR" at={58} x={0} y={690} w={540} size={28} color="#B9C2D0" />
       </Panel>
       <Panel side="right" slide={slide} cam={cam} svg={<Stage seed="hkr" beamX={240} gold={reveal > 0.5} charNode={right} reflId="hkr" />}>
-        <Spell text="LE BÂTISSEUR" at={36} x={0} y={690} w={480} size={28} color={reveal > 0.5 ? C.goldLight : '#B9C2D0'} glow={reveal > 0.5 ? 'rgba(212,175,55,0.6)' : undefined} />
+        <Spell text="LE BÂTISSEUR" at={62} x={0} y={690} w={480} size={28} color={reveal > 0.5 ? C.goldLight : '#B9C2D0'} glow={reveal > 0.5 ? 'rgba(212,175,55,0.6)' : undefined} />
       </Panel>
       <div style={{position: 'absolute', inset: 0, transform: `translateX(${slide}px)`}}>
         <KText
@@ -37,8 +37,8 @@ export const Hook: React.FC<SceneProps> = (props) => {
             {t: 'MÊME', at: -20},
             {t: 'ÂGE.', at: -20},
             {t: '\n', at: 0},
-            {t: 'MÊME', at: 22},
-            {t: 'DÉPART.', at: 30, color: C.goldLight},
+            {t: 'MÊME', at: 34},
+            {t: 'DÉPART.', at: 46, color: C.goldLight},
           ]}
           x={120}
           y={400}

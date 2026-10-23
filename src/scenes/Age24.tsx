@@ -203,7 +203,7 @@ export const Age24: React.FC<SceneProps> = (props) => {
       </Panel>
       <Panel side="right" slide={slide} cam={camR} svg={<Site f={f} />}>
         <KText words={[{t: '1ER', at: COLLAPSE + 10}, {t: 'PROJET', at: COLLAPSE + 14}, {t: '\n', at: 0}, {t: 'ÉCHEC', at: COLLAPSE + 22, color: C.red}]} x={0} y={420} w={400} size={42} weight={600} color="#E8D6D4" out={RISE + 20} />
-        <KText words={[{t: 'IL', at: RISE + 34}, {t: 'SE', at: RISE + 38}, {t: 'RELÈVE.', at: RISE + 44, color: C.goldLight}]} x={0} y={440} w={400} size={46} weight={600} glow="rgba(212,175,55,0.35)" />
+        <KText words={[{t: 'IL', at: RISE + 6}, {t: 'SE', at: RISE + 12}, {t: 'RELÈVE.', at: RISE + 18, color: C.goldLight}]} x={0} y={440} w={400} size={46} weight={600} glow="rgba(212,175,55,0.35)" />
       </Panel>
     </>
   );

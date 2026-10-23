@@ -183,7 +183,7 @@ export const Age26: React.FC<SceneProps> = (props) => {
         {taps > 0 && <Stat big={`SNOOZE ×${taps}`} label="ENCORE 10 MINUTES" at={RINGS[0][1]} x={20} y={410} w={500} color="#C9CED6" bigSize={66} pulse={Math.max(0, 1 - (f - lastTap) / 8) * 0.12} />}
       </Panel>
       <Panel side="right" slide={slide} cam={camR} svg={<Rooftop f={f} dur={props.dur} />}>
-        <Stat big="6:00" label="DÉJÀ DEHORS" at={30} x={0} y={410} w={400} color={C.goldLight} glow="rgba(212,175,55,0.5)" />
+        <Stat big="6:00" label="DÉJÀ DEHORS" at={112} x={0} y={410} w={400} color={C.goldLight} glow="rgba(212,175,55,0.5)" />
       </Panel>
     </>
   );

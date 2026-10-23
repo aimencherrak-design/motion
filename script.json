@@ -2,39 +2,142 @@
   "episode": "01 — Le Scrolleur vs le Bâtisseur",
   "fps": 30,
   "duration_s": 61,
-  "voice": {"engine": "google-chirp3-hd", "name": "fr-FR-Chirp3-HD-Charon", "speakingRate": 0.95},
+  "voice": {
+    "engine": "google-chirp3-hd",
+    "name": "fr-FR-Chirp3-HD-Charon",
+    "speakingRate": 0.95
+  },
   "scenes": [
-    {"id": "hook", "from": 0, "to": 90, "voice": "Même âge. Même point de départ.",
-     "left": "Scrolleur gris, debout dans son faisceau, respire", "right": "Bâtisseur gris qui s'allume en or des pieds à la tête (f42–66)",
-     "text": ["MÊME ÂGE. MÊME DÉPART.", "LE SCROLLEUR / LE BÂTISSEUR"],
-     "sfx": [[0, "boom"], [28, "whoosh-soft"], [42, "shimmer"]]},
-    {"id": "age20", "from": 90, "to": 330, "voice": "À vingt ans, l'un remplit ses nuits d'écrans. L'autre, de pages.",
-     "left": "Avachi sur le canapé, scrolle, horloge 1:00→3:00, bâille (f+150)", "right": "Écrit, tourne la page (f+70), se frotte les yeux (f+118), s'étire (f+160)",
-     "text": ["3H DE SCROLL", "1H D'APPRENTISSAGE"],
-     "sfx": "swipes /22 f, tic-tac, stylo, page tournée f+70, bâillement f+148"},
-    {"id": "age22", "from": 330, "to": 570, "voice": "Le premier veut avoir l'air riche. Le second veut le devenir.",
-     "left": "Marche devant sa voiture neuve en faisant tourner les clés, bip + phares (f+62), photo (f+120), tampon CRÉDIT 48 MOIS (f+160)", "right": "7 pièces glissées dans le bocal, hochement de tête",
-     "text": ["AVOIR L'AIR RICHE", "+1 400 € — +200 € / MOIS"],
-     "sfx": "clés, bip, déclic photo f+120, impact tampon f+160, pièces dans le verre ×7"},
-    {"id": "age24", "from": 570, "to": 840, "voice": "Son premier projet s'effondre. Tout le monde rit. Il se relève quand même.",
-     "left": "Regarde, pointe du doigt et se plie de rire, bulle T'ES FOU", "right": "Pose 5 briques, le mur tremble (f+112), s'effondre (f+130), chute (f+146), se relève (f+190), repose une brique (f+258), sa lumière revient plus forte",
-     "text": ["1ER PROJET : ÉCHEC", "IL SE RELÈVE."],
-     "sfx": "briques + truelle, grondement, effondrement f+130, chute f+146, souffle, brique isolée f+258"},
-    {"id": "age26", "from": 840, "to": 1110, "voice": "Sept heures. L'un repousse sa vie de dix minutes. L'autre court vers la sienne.",
-     "left": "Réveil 7:00 → snooze ×3 (f+52, f+136, f+220)", "right": "Court sur les toits à l'aube, saute une bouche d'aération (f+150), buée",
-     "text": ["SNOOZE ×3", "6:00 DÉJÀ DEHORS"],
-     "sfx": "alarme + vibration, clics snooze, grognements, foulées, souffle, vent"},
-    {"id": "age28", "from": 1110, "to": 1380, "voice": "Les années passent. Les écarts, eux, se creusent.",
-     "left": "ÉPARGNE 0 € clignote, 3 étiquettes + MENSUALITÉ l'écrasent (f+70, f+125, f+180)", "right": "Compteur 0 → 42 000 €, immeuble qui monte étage par étage, montre qui scintille",
-     "text": ["ÉPARGNE 0 €", "ÉPARGNE 42 000 €"],
-     "sfx": "buzz d'erreur, étiquettes mates, tic-tic accélérant, chime f+220, grincements"},
-    {"id": "age30", "from": 1380, "to": 1650, "voice": "Dix ans plus tard, l'un est toujours sur le même canapé. L'autre ne compte plus ses heures. Il les choisit.",
-     "left": "Même salon qu'à 20 ans, usé, plus voûté, bâillement en écho", "right": "Au sommet de son immeuble, veste au vent, lever de soleil, grande inspiration",
-     "text": ["TOUJOURS LE MÊME CANAPÉ", "LIBRE DE SON TEMPS"],
-     "sfx": "scroll réverbéré, vent d'altitude, scintillement chaud f+140"},
-    {"id": "fin", "from": 1650, "to": 1830, "voice": "Même âge. Mêmes vingt-quatre heures. Toi… tu es lequel ?",
-     "left": "Voûté, téléphone, tourne la tête vers la caméra", "right": "Droit, lumineux, tourne la tête vers la caméra",
-     "text": ["MÊMES 24 HEURES.", "TU ES LEQUEL DES DEUX ?"],
-     "sfx": [[1728, "boom"], "puis silence"]}
+    {
+      "id": "hook",
+      "from": 0,
+      "to": 90,
+      "voice": "Même âge. Même point de départ.",
+      "left": "Scrolleur gris, debout dans son faisceau, respire",
+      "right": "Bâtisseur gris qui s'allume en or des pieds à la tête (f42–66)",
+      "text": [
+        "MÊME ÂGE. MÊME DÉPART.",
+        "LE SCROLLEUR / LE BÂTISSEUR"
+      ],
+      "sfx": [
+        [
+          0,
+          "boom"
+        ],
+        [
+          28,
+          "whoosh-soft"
+        ],
+        [
+          42,
+          "shimmer"
+        ]
+      ],
+      "voiceAt": 0.0
+    },
+    {
+      "id": "age20",
+      "from": 90,
+      "to": 330,
+      "voice": "À vingt ans, l'un remplit ses nuits d'écrans. L'autre, de pages.",
+      "left": "Avachi sur le canapé, scrolle, horloge 1:00→3:00, bâille (f+150)",
+      "right": "Écrit, tourne la page (f+70), se frotte les yeux (f+118), s'étire (f+160)",
+      "text": [
+        "3H DE SCROLL",
+        "1H D'APPRENTISSAGE"
+      ],
+      "sfx": "swipes /22 f, tic-tac, stylo, page tournée f+70, bâillement f+148",
+      "voiceAt": 0.2
+    },
+    {
+      "id": "age22",
+      "from": 330,
+      "to": 570,
+      "voice": "Le premier veut avoir l'air riche. Le second veut le devenir.",
+      "left": "Marche devant sa voiture neuve en faisant tourner les clés, bip + phares (f+62), photo (f+120), tampon CRÉDIT 48 MOIS (f+160)",
+      "right": "7 pièces glissées dans le bocal, hochement de tête",
+      "text": [
+        "AVOIR L'AIR RICHE",
+        "+1 400 € — +200 € / MOIS"
+      ],
+      "sfx": "clés, bip, déclic photo f+120, impact tampon f+160, pièces dans le verre ×7",
+      "voiceAt": 0.2
+    },
+    {
+      "id": "age24",
+      "from": 570,
+      "to": 840,
+      "voice": "Son premier projet s'effondre. Tout le monde rit. Il se relève quand même.",
+      "left": "Regarde, pointe du doigt et se plie de rire, bulle T'ES FOU",
+      "right": "Pose 5 briques, le mur tremble (f+112), s'effondre (f+130), chute (f+146), se relève (f+190), repose une brique (f+258), sa lumière revient plus forte",
+      "text": [
+        "1ER PROJET : ÉCHEC",
+        "IL SE RELÈVE."
+      ],
+      "sfx": "briques + truelle, grondement, effondrement f+130, chute f+146, souffle, brique isolée f+258",
+      "voiceAt": 3.15
+    },
+    {
+      "id": "age26",
+      "from": 840,
+      "to": 1110,
+      "voice": "Sept heures. L'un repousse sa vie de dix minutes. L'autre court vers la sienne.",
+      "left": "Réveil 7:00 → snooze ×3 (f+52, f+136, f+220)",
+      "right": "Court sur les toits à l'aube, saute une bouche d'aération (f+150), buée",
+      "text": [
+        "SNOOZE ×3",
+        "6:00 DÉJÀ DEHORS"
+      ],
+      "sfx": "alarme + vibration, clics snooze, grognements, foulées, souffle, vent",
+      "voiceAt": 0.15
+    },
+    {
+      "id": "age28",
+      "from": 1110,
+      "to": 1380,
+      "voice": "Les années passent. Les écarts, eux, se creusent.",
+      "left": "ÉPARGNE 0 € clignote, 3 étiquettes + MENSUALITÉ l'écrasent (f+70, f+125, f+180)",
+      "right": "Compteur 0 → 42 000 €, immeuble qui monte étage par étage, montre qui scintille",
+      "text": [
+        "ÉPARGNE 0 €",
+        "ÉPARGNE 42 000 €"
+      ],
+      "sfx": "buzz d'erreur, étiquettes mates, tic-tic accélérant, chime f+220, grincements",
+      "voiceAt": 0.4
+    },
+    {
+      "id": "age30",
+      "from": 1380,
+      "to": 1650,
+      "voice": "Dix ans plus tard, l'un est toujours sur le même canapé. L'autre ne compte plus ses heures. Il les choisit.",
+      "left": "Même salon qu'à 20 ans, usé, plus voûté, bâillement en écho",
+      "right": "Au sommet de son immeuble, veste au vent, lever de soleil, grande inspiration",
+      "text": [
+        "TOUJOURS LE MÊME CANAPÉ",
+        "LIBRE DE SON TEMPS"
+      ],
+      "sfx": "scroll réverbéré, vent d'altitude, scintillement chaud f+140",
+      "voiceAt": 0.2
+    },
+    {
+      "id": "fin",
+      "from": 1650,
+      "to": 1830,
+      "voice": "Même âge. Mêmes vingt-quatre heures. Toi… tu es lequel ?",
+      "left": "Voûté, téléphone, tourne la tête vers la caméra",
+      "right": "Droit, lumineux, tourne la tête vers la caméra",
+      "text": [
+        "MÊMES 24 HEURES.",
+        "TU ES LEQUEL DES DEUX ?"
+      ],
+      "sfx": [
+        [
+          1728,
+          "boom"
+        ],
+        "puis silence"
+      ],
+      "voiceAt": 0.15
+    }
   ]
 }
