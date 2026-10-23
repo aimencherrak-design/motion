@@ -1,0 +1,757 @@
+[
+ {
+  "frame": 0,
+  "file": "boom.mp3",
+  "vol": 0.6
+ },
+ {
+  "frame": 28,
+  "file": "whoosh-soft.mp3",
+  "vol": 0.4
+ },
+ {
+  "frame": 42,
+  "file": "shimmer.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 80,
+  "file": "whoosh.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 90,
+  "file": "clock-tick.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 92,
+  "file": "pen-scratch.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 95,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 105,
+  "file": "clock-tock.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 117,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 120,
+  "file": "clock-tick.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 122,
+  "file": "pen-scratch.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 135,
+  "file": "clock-tock.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 139,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 150,
+  "file": "clock-tick.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 160,
+  "file": "page-turn.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 161,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 165,
+  "file": "clock-tock.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 180,
+  "file": "clock-tick.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 183,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 184,
+  "file": "pen-scratch.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 195,
+  "file": "clock-tock.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 205,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 210,
+  "file": "clock-tick.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 225,
+  "file": "clock-tock.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 227,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 238,
+  "file": "yawn.mp3",
+  "vol": 0.4
+ },
+ {
+  "frame": 240,
+  "file": "clock-tick.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 249,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 255,
+  "file": "clock-tock.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 270,
+  "file": "clock-tick.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 271,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 285,
+  "file": "clock-tock.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 293,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 300,
+  "file": "clock-tick.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 302,
+  "file": "pen-scratch.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 315,
+  "file": "phone-swipe.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 315,
+  "file": "clock-tock.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 320,
+  "file": "whoosh.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 334,
+  "file": "keys-jingle.mp3",
+  "vol": 0.4
+ },
+ {
+  "frame": 365,
+  "file": "coin-glass.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 370,
+  "file": "keys-jingle.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 391,
+  "file": "coin-glass.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 392,
+  "file": "car-unlock-beep.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 417,
+  "file": "coin-glass.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 443,
+  "file": "coin-glass.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 450,
+  "file": "camera-shutter.mp3",
+  "vol": 0.5
+ },
+ {
+  "frame": 469,
+  "file": "coin-glass.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 478,
+  "file": "stamp-fall.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 490,
+  "file": "stamp-impact.mp3",
+  "vol": 0.6
+ },
+ {
+  "frame": 495,
+  "file": "coin-glass.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 521,
+  "file": "coin-glass.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 560,
+  "file": "whoosh.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 582,
+  "file": "brick-place.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 586,
+  "file": "trowel-tap.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 589,
+  "file": "trowel-tap.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 604,
+  "file": "brick-place.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 608,
+  "file": "trowel-tap.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 611,
+  "file": "trowel-tap.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 626,
+  "file": "brick-place.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 630,
+  "file": "trowel-tap.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 633,
+  "file": "trowel-tap.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 648,
+  "file": "brick-place.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 652,
+  "file": "trowel-tap.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 655,
+  "file": "trowel-tap.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 670,
+  "file": "brick-place.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 674,
+  "file": "trowel-tap.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 677,
+  "file": "trowel-tap.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 680,
+  "file": "rumble.mp3",
+  "vol": 0.5
+ },
+ {
+  "frame": 700,
+  "file": "brick-collapse.mp3",
+  "vol": 0.6
+ },
+ {
+  "frame": 716,
+  "file": "body-thud.mp3",
+  "vol": 0.55
+ },
+ {
+  "frame": 758,
+  "file": "heavy-breath.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 828,
+  "file": "brick-place.mp3",
+  "vol": 0.6
+ },
+ {
+  "frame": 830,
+  "file": "whoosh.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 840,
+  "file": "alarm.mp3",
+  "vol": 0.4
+ },
+ {
+  "frame": 840,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 840,
+  "file": "wind.mp3",
+  "vol": 0.2
+ },
+ {
+  "frame": 844,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 850,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 859,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 863,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 868,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 878,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 882,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 888,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 892,
+  "file": "snooze-click.mp3",
+  "vol": 0.5
+ },
+ {
+  "frame": 895,
+  "file": "grunt.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 897,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 901,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 906,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 916,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 920,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 926,
+  "file": "alarm.mp3",
+  "vol": 0.4
+ },
+ {
+  "frame": 926,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 935,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 939,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 944,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 954,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 958,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 964,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 973,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 976,
+  "file": "snooze-click.mp3",
+  "vol": 0.5
+ },
+ {
+  "frame": 977,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 979,
+  "file": "grunt.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 996,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1004,
+  "file": "body-thud.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 1010,
+  "file": "alarm.mp3",
+  "vol": 0.4
+ },
+ {
+  "frame": 1011,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1015,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1020,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1030,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1034,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1040,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1049,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1053,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1058,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1060,
+  "file": "snooze-click.mp3",
+  "vol": 0.5
+ },
+ {
+  "frame": 1063,
+  "file": "grunt.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 1068,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1072,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1078,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1087,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1091,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1096,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1100,
+  "file": "whoosh.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 1106,
+  "file": "footstep.mp3",
+  "vol": 0.28
+ },
+ {
+  "frame": 1110,
+  "file": "breath-puff.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1116,
+  "file": "error-buzz.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 1140,
+  "file": "counter-ticks.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 1150,
+  "file": "construction-creak.mp3",
+  "vol": 0.3
+ },
+ {
+  "frame": 1180,
+  "file": "label-thump.mp3",
+  "vol": 0.5
+ },
+ {
+  "frame": 1235,
+  "file": "label-thump.mp3",
+  "vol": 0.5
+ },
+ {
+  "frame": 1240,
+  "file": "construction-creak.mp3",
+  "vol": 0.25
+ },
+ {
+  "frame": 1290,
+  "file": "label-thump.mp3",
+  "vol": 0.5
+ },
+ {
+  "frame": 1330,
+  "file": "chime.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 1370,
+  "file": "whoosh.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 1380,
+  "file": "wind-high.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1385,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1407,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1429,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1451,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1473,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1495,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1517,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1520,
+  "file": "warm-shimmer.mp3",
+  "vol": 0.45
+ },
+ {
+  "frame": 1539,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1561,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1583,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1605,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1627,
+  "file": "scroll-echo.mp3",
+  "vol": 0.22
+ },
+ {
+  "frame": 1640,
+  "file": "whoosh.mp3",
+  "vol": 0.35
+ },
+ {
+  "frame": 1728,
+  "file": "boom.mp3",
+  "vol": 0.6
+ }
+]
